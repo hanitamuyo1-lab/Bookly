@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking App UI Concepts</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell" data-theme="pro">
+      <section class="hero-bar">
+        <div>
+          <p class="eyebrow">Clean Professional</p>
+          <h1>Scheduling app interface</h1>
+        </div>
+        <div class="header-actions" aria-label="Account actions">
+          <button class="ghost-btn" type="button">Log in</button>
+          <button class="primary-btn" type="button">Sign up</button>
+        </div>
+      </section>
+
+      <section class="app-frame">
+        <aside class="sidebar" aria-label="App navigation">
+          <div class="brand">
+            <span class="brand-mark">B</span>
+            <span class="brand-name">Bookly</span>
+          </div>
+          <nav class="nav-list">
+            <a class="nav-item active" href="#">Dashboard</a>
+            <a class="nav-item" href="#">Event types</a>
+            <a class="nav-item" href="#">Availability</a>
+            <a class="nav-item" href="#">Payments</a>
+            <a class="nav-item" href="#">Forms</a>
+            <a class="nav-item" href="#">Reminders</a>
+            <a class="nav-item" href="#">Account</a>
+          </nav>
+          <div class="login-card">
+            <span class="google-dot">G</span>
+            <div>
+              <strong>Google connected</strong>
+              <small>Calendar sync enabled</small>
+            </div>
+          </div>
+        </aside>
+
+        <section class="workspace">
+          <header class="topbar">
+            <div>
+              <p class="eyebrow">Booking dashboard</p>
+              <h2>Manage appointments, payments, and invitee questions</h2>
+            </div>
+            <button class="primary-btn" type="button">Create event type</button>
+          </header>
+
+          <section class="auth-grid" aria-label="User signup and login">
+            <article class="panel auth-panel">
+              <div>
+                <p class="eyebrow">New account</p>
+                <h3>Create your booking profile</h3>
+              </div>
+              <div class="auth-form">
+                <label>
+                  Full name
+                  <input type="text" value="Annie Mumba" />
+                </label>
+                <label>
+                  Work email
+                  <input type="email" value="annie@example.com" />
+                </label>
+                <label>
+                  Password
+                  <input type="password" value="booklydemo" />
+                </label>
+              </div>
+              <button class="primary-btn wide-btn" type="button">Create account</button>
+            </article>
+
+            <article class="panel auth-panel">
+              <div>
+                <p class="eyebrow">Welcome back</p>
+                <h3>Log in to manage bookings</h3>
+              </div>
+              <button class="google-btn" type="button">
+                <span class="google-dot">G</span>
+                Continue with Google
+              </button>
+              <div class="auth-form compact">
+                <label>
+                  Email
+                  <input type="email" value="annie@example.com" />
+                </label>
+                <label>
+                  Password
+                  <input type="password" value="booklydemo" />
+                </label>
+              </div>
+              <button class="ghost-btn wide-btn" type="button">Log in</button>
+            </article>
+          </section>
+
+          <section class="summary-grid" aria-label="Booking metrics">
+            <article class="metric">
+              <span>Bookings this week</span>
+              <strong>42</strong>
+              <small>+18% from last week</small>
+            </article>
+            <article class="metric">
+              <span>Paid revenue</span>
+              <strong>$2,840</strong>
+              <small>Stripe-ready appointments</small>
+            </article>
+            <article class="metric">
+              <span>No-conflict rate</span>
+              <strong>99%</strong>
+              <small>Google Calendar protected</small>
+            </article>
+          </section>
+
+          <section class="content-grid">
+            <article class="panel calendar-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Availability</p>
+                  <h3>May 2026</h3>
+                </div>
+                <button class="ghost-btn" type="button">Edit rules</button>
+              </div>
+              <div class="weekdays" aria-hidden="true">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+              </div>
+              <div class="calendar" aria-label="Calendar preview">
+                <span class="muted">27</span><span class="muted">28</span><span class="muted">29</span><span class="muted">30</span>
+                <button>1</button><button>2</button><button>3</button>
+                <button>4</button><button class="open">5</button><button>6</button><button class="open">7</button><button>8</button><button>9</button><button>10</button>
+                <button>11</button><button class="open selected">12</button><button class="open">13</button><button>14</button><button class="blocked">15</button><button>16</button><button>17</button>
+                <button>18</button><button>19</button><button class="open">20</button><button>21</button><button class="open">22</button><button>23</button><button>24</button>
+                <button>25</button><button>26</button><button>27</button><button class="open">28</button><button>29</button><button>30</button><button>31</button>
+              </div>
+              <div class="time-list">
+                <button>09:00</button>
+                <button>10:30</button>
+                <button>13:00</button>
+                <button>15:30</button>
+              </div>
+            </article>
+
+            <article class="panel booking-panel">
+              <div class="profile-row">
+                <span class="avatar">AM</span>
+                <div>
+                  <h3>Strategy consultation</h3>
+                  <p>45 min · $120 · Google Meet</p>
+                </div>
+              </div>
+              <div class="booking-form">
+                <label>
+                  Name
+                  <input type="text" value="Maya Johnson" />
+                </label>
+                <label>
+                  Email
+                  <input type="email" value="maya@example.com" />
+                </label>
+                <label>
+                  What would you like help with?
+                  <textarea>Launch planning, pricing, and choosing the right package.</textarea>
+                </label>
+                <label>
+                  Appointment type
+                  <select>
+                    <option>Paid consultation - 45 minutes</option>
+                    <option>Discovery call - 20 minutes</option>
+                    <option>Follow-up session - 30 minutes</option>
+                  </select>
+                </label>
+              </div>
+              <div class="checkout-row">
+                <div>
+                  <span>Total due today</span>
+                  <strong>$120.00</strong>
+                </div>
+                <button class="primary-btn" type="button">Confirm and pay</button>
+              </div>
+            </article>
+          </section>
+
+          <section class="automation-strip" aria-label="Automation settings">
+            <article>
+              <strong>Confirmation</strong>
+              <span>Email sent instantly after payment or approval.</span>
+            </article>
+            <article>
+              <strong>Reminder</strong>
+              <span>24 hours and 1 hour before the appointment.</span>
+            </article>
+            <article>
+              <strong>Rescheduling</strong>
+              <span>Invitees can reschedule up to 12 hours before.</span>
+            </article>
+          </section>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

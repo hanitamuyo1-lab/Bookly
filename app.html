@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookly — Scheduling, simplified</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css?v=editor-reactive" />
+  </head>
+  <body>
+    <!-- ─── Icon sprite ─── -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM16 3v4M8 3v4" /></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 1 0-7.07-7.07l-1 1M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 1 0 7.07 7.07l1-1" /></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></symbol>
+        <symbol id="i-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z" /></symbol>
+        <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" /></symbol>
+        <symbol id="i-money" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></symbol>
+        <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></symbol>
+        <symbol id="i-workflow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h6v6H3zM15 15h6v6h-6zM9 6h6a3 3 0 0 1 3 3v6" /></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 15l4-4 3 3 5-6" /></symbol>
+        <symbol id="i-layout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.3-4.3" /></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14" /></symbol>
+        <symbol id="i-chev-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></symbol>
+        <symbol id="i-chev-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></symbol>
+        <symbol id="i-chev-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></symbol>
+        <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" /></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M14 21a2 2 0 0 1-4 0" /></symbol>
+        <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 6l-10 7L2 6" /></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5" /></symbol>
+        <symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></symbol>
+        <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12" /></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol>
+        <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.86a2 2 0 0 1 3.4 0l8.2 13.3a2 2 0 0 1-1.7 3.06H3.8a2 2 0 0 1-1.7-3.06l8.2-13.3z" /><path d="M12 9v4M12 17h.01" /></symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></symbol>
+        <symbol id="i-handle" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol>
+        <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></symbol>
+        <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01" /></symbol>
+      </defs>
+    </svg>
+
+    <!-- ─── Screen navigator (floats at bottom) ─── -->
+    <nav class="screen-nav" aria-label="Demo screens">
+      <span class="label">Demo</span>
+      <button data-screen="signup">Sign up</button>
+      <button data-screen="login">Log in</button>
+      <span class="group-sep"></span>
+      <span class="label">Admin</span>
+      <button data-screen="admin-events">Event types</button>
+      <button data-screen="admin-editor">Editor</button>
+      <button data-screen="admin-availability">Availability</button>
+      <button data-screen="admin-integrations">Integrations</button>
+      <span class="group-sep"></span>
+      <span class="label">Public</span>
+      <button data-screen="public-pick">Pick a time</button>
+      <button data-screen="public-form">Details</button>
+      <button data-screen="public-done">Confirmed</button>
+      <button data-screen="manage">Manage</button>
+    </nav>
+
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- 1. SIGN UP                                            -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" data-screen-label="01 Sign up" id="screen-signup">
+      <div class="auth-shell">
+        <aside class="auth-side">
+          <div class="brand">
+            <span class="brand-mark">B</span>
+            <span class="brand-name">Bookly</span>
+          </div>
+          <div class="auth-marketing">
+            <h2>The simplest way to schedule meetings without the back-and-forth.</h2>
+            <p>Share your link. People pick a time. Bookly keeps your calendar safe from double-bookings, sends reminders, and creates the meeting link automatically.</p>
+            <div class="auth-feature-list">
+              <div class="row"><svg><use href="#i-check" /></svg>Free to use · no credit card required</div>
+              <div class="row"><svg><use href="#i-check" /></svg>Connect Google, Outlook, or Apple Calendar</div>
+              <div class="row"><svg><use href="#i-check" /></svg>Automatic Google Meet, Zoom, or Teams links</div>
+              <div class="row"><svg><use href="#i-check" /></svg>Email reminders + invitee timezone detection</div>
+            </div>
+          </div>
+        </aside>
+        <main class="auth-form-side">
+          <form class="auth-form" onsubmit="event.preventDefault(); go('admin-events');">
+            <div>
+              <h1>Create your account</h1>
+              <p class="auth-sub">Get your booking link ready in under a minute.</p>
+            </div>
+
+            <button type="button" class="btn-google">
+              <span class="g">
+                <svg width="18" height="18" viewBox="0 0 18 18">
+                  <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.2 1.13-.83 2.09-1.78 2.73v2.27h2.88c1.69-1.56 2.7-3.86 2.7-6.64z" />
+                  <path fill="#34A853" d="M9 18c2.43 0 4.46-.81 5.95-2.18l-2.88-2.27c-.81.54-1.85.86-3.07.86-2.36 0-4.36-1.6-5.07-3.74H.96v2.36C2.43 15.97 5.48 18 9 18z" />
+                  <path fill="#FBBC05" d="M3.93 10.67c-.18-.54-.28-1.11-.28-1.7s.1-1.16.28-1.7V4.91H.96A8.98 8.98 0 0 0 0 8.97c0 1.45.35 2.82.96 4.06l2.97-2.36z" />
+                  <path fill="#EA4335" d="M9 3.58c1.33 0 2.52.46 3.46 1.36l2.59-2.59C13.46.89 11.43 0 9 0 5.48 0 2.43 2.03.96 4.91l2.97 2.36C4.64 5.18 6.64 3.58 9 3.58z" />
+                </svg>
+              </span>
+              Continue with Google
+            </button>
+
+            <div class="divider">or with email</div>
+
+            <div class="field">
+              <label>Full name</label>
+              <input type="text" placeholder="Annie Mumba" />
+            </div>
+            <div class="field">
+              <label>Work email</label>
+              <input type="email" placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" placeholder="At least 8 characters" />
+              <span class="hint">Use 8+ characters with a mix of letters and numbers.</span>
+            </div>
+            <div class="field">
+              <label>Your booking handle</label>
+              <div style="display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden;">
+                <span style="padding: 0 12px; height: 38px; display: grid; place-items: center; background: var(--surface-2); border-right: 1px solid var(--line); color: var(--muted); font-size: 13px; font-family: var(--font-mono);">bookly.io/</span>
+                <input style="border: 0; border-radius: 0; flex: 1;" placeholder="annie" />
+              </div>
+              <span class="hint">This becomes your public booking link.</span>
+            </div>
+            <button class="btn btn-primary btn-lg" type="submit">Create account →</button>
+            <p class="auth-foot">Already have an account? <a href="#" onclick="event.preventDefault(); go('login');">Log in</a></p>
+          </form>
+        </main>
+      </div>
+    </section>
+
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- 2. LOG IN                                            -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" data-screen-label="02 Log in" id="screen-login">
+      <div class="auth-shell">
+        <aside class="auth-side">
+          <div class="brand">
+            <span class="brand-mark">B</span>
+            <span class="brand-name">Bookly</span>
+          </div>
+          <div class="auth-marketing">
+            <h2>Welcome back.</h2>
+            <p>Your event types, availability, and bookings are right where you left them.</p>
+            <div class="auth-feature-list">
+              <div class="row"><svg><use href="#i-zap" /></svg>3 bookings today · next one in 42 minutes</div>
+              <div class="row"><svg><use href="#i-cal" /></svg>Google Calendar synced 2 minutes ago</div>
+              <div class="row"><svg><use href="#i-bell" /></svg>Reminder for Maya sent at 09:30</div>
+            </div>
+          </div>
+        </aside>
+        <main class="auth-form-side">
+          <form class="auth-form" onsubmit="event.preventDefault(); go('admin-events');">
+            <div>
+              <h1>Log in</h1>
+              <p class="auth-sub">Manage your event types and bookings.</p>
+            </div>
+
+            <button type="button" class="btn-google">
+              <span class="g">
+                <svg width="18" height="18" viewBox="0 0 18 18">
+                  <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.2 1.13-.83 2.09-1.78 2.73v2.27h2.88c1.69-1.56 2.7-3.86 2.7-6.64z" />
+                  <path fill="#34A853" d="M9 18c2.43 0 4.46-.81 5.95-2.18l-2.88-2.27c-.81.54-1.85.86-3.07.86-2.36 0-4.36-1.6-5.07-3.74H.96v2.36C2.43 15.97 5.48 18 9 18z" />
+                  <path fill="#FBBC05" d="M3.93 10.67c-.18-.54-.28-1.11-.28-1.7s.1-1.16.28-1.7V4.91H.96A8.98 8.98 0 0 0 0 8.97c0 1.45.35 2.82.96 4.06l2.97-2.36z" />
+                  <path fill="#EA4335" d="M9 3.58c1.33 0 2.52.46 3.46 1.36l2.59-2.59C13.46.89 11.43 0 9 0 5.48 0 2.43 2.03.96 4.91l2.97 2.36C4.64 5.18 6.64 3.58 9 3.58z" />
+                </svg>
+              </span>
+              Continue with Google
+            </button>
+
+            <div class="divider">or with email</div>
+
+            <div class="field">
+              <label>Email</label>
+              <input type="email" value="annie@bookly.io" />
+            </div>
+            <div class="field">
+              <label>
+                <span style="display: flex; justify-content: space-between; align-items: center;">
+                  Password
+                  <a href="#" style="font-weight: 500; color: var(--muted); font-size: 12px;">Forgot?</a>
+                </span>
+              </label>
+              <input type="password" value="••••••••••" />
+            </div>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); cursor: pointer;">
+              <input type="checkbox" checked style="width: auto; height: auto;" /> Remember me on this device
+            </label>
+            <button class="btn btn-primary btn-lg" type="submit">Log in →</button>
+            <p class="auth-foot">Don't have an account? <a href="#" onclick="event.preventDefault(); go('signup');">Sign up</a></p>
+          </form>
+        </main>
+      </div>
+    </section>
+
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- Sidebar template (reused via JS later)                -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <template id="sidebar-tmpl">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">B</span>
+          <span class="brand-name">Bookly</span>
+        </div>
+        <div class="search-input">
+          <svg width="14" height="14"><use href="#i-search" /></svg>
+          <input type="text" placeholder="Search…" />
+          <span class="kbd">⌘K</span>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">Workspace</div>
+          <a class="nav-item" data-nav="admin-events">
+            <svg width="16" height="16"><use href="#i-link" /></svg>
+            <span>Event types</span>
+            <span class="nav-count">5</span>
+          </a>
+          <a class="nav-item" data-nav="bookings">
+            <svg width="16" height="16"><use href="#i-cal" /></svg>
+            <span>Bookings</span>
+            <span class="pulse" title="1 needs confirmation"></span>
+          </a>
+          <a class="nav-item" data-nav="admin-availability">
+            <svg width="16" height="16"><use href="#i-clock" /></svg>
+            <span>Availability</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">Configure</div>
+          <a class="nav-item" data-nav="admin-integrations">
+            <svg width="16" height="16"><use href="#i-zap" /></svg>
+            <span>Integrations</span>
+          </a>
+          <a class="nav-item" data-nav="workflows">
+            <svg width="16" height="16"><use href="#i-workflow" /></svg>
+            <span>Workflows</span>
+          </a>
+          <a class="nav-item" data-nav="insights">
+            <svg width="16" height="16"><use href="#i-chart" /></svg>
+            <span>Insights</span>
+          </a>
+        </div>
+        <div class="sidebar-foot">
+          <a class="nav-item" data-nav="settings">
+            <svg width="16" height="16"><use href="#i-settings" /></svg>
+            <span>Settings</span>
+          </a>
+          <div class="user-card">
+            <span class="user-thumb"></span>
+            <div class="info">
+              <strong>Annie</strong>
+              <small>annie@bookly.io</small>
+            </div>
+            <svg width="14" height="14" style="color: var(--ink-faint)"><use href="#i-chev-down" /></svg>
+          </div>
+        </div>
+      </aside>
+    </template>
+
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- 3. ADMIN — EVENT TYPES                                -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" data-screen-label="03 Event types" id="screen-admin-events">
+      <div class="app-shell">
+        <div data-sidebar data-active="admin-events"></div>
+        <section class="workspace">
+          <header class="topbar">
+            <div>
+              <h2>Good morning, Annie</h2>
+              <p class="subtitle">3 bookings today · Your next call starts in 42 minutes.</p>
+            </div>
+            <div class="topbar-right">
+              <button class="btn btn-secondary" type="button" onclick="go('public-pick')">
+                <svg width="14" height="14"><use href="#i-external" /></svg>
+                View public page
+              </button>
+              <button class="btn btn-primary" type="button" onclick="go('admin-editor')">
+                <svg width="14" height="14"><use href="#i-plus" /></svg>
+                New event type
+              </button>
+            </div>
+          </header>
+
+          <section class="summary-grid">
+            <article class="metric">
+              <div class="label">Bookings this week</div>
+              <div class="value">42</div>
+              <div class="delta up">↑ 18% vs last week</div>
+            </article>
+            <article class="metric">
+              <div class="label">Awaiting confirmation</div>
+              <div class="value">1</div>
+              <div class="delta">Maya Johnson — Demo call</div>
+            </article>
+            <article class="metric">
+              <div class="label">Conflicts blocked</div>
+              <div class="value">7</div>
+              <div class="delta">Across 3 connected calendars</div>
+            </article>
+            <article class="metric">
+              <div class="label">Reminders sent</div>
+              <div class="value">68</div>
+              <div class="delta">100% delivery rate</div>
+            </article>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Your event types</h3>
+                <div class="subtitle" data-event-status>Share any of these links to let people book time with you.</div>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn btn-secondary btn-sm" type="button">
+                  All event types
+                  <svg width="12" height="12"><use href="#i-chev-down" /></svg>
+                </button>
+                <button class="btn btn-secondary btn-sm" type="button" onclick="go('admin-editor')">
+                  <svg width="12" height="12"><use href="#i-plus" /></svg>
+                  New
+                </button>
+              </div>
+            </div>
+
+            <div class="event-list">
+              <div class="event-row active" data-event-row data-event-name="Training">
+                <span class="accent-bar"></span>
+                <div class="event-main">
+                  <h4>Training</h4>
+                  <span class="slug">bookly.io/annie/training</span>
+                  <div class="event-meta-pills">
+                    <span class="pill"><svg><use href="#i-clock" /></svg>60 min</span>
+                    <span class="pill accent"><svg><use href="#i-zap" /></svg>Group session</span>
+                    <span class="pill"><svg><use href="#i-video" /></svg>Google Meet</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>73 booked</span>
+                  </div>
+                </div>
+                <div class="event-actions">
+                  <span class="toggle on" data-toggle></span>
+                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('Training')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('Training')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
+                </div>
+              </div>
+
+              <div class="event-row" data-event-row data-event-name="School">
+                <span class="accent-bar"></span>
+                <div class="event-main">
+                  <h4>School</h4>
+                  <span class="slug">bookly.io/annie/school</span>
+                  <div class="event-meta-pills">
+                    <span class="pill"><svg><use href="#i-clock" /></svg>20 min</span>
+                    <span class="pill accent"><svg><use href="#i-zap" /></svg>Parent/teacher</span>
+                    <span class="pill"><svg><use href="#i-video" /></svg>Zoom</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>26 booked</span>
+                  </div>
+                </div>
+                <div class="event-actions">
+                  <span class="toggle on" data-toggle></span>
+                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('School')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('School')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
+                </div>
+              </div>
+
+              <div class="event-row" data-event-row data-event-name="Work">
+                <span class="accent-bar"></span>
+                <div class="event-main">
+                  <h4>Work</h4>
+                  <span class="slug">bookly.io/annie/work</span>
+                  <div class="event-meta-pills">
+                    <span class="pill"><svg><use href="#i-clock" /></svg>30 min</span>
+                    <span class="pill free"><svg><use href="#i-money" /></svg>Free</span>
+                    <span class="pill"><svg><use href="#i-video" /></svg>Google Meet</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>58 booked</span>
+                  </div>
+                </div>
+                <div class="event-actions">
+                  <span class="toggle on" data-toggle></span>
+                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('Work')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('Work')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
+                </div>
+              </div>
+
+              <div class="event-row" data-event-row data-event-name="Hospital">
+                <span class="accent-bar"></span>
+                <div class="event-main">
+                  <h4>Hospital</h4>
+                  <span class="slug">bookly.io/annie/hospital</span>
+                  <div class="event-meta-pills">
+                    <span class="pill"><svg><use href="#i-clock" /></svg>25 min</span>
+                    <span class="pill free"><svg><use href="#i-money" /></svg>Free</span>
+                    <span class="pill"><svg><use href="#i-video" /></svg>Zoom</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>41 booked</span>
+                  </div>
+                </div>
+                <div class="event-actions">
+                  <span class="toggle on" data-toggle></span>
+                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('Hospital')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('Hospital')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
+                </div>
+              </div>
+
+              <div class="event-row" data-event-row data-event-name="Business (Salon Bar)">
+                <span class="accent-bar"></span>
+                <div class="event-main">
+                  <h4>Business (Salon Bar)</h4>
+                  <span class="slug">bookly.io/annie/salon-bar</span>
+                  <div class="event-meta-pills">
+                    <span class="pill"><svg><use href="#i-clock" /></svg>45 min</span>
+                    <span class="pill accent"><svg><use href="#i-pin" /></svg>In-person</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>142 booked</span>
+                  </div>
+                </div>
+                <div class="event-actions">
+                  <span class="toggle on" data-toggle></span>
+                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('Business (Salon Bar)')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
+                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('Business (Salon Bar)')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </section>
+
+    <!-- More screens injected below -->
+    <div id="more-screens-anchor"></div>
+
+    <!-- ─── Screen-switcher JS ─── -->
+    <script>
+      // ──────────────────────────────────────────────────
+      // Screen routing
+      // ──────────────────────────────────────────────────
+      const screens = () => document.querySelectorAll(".screen");
+      function go(name) {
+        screens().forEach(s => s.classList.remove("active"));
+        const target = document.getElementById("screen-" + name);
+        if (target) target.classList.add("active");
+        document.querySelectorAll(".screen-nav button").forEach(b => {
+          b.classList.toggle("active", b.dataset.screen === name);
+        });
+        window.scrollTo(0, 0);
+        history.replaceState(null, "", "#" + name);
+        ensureSidebars();
+      }
+      document.querySelectorAll(".screen-nav button").forEach(b => {
+        b.addEventListener("click", () => go(b.dataset.screen));
+      });
+
+      // ──────────────────────────────────────────────────
+      // Inject sidebar into [data-sidebar] slots; sync active
+      // ──────────────────────────────────────────────────
+      function ensureSidebars() {
+        const tmpl = document.getElementById("sidebar-tmpl");
+        document.querySelectorAll("[data-sidebar]").forEach(slot => {
+          if (!slot.firstElementChild) {
+            slot.appendChild(tmpl.content.cloneNode(true));
+          }
+          const active = slot.dataset.active;
+          slot.querySelectorAll(".nav-item").forEach(n => {
+            n.classList.toggle("active", n.dataset.nav === active);
+            // Wire navigation
+            n.onclick = (e) => {
+              e.preventDefault();
+              const target = n.dataset.nav;
+              if (["admin-events", "admin-availability", "admin-integrations"].includes(target)) {
+                go(target);
+              } else {
+                // not implemented — visual focus only
+                slot.querySelectorAll(".nav-item").forEach(x => x.classList.remove("active"));
+                n.classList.add("active");
+              }
+            };
+          });
+        });
+      }
+
+      // ──────────────────────────────────────────────────
+      // Toggle interactivity
+      // ──────────────────────────────────────────────────
+      document.addEventListener("click", (e) => {
+        const t = e.target.closest("[data-toggle]");
+        if (t) {
+          e.stopPropagation();
+          const on = t.classList.toggle("on");
+          const row = t.closest(".event-row");
+          if (row) row.classList.toggle("off", !on);
+          const name = row?.dataset.eventName || "Event";
+          const status = document.querySelector("[data-event-status]");
+          if (status) status.textContent = `${name} is now ${on ? "active" : "paused"}.`;
+          return;
+        }
+
+        const copy = e.target.closest("[data-copy-event]");
+        if (copy) {
+          e.stopPropagation();
+          const row = copy.closest("[data-event-row]");
+          const slug = row?.querySelector(".slug")?.textContent?.trim() || "";
+          const name = row?.dataset.eventName || "Event";
+          const status = document.querySelector("[data-event-status]");
+          if (navigator.clipboard && slug) navigator.clipboard.writeText(slug).catch(() => {});
+          copy.classList.add("active");
+          copy.title = "Copied";
+          if (status) status.textContent = `${name} link copied: ${slug}`;
+          setTimeout(() => {
+            copy.classList.remove("active");
+            copy.title = "Copy link";
+          }, 1200);
+          return;
+        }
+
+        const row = e.target.closest("[data-event-row]");
+        if (row && !e.target.closest("button")) {
+          document.querySelectorAll("[data-event-row]").forEach(r => r.classList.remove("active"));
+          row.classList.add("active");
+          const status = document.querySelector("[data-event-status]");
+          if (status) status.textContent = `${row.dataset.eventName} selected. Use the icons to copy, preview, or edit this event type.`;
+        }
+      });
+
+      // ──────────────────────────────────────────────────
+      // Boot — open the route from URL hash, or signup
+      // ──────────────────────────────────────────────────
+      function boot() {
+        const route = (location.hash || "#signup").slice(1);
+        go(route);
+      }
+    </script>
+    <script src="./screens-more.js?v=editor-reactive-2"></script>
+  </body>
+</html>
