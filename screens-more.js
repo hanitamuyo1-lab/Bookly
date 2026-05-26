@@ -1472,6 +1472,46 @@
     document.getElementById("cancel-pane").hidden = false;
   };
 
+  // ── Availability screen interactivity ────────────────────────
+  const availScreen = document.getElementById("screen-admin-availability");
+  if (availScreen) {
+    availScreen.addEventListener("click", (e) => {
+      // X on a time range row → remove that row
+      const xBtn = e.target.closest(".range-row .btn-icon");
+      if (xBtn) {
+        const row = xBtn.closest(".range-row");
+        const day = row?.closest(".schedule-day");
+        const rows = day?.querySelectorAll(".range-row");
+        if (rows && rows.length > 1) {
+          row.remove();
+        } else {
+          // Last row — toggle day off instead of leaving it empty
+          const toggle = day?.querySelector("[data-toggle]");
+          if (toggle) {
+            toggle.classList.remove("on");
+            day.classList.add("off");
+          }
+        }
+        return;
+      }
+
+      // X on a date override entry → remove the entry
+      const overrideX = e.target.closest(".panel-body > div > .btn-icon");
+      if (overrideX) {
+        overrideX.closest(".panel-body > div")?.remove();
+        return;
+      }
+
+      // Toggle on schedule day label
+      const dayToggle = e.target.closest(".schedule-day .day-label [data-toggle]");
+      if (dayToggle) {
+        const day = dayToggle.closest(".schedule-day");
+        const isOn = dayToggle.classList.toggle("on");
+        day.classList.toggle("off", !isOn);
+      }
+    });
+  }
+
   // ── Time helpers ────────────────────────────────────────────
   function timeToMins(t) {
     const [h, m] = t.split(":").map(Number);
