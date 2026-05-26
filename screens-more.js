@@ -1550,7 +1550,7 @@
   // To enable real OAuth, add your credentials below then redeploy.
   // Get Google Client ID:  console.cloud.google.com → APIs & Services → Credentials
   // Get Microsoft Client ID: portal.azure.com → App registrations
-  const GOOGLE_CLIENT_ID    = "";   // e.g. "1234.apps.googleusercontent.com"
+  const GOOGLE_CLIENT_ID    = "18917559280-mv9du43a6r5fica6d5j3meomuusrp5qq.apps.googleusercontent.com";
   const MICROSOFT_CLIENT_ID = "";   // e.g. "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   const MICROSOFT_TENANT    = "common";
 
