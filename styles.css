@@ -1623,11 +1623,12 @@ h1, h2, h3, h4, p { margin: 0; }
 .pv-meta-row svg { vertical-align: middle; }
 .pv-date-chip { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line-soft); font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
 
-.pv-fields { display: flex; flex-direction: column; gap: 5px; }
+.pv-fields { display: flex; flex-direction: column; gap: 6px; }
 .pv-field { display: flex; flex-direction: column; gap: 3px; }
 .pv-field-label { font-size: 11px; font-weight: 500; color: var(--text); }
-.pv-field-input { display: flex; align-items: center; gap: 6px; background: var(--field); border: 1px solid var(--line); border-radius: 5px; padding: 5px 9px; font-size: 11px; color: var(--muted); }
-.pv-type-chip { background: var(--surface-2); border: 1px solid var(--line); border-radius: 3px; padding: 1px 5px; font-size: 10px; font-weight: 600; color: var(--accent); font-family: var(--font-mono); flex-shrink: 0; }
+.pv-input { width: 100%; height: 32px; padding: 0 9px; border: 1px solid var(--line); border-radius: 5px; background: var(--field); color: var(--text); font-size: 11.5px; font-family: inherit; outline: none; transition: border-color 120ms, box-shadow 120ms; box-sizing: border-box; }
+.pv-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-ring); }
+textarea.pv-input { height: auto; padding: 7px 9px; resize: none; }
 
 .pv-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 .pv-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }

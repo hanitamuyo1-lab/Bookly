@@ -236,10 +236,12 @@
                       <span id="pv-sample-date">Thu, 29 May · 10:30 – 11:15</span>
                     </div>
                   </div>
-                  <div id="pv-fields" class="pv-fields"></div>
-                  <button class="btn btn-primary" style="width:100%;height:34px;font-size:12.5px;margin-top:2px;" onclick="go('public-pick')">
-                    Try full booking flow →
-                  </button>
+                  <form id="pv-form" class="pv-fields" novalidate onsubmit="event.preventDefault(); pvSubmitForm();">
+                    <div id="pv-fields"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;height:34px;font-size:12.5px;margin-top:4px;">
+                      Confirm booking
+                    </button>
+                  </form>
                 </div>
 
                 <!-- CALENDAR PANE -->
@@ -1300,19 +1302,35 @@
     const dateStr = `${DAYS[sample.getDay()]}, ${sample.getDate()} ${MONS[sample.getMonth()]} · 10:30`;
     set("pv-sample-date", dateStr);
 
-    // Render form fields preview
+    // Render fillable form fields in the preview
     const container = document.getElementById("pv-fields");
     if (container) {
-      container.innerHTML = questions.map(q => {
-        const icon = PV_TYPE_ICON[q.type] || "Aa";
-        return `<div class="pv-field">
-          <div class="pv-field-label">${q.label}${q.required ? ' <span style="color:#ef4444">*</span>' : ""}</div>
-          <div class="pv-field-input"><span class="pv-type-chip">${icon}</span>${q.type}</div>
+      function pvControl(q) {
+        const req = q.required ? " required" : "";
+        const lbl = q.label.toLowerCase();
+        if (q.type.toLowerCase().includes("email"))
+          return `<input type="email" placeholder="you@example.com" class="pv-input"${req} />`;
+        if (q.type.toLowerCase().includes("long"))
+          return `<textarea rows="2" placeholder="Optional notes…" class="pv-input" style="resize:none;height:52px;padding:7px 10px;"></textarea>`;
+        if (q.type.toLowerCase().includes("select")) {
+          if (lbl.includes("new customer") || lbl.includes("existing"))
+            return `<select class="pv-input"${req}><option value="">Select…</option><option>Yes, I'm a new customer</option><option>No, I'm existing</option><option>Not sure</option></select>`;
+          return `<select class="pv-input"${req}><option value="">Select team size…</option><option>1–10 people</option><option>11–50 people</option><option>51–200 people</option><option>200+ people</option></select>`;
+        }
+        if (lbl.includes("name"))  return `<input type="text" placeholder="Your full name" class="pv-input"${req} />`;
+        if (lbl.includes("company")) return `<input type="text" placeholder="Your company (optional)" class="pv-input" />`;
+        return `<input type="text" placeholder="" class="pv-input"${req} />`;
+      }
+
+      container.innerHTML = questions.map(q => `
+        <div class="pv-field">
+          <label class="pv-field-label">${q.label}${q.required ? ' <span style="color:#ef4444">*</span>' : ""}</label>
+          ${pvControl(q)}
+        </div>`).join("") + `
+        <div class="pv-field">
+          <label class="pv-field-label" style="color:var(--muted);">Add guests <span style="opacity:.6">(optional)</span></label>
+          <input type="text" placeholder="email@example.com" class="pv-input" />
         </div>`;
-      }).join("") + `<div class="pv-field">
-        <div class="pv-field-label" style="color:var(--muted);">Add guests <span style="opacity:.6">(optional)</span></div>
-        <div class="pv-field-input"><span class="pv-type-chip">@</span>Email</div>
-      </div>`;
     }
 
     // Init calendar if needed
@@ -1321,6 +1339,60 @@
       pvBuildCal(n.getFullYear(), n.getMonth());
     }
   }
+
+  window.pvSubmitForm = function() {
+    const pvForm = document.getElementById("pv-form");
+    if (!pvForm) return;
+
+    // Validate required fields
+    let valid = true;
+    pvForm.querySelectorAll("[required]").forEach(field => {
+      field.style.borderColor = "";
+      if (!field.value.trim()) {
+        field.style.borderColor = "#ef4444";
+        valid = false;
+      }
+    });
+    const emailField = pvForm.querySelector('input[type="email"]');
+    if (emailField?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value)) {
+      emailField.style.borderColor = "#ef4444";
+      valid = false;
+    }
+    if (!valid) {
+      pvForm.querySelector("[style*='#ef4444']")?.focus();
+      return;
+    }
+
+    // Copy values into the real booking form, then go to confirmation
+    const nameVal = pvForm.querySelector('input[type="text"]')?.value || "Guest";
+    const emailVal = pvForm.querySelector('input[type="email"]')?.value || "";
+
+    // Pre-fill the real public form if it exists
+    const realForm = document.getElementById("booking-confirm-form");
+    if (realForm) {
+      const nameInp = realForm.querySelector('input[type="text"]');
+      const emailInp = realForm.querySelector('input[type="email"]');
+      if (nameInp) nameInp.value = nameVal;
+      if (emailInp) emailInp.value = emailVal;
+    }
+
+    // Set a sample date/time in bookingState so the confirmation looks right
+    const chip = document.getElementById("pv-sample-date");
+    if (chip) {
+      const parts = chip.textContent.split("·");
+      if (parts[0]) bookingState.date = parts[0].trim();
+      if (parts[1]) {
+        bookingState.time = parts[1].trim().split("–")[0]?.trim() || "10:30";
+        bookingState.endTime = parts[1].trim().split("–")[1]?.trim() || "11:15";
+      }
+    }
+
+    document.querySelectorAll("[data-confirm-date]").forEach(el => el.textContent = bookingState.date);
+    document.querySelectorAll("[data-confirm-time]").forEach(el => el.textContent = `${bookingState.time} – ${bookingState.endTime}`);
+    document.querySelectorAll("[data-confirm-email]").forEach(el => el.textContent = emailVal);
+
+    go("public-done");
+  };
 
   function updateQuestionCount() {
     const count = selectedQuestionRows().filter(row => row.querySelector(".toggle")?.classList.contains("on")).length;
