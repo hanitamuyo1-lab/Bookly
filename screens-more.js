@@ -1512,6 +1512,82 @@
     });
   }
 
+  // ── Integrations screen — conflict checking reactivity ───────
+  const intScreen = document.getElementById("screen-admin-integrations");
+  if (intScreen) {
+    const conflictPanel = intScreen.querySelector(".panel");
+
+    function updateConflictStatus() {
+      const pill = conflictPanel?.querySelector(".pill");
+      if (!pill) return;
+      const toggles = [...(conflictPanel?.querySelectorAll("[data-toggle]") || [])];
+      const allOn = toggles.every(t => t.classList.contains("on"));
+      const anyOn = toggles.some(t => t.classList.contains("on"));
+      if (allOn) {
+        pill.innerHTML = `<svg style="color:var(--success);" width="12" height="12"><use href="#i-check" /></svg> All systems synced`;
+        pill.style.cssText = "background:var(--success-soft);color:var(--success);border-color:transparent;";
+      } else if (anyOn) {
+        pill.innerHTML = `<svg width="12" height="12"><use href="#i-zap" /></svg> Some calendars paused`;
+        pill.style.cssText = "background:var(--warning-soft,#fef3c7);color:var(--warning,#b45309);border-color:transparent;";
+      } else {
+        pill.innerHTML = `<svg width="12" height="12"><use href="#i-x" /></svg> Conflict checking off`;
+        pill.style.cssText = "background:var(--danger-soft);color:var(--danger);border-color:transparent;";
+      }
+    }
+
+    intScreen.addEventListener("click", (e) => {
+      // Toggle on a conflict-checking calendar row
+      const rowToggle = e.target.closest(".panel [data-toggle]");
+      if (rowToggle) {
+        const isOn = rowToggle.classList.toggle("on");
+        const row = rowToggle.closest("[style*='grid-template-columns']");
+        if (row) {
+          row.style.opacity = isOn ? "" : "0.45";
+          row.style.pointerEvents = isOn ? "" : "none";
+          rowToggle.style.pointerEvents = "auto";
+        }
+        updateConflictStatus();
+        return;
+      }
+
+      // "Manage" button on a calendar row
+      const manageBtn = e.target.closest(".panel .btn-secondary.btn-sm");
+      if (manageBtn && manageBtn.textContent.trim() === "Manage") {
+        const row = manageBtn.closest("[style*='grid-template-columns']");
+        const name = row?.querySelector("[style*='font-weight']")?.textContent?.trim() || "calendar";
+        const toggle = row?.querySelector("[data-toggle]");
+        const isOn = toggle ? toggle.classList.contains("on") : true;
+        const action = isOn ? "Pause" : "Resume";
+        const confirmed = window.confirm(`${action} conflict checking for ${name}?`);
+        if (confirmed && toggle) {
+          const nowOn = !isOn;
+          toggle.classList.toggle("on", nowOn);
+          const parentRow = toggle.closest("[style*='grid-template-columns']");
+          if (parentRow) {
+            parentRow.style.opacity = nowOn ? "" : "0.45";
+            parentRow.style.pointerEvents = nowOn ? "" : "none";
+            toggle.style.pointerEvents = "auto";
+          }
+          updateConflictStatus();
+        }
+        return;
+      }
+
+      // "Connect another calendar" button
+      const connectBtn = e.target.closest(".panel ~ section, .panel + section");
+      const addCalBtn = e.target.closest("button");
+      if (addCalBtn && addCalBtn.textContent.includes("Connect another calendar")) {
+        const grid = document.getElementById("integration-grid");
+        grid?.scrollIntoView({ behavior: "smooth", block: "start" });
+        grid?.querySelectorAll(".integration-card").forEach(c => {
+          c.style.transition = "box-shadow 0.3s";
+          c.style.boxShadow = "0 0 0 2px var(--accent)";
+          setTimeout(() => { c.style.boxShadow = ""; }, 1400);
+        });
+      }
+    });
+  }
+
   // ── Time helpers ────────────────────────────────────────────
   function timeToMins(t) {
     const [h, m] = t.split(":").map(Number);
