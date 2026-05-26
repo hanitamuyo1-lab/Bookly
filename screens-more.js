@@ -448,15 +448,31 @@
                   </div>
                 </div>
 
-                <div class="schedule-day off">
-                  <div class="day-label"><span class="toggle" data-toggle></span><strong>Saturday</strong></div>
-                  <span class="unavailable">Unavailable</span>
-                  <div></div>
+                <div class="schedule-day">
+                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Saturday</strong></div>
+                  <div class="range-row">
+                    <input class="range-input" value="09:00" />
+                    <span class="range-sep">–</span>
+                    <input class="range-input" value="13:00" />
+                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
+                  </div>
+                  <div style="display: flex; gap: 4px;">
+                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
+                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
+                  </div>
                 </div>
-                <div class="schedule-day off">
-                  <div class="day-label"><span class="toggle" data-toggle></span><strong>Sunday</strong></div>
-                  <span class="unavailable">Unavailable</span>
-                  <div></div>
+                <div class="schedule-day">
+                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Sunday</strong></div>
+                  <div class="range-row">
+                    <input class="range-input" value="09:00" />
+                    <span class="range-sep">–</span>
+                    <input class="range-input" value="13:00" />
+                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
+                  </div>
+                  <div style="display: flex; gap: 4px;">
+                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
+                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
+                  </div>
                 </div>
               </div>
             </section>
@@ -948,7 +964,7 @@
   const DAY_SHORT   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
   // Days blocked as "unavailable" (0=Sun,6=Sat always blocked; this adds Wed off)
-  const BLOCKED_DOW = new Set([0, 3, 6]); // Sun, Wed, Sat
+  const BLOCKED_DOW = new Set([3]); // Wed only — Sat/Sun open 09:00–13:00
 
   let calYear, calMonth;
   (function initCal() {
@@ -1050,7 +1066,11 @@
       // Populate slots
       const slotList = document.getElementById("public-slot-list");
       if (slotList) {
-        slotList.innerHTML = SLOT_TIMES.map(t =>
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+        const slots = isWeekend
+          ? SLOT_TIMES.filter(t => t < "13:00")
+          : SLOT_TIMES;
+        slotList.innerHTML = slots.map(t =>
           `<button class="slot" type="button">${t}</button>`
         ).join("");
       }
@@ -1229,7 +1249,7 @@
 
   // ── Live booking preview ──────────────────────────────────────
   const PV_SLOT_TIMES = ["09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30"];
-  const PV_BLOCKED_DOW = new Set([0, 3, 6]);
+  const PV_BLOCKED_DOW = new Set([3]);
   let pvYear, pvMonth;
 
   function pvBuildCal(year, month) {
