@@ -75,13 +75,14 @@
                     </div>
                     <div class="field">
                       <label>Location</label>
-                      <select>
+                      <select id="editor-location-select" onchange="onEditorLocationChange(this.value)">
                         <option>Google Meet</option>
                         <option selected>Zoom</option>
                         <option>Microsoft Teams</option>
                         <option>In-person</option>
                         <option>Phone call</option>
                       </select>
+                      <div id="editor-location-hint" style="margin-top:6px;"></div>
                     </div>
                   </div>
                   <div class="field">
@@ -1201,7 +1202,68 @@
     editorStatus(`Preview updated: ${type} event at bookly.io/you/${slug}.`);
     updateQuestionCount();
     renderPublicBookingForm();
+    onEditorLocationChange(document.getElementById("editor-location-select")?.value || "");
   }
+
+  // ── Editor location hint (Zoom / Teams link preview) ──────────
+  window.onEditorLocationChange = function(loc) {
+    const hint = document.getElementById("editor-location-hint");
+    if (!hint) return;
+
+    const zoomLink  = localStorage.getItem("bookly_zoom_link");
+    const teamsLink = localStorage.getItem("bookly_teams_link");
+
+    if (loc === "Zoom") {
+      if (zoomLink) {
+        hint.innerHTML = `
+          <div class="location-hint connected">
+            <svg width="13" height="13"><use href="#i-check" /></svg>
+            <span>Zoom connected — <a href="${zoomLink}" target="_blank" rel="noopener" style="color:var(--accent);word-break:break-all;">${zoomLink}</a></span>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="showLinkModal('zoom')">Change</button>
+          </div>`;
+      } else {
+        hint.innerHTML = `
+          <div class="location-hint warning">
+            <svg width="13" height="13"><use href="#i-zap" /></svg>
+            <span>No Zoom link saved yet.</span>
+            <button class="btn btn-secondary btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="showLinkModal('zoom')">Connect Zoom</button>
+          </div>`;
+      }
+    } else if (loc === "Microsoft Teams") {
+      if (teamsLink) {
+        hint.innerHTML = `
+          <div class="location-hint connected">
+            <svg width="13" height="13"><use href="#i-check" /></svg>
+            <span>Teams connected — <a href="${teamsLink}" target="_blank" rel="noopener" style="color:var(--accent);word-break:break-all;">${teamsLink}</a></span>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="showLinkModal('ms-teams')">Change</button>
+          </div>`;
+      } else {
+        hint.innerHTML = `
+          <div class="location-hint warning">
+            <svg width="13" height="13"><use href="#i-zap" /></svg>
+            <span>No Teams link saved yet.</span>
+            <button class="btn btn-secondary btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="showLinkModal('ms-teams')">Connect Teams</button>
+          </div>`;
+      }
+    } else if (loc === "Google Meet") {
+      const googleConnected = !!sessionStorage.getItem("bookly_google_token");
+      if (googleConnected) {
+        hint.innerHTML = `
+          <div class="location-hint connected">
+            <svg width="13" height="13"><use href="#i-check" /></svg>
+            <span>Google Calendar connected — Meet link auto-generated on booking.</span>
+          </div>`;
+      } else {
+        hint.innerHTML = `
+          <div class="location-hint info">
+            <svg width="13" height="13"><use href="#i-cal" /></svg>
+            <span>Connect Google Calendar in Integrations to auto-generate Meet links.</span>
+          </div>`;
+      }
+    } else {
+      hint.innerHTML = "";
+    }
+  };
 
   function makeQuestionRow({ label = "New custom question", type = "Text", meta = "Optional", required = false } = {}) {
     const row = document.createElement("div");
@@ -1297,6 +1359,7 @@
 
     go("admin-editor");
     syncEditorPreview();
+    onEditorLocationChange(config.location);
   };
 
   if (editor) {
@@ -1608,6 +1671,26 @@
     });
   }
   refreshIntegrationUI();
+  refreshEventListPills();
+
+  // ── Refresh Zoom/Teams pills on the event list ────────────────
+  function refreshEventListPills() {
+    const zoomLink  = localStorage.getItem("bookly_zoom_link");
+    const teamsLink = localStorage.getItem("bookly_teams_link");
+    document.querySelectorAll("[data-event-row]").forEach(row => {
+      row.querySelectorAll(".pill").forEach(pill => {
+        const txt = pill.textContent.trim();
+        if (txt.includes("Zoom")) {
+          pill.classList.toggle("connected-pill", !!zoomLink);
+          pill.title = zoomLink ? `Zoom connected: ${zoomLink}` : "Zoom not connected — go to Integrations";
+        }
+        if (txt.includes("Teams") || txt.includes("Microsoft Teams")) {
+          pill.classList.toggle("connected-pill", !!teamsLink);
+          pill.title = teamsLink ? `Teams connected: ${teamsLink}` : "Teams not connected — go to Integrations";
+        }
+      });
+    });
+  }
 
   // ── Google OAuth ──────────────────────────────────────────────
   function connectGoogle() {
@@ -1945,6 +2028,8 @@
       localStorage.setItem(storageKey, val);
       connected[id] = true;
       refreshIntegrationUI();
+      refreshEventListPills();
+      onEditorLocationChange(document.getElementById("editor-location-select")?.value || "");
       overlay.hidden = true;
       showIntegrationToast(`${isZoom ? "Zoom" : "Teams"} link saved! It will appear in booking confirmations.`);
     };

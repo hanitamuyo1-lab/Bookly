@@ -1457,6 +1457,30 @@ h1, h2, h3, h4, p { margin: 0; }
 .auth-legal a:hover { color: var(--accent); }
 
 /* ─────────────────────────────────────────────────────────────
+   Editor location hint
+   ───────────────────────────────────────────────────────────── */
+.location-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  line-height: 1.5;
+  border: 1px solid var(--line);
+}
+.location-hint svg { flex-shrink: 0; margin-top: 2px; }
+.location-hint.connected { background: var(--success-soft); border-color: var(--success); color: var(--text); }
+.location-hint.connected svg { color: var(--success); }
+.location-hint.warning { background: #fff8f0; border-color: #f59e0b; color: var(--text); }
+.location-hint.warning svg { color: #f59e0b; }
+.location-hint.info { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+.location-hint.info svg { color: var(--accent); }
+
+/* Connected pill (event list) */
+.pill.connected-pill { outline: 1.5px solid var(--success); }
+
+/* ─────────────────────────────────────────────────────────────
    Integration status badges
    ───────────────────────────────────────────────────────────── */
 .integration-status.connected   { color: var(--success); }
