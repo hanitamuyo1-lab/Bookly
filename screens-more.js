@@ -518,7 +518,7 @@
             <div class="integration-grid" id="integration-grid">
               ${[
                 { id:"google-cal",  name:"Google Calendar",    cls:"google",  glyph:"G", desc:"Conflict check + auto-create Google Calendar events on confirmation." },
-                { id:"outlook-cal", name:"Outlook Calendar",   cls:"outlook", glyph:"O", desc:"Microsoft 365 and Outlook.com — reads busy times, writes bookings." },
+                { id:"outlook-cal", name:"Outlook / Apple / Other", cls:"outlook", glyph:"📅", desc:"Download an .ics file after booking — opens in Outlook, Apple Calendar, or any calendar app. No account needed." },
                 { id:"apple-cal",   name:"Apple Calendar",     cls:"apple",   glyph:"🍎",desc:"Sync via CalDAV for iCloud and macOS calendars." },
                 { id:"google-meet", name:"Google Meet",        cls:"meet",    glyph:"M", desc:"Auto-generate a unique Meet link for every confirmed booking." },
                 { id:"zoom",        name:"Zoom",               cls:"zoom",    glyph:"Z", desc:"Auto-create Zoom meetings on confirmation." },
@@ -754,8 +754,8 @@
                   <a id="add-google-cal" href="#" target="_blank" rel="noopener" class="cal-option">
                     <span class="cal-option-logo google">G</span>Google Calendar
                   </a>
-                  <a id="add-outlook-cal" href="#" target="_blank" rel="noopener" class="cal-option">
-                    <span class="cal-option-logo outlook">O</span>Outlook Calendar
+                  <a id="add-outlook-cal" href="#" rel="noopener" class="cal-option" onclick="event.preventDefault(); downloadICS()">
+                    <span class="cal-option-logo outlook">O</span>Outlook / Apple / Other (.ics)
                   </a>
                 </div>
               </div>
@@ -1564,7 +1564,7 @@
   const connected = {
     "google-cal":  !!tokens.google,
     "google-meet": !!tokens.google,  // Meet comes from Google Calendar API
-    "outlook-cal": !!tokens.microsoft,
+    "outlook-cal": true,  // ICS download — always available, no auth needed
     "apple-cal":   false,
     "zoom":        false,
     "ms-teams":    false,
@@ -1575,6 +1575,14 @@
       const statusEl = document.querySelector(`[data-int-status="${id}"]`);
       const btnEl    = document.querySelector(`[data-int-btn="${id}"]`);
       const footEl   = document.querySelector(`[data-int-foot="${id}"]`);
+
+      if (id === "outlook-cal") {
+        if (statusEl) { statusEl.textContent = "Ready"; statusEl.className = "integration-status connected"; }
+        if (btnEl)    btnEl.style.display = "none";
+        if (footEl)   footEl.textContent  = ".ics download on confirmation";
+        return;
+      }
+
       if (statusEl) {
         statusEl.textContent = isConnected ? "Connected" : "Not connected";
         statusEl.className   = `integration-status ${isConnected ? "connected" : "disconnected"}`;
@@ -1582,7 +1590,7 @@
       if (btnEl) btnEl.textContent = isConnected ? "Disconnect" : "Connect";
       if (footEl) {
         footEl.textContent = isConnected
-          ? (id === "google-cal" ? "Calendar + Meet enabled" : id === "outlook-cal" ? "Calendar connected" : "Connected")
+          ? (id === "google-cal" ? "Calendar + Meet enabled" : "Connected")
           : "";
       }
     });
@@ -1723,6 +1731,44 @@
     });
     return `https://outlook.live.com/calendar/0/deeplink/compose?${p}`;
   }
+
+  // ── ICS file download (works with Outlook, Apple, any calendar) ─
+  function toICSDate(d) {
+    return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  }
+
+  window.downloadICS = function() {
+    const start = bookingToDate(bookingState.date, bookingState.time);
+    const end   = bookingToDate(bookingState.date, bookingState.endTime);
+    const uid   = `bookly-${Date.now()}@bookly.io`;
+    const loc   = bookingState.location === "In-person" ? "In-person" : bookingState.location;
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Bookly//EN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      `UID:${uid}`,
+      `DTSTAMP:${toICSDate(new Date())}`,
+      `DTSTART:${toICSDate(start)}`,
+      `DTEND:${toICSDate(end)}`,
+      `SUMMARY:${bookingState.eventName}`,
+      `DESCRIPTION:Booked via Bookly`,
+      `LOCATION:${loc}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = `${bookingState.eventName.replace(/\s+/g, "-")}.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
+    const menu = document.getElementById("cal-dropdown");
+    if (menu) menu.hidden = true;
+    showIntegrationToast("Calendar file downloaded — open it to add to your calendar.");
+  };
 
   // ── Create Google Calendar event + Meet link via API ──────────
   async function createGoogleEvent(booking, guestEmail) {
