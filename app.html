@@ -67,6 +67,12 @@
       <button data-screen="public-form">Details</button>
       <button data-screen="public-done">Confirmed</button>
       <button data-screen="manage">Manage</button>
+      <span class="group-sep"></span>
+      <span class="label">Info</span>
+      <button data-screen="about">About</button>
+      <button data-screen="faq">FAQ</button>
+      <button data-screen="privacy">Privacy</button>
+      <button data-screen="terms">Terms</button>
     </nav>
 
     <!-- ──────────────────────────────────────────────────── -->
@@ -135,6 +141,12 @@
             <button class="btn btn-primary btn-lg" type="submit">Create account →</button>
             <p class="auth-foot">Already have an account? <a href="#" onclick="event.preventDefault(); go('login');">Log in</a></p>
           </form>
+          <footer class="auth-legal">
+            <a href="#" onclick="event.preventDefault(); go('about');">About</a>
+            <a href="#" onclick="event.preventDefault(); go('faq');">FAQ</a>
+            <a href="#" onclick="event.preventDefault(); go('privacy');">Privacy</a>
+            <a href="#" onclick="event.preventDefault(); go('terms');">Terms</a>
+          </footer>
         </main>
       </div>
     </section>
@@ -199,6 +211,12 @@
             <button class="btn btn-primary btn-lg" type="submit">Log in →</button>
             <p class="auth-foot">Don't have an account? <a href="#" onclick="event.preventDefault(); go('signup');">Sign up</a></p>
           </form>
+          <footer class="auth-legal">
+            <a href="#" onclick="event.preventDefault(); go('about');">About</a>
+            <a href="#" onclick="event.preventDefault(); go('faq');">FAQ</a>
+            <a href="#" onclick="event.preventDefault(); go('privacy');">Privacy</a>
+            <a href="#" onclick="event.preventDefault(); go('terms');">Terms</a>
+          </footer>
         </main>
       </div>
     </section>
@@ -436,6 +454,284 @@
       </div>
     </section>
 
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- ABOUT                                                 -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" id="screen-about">
+      <div class="info-page">
+        <header class="info-header">
+          <button class="btn btn-icon info-back" data-info-back>
+            <svg width="16" height="16"><use href="#i-chev-left" /></svg>
+          </button>
+          <span class="brand-mark">B</span>
+          <span class="brand-name">Bookly</span>
+        </header>
+        <div class="info-body">
+          <h1>About Bookly</h1>
+          <p class="info-lead">Bookly makes it effortless to share your time — without the back-and-forth emails.</p>
+
+          <h2>Our mission</h2>
+          <p>We built Bookly because scheduling shouldn't be hard. Whether you're a nurse coordinating patient appointments, a trainer managing group sessions, or a salon owner handling walk-ins, your calendar should work for you — not the other way around.</p>
+          <p>Bookly gives you a personalised booking link you can share anywhere. Your clients pick a time that works for them; Bookly handles the rest: confirmations, reminders, and calendar sync.</p>
+
+          <h2>What you get</h2>
+          <ul>
+            <li>A shareable booking page at <code>bookly.io/you</code></li>
+            <li>Multiple event types — training, school, work, hospital, in-person</li>
+            <li>Google Meet, Zoom, and Teams links generated automatically</li>
+            <li>Google Calendar, Outlook, and Apple Calendar sync</li>
+            <li>Automated email reminders to reduce no-shows</li>
+            <li>Availability rules and buffer time between meetings</li>
+          </ul>
+
+          <h2>Who uses Bookly</h2>
+          <p>From student nurses booking placement check-ins to salon owners running a full appointment diary — Bookly works for any professional who values their time.</p>
+
+          <h2>Get in touch</h2>
+          <p>Questions, feedback, or partnership enquiries: <a href="mailto:hello@bookly.io">hello@bookly.io</a></p>
+
+          <footer class="info-foot">
+            <a href="#" onclick="event.preventDefault(); go('faq');">FAQ</a>
+            <a href="#" onclick="event.preventDefault(); go('privacy');">Privacy Policy</a>
+            <a href="#" onclick="event.preventDefault(); go('terms');">Terms of Service</a>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- FAQ                                                   -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" id="screen-faq">
+      <div class="info-page">
+        <header class="info-header">
+          <button class="btn btn-icon info-back" data-info-back>
+            <svg width="16" height="16"><use href="#i-chev-left" /></svg>
+          </button>
+          <span class="brand-mark">B</span>
+          <span class="brand-name">Bookly</span>
+        </header>
+        <div class="info-body">
+          <h1>Frequently Asked Questions</h1>
+
+          <div class="faq-list">
+            <details class="faq-item" open>
+              <summary>Is Bookly free to use?</summary>
+              <p>Yes — Bookly's core features are completely free, including your booking page, unlimited event types, and email confirmations. We offer a Pro plan for advanced features like payment collection, custom branding, and team scheduling.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Do my clients need a Bookly account to book with me?</summary>
+              <p>No. Your clients visit your public booking link, pick a time, fill in their details, and receive a confirmation email — no account or download required on their end.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Which calendars does Bookly sync with?</summary>
+              <p>Bookly connects with Google Calendar, Microsoft Outlook, and Apple Calendar. It reads your existing events to block out busy times and writes new bookings directly to your calendar.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Can I accept payments for bookings?</summary>
+              <p>Yes. With the Pro plan you can require a deposit or full payment via Stripe before a booking is confirmed. This is especially useful for salon appointments, training sessions, and consultations.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>How do I set my availability?</summary>
+              <p>Go to the Availability section in your admin panel. You can set working hours by day, add date-specific overrides (holidays, days off), and configure buffer time between appointments.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Can I have multiple event types?</summary>
+              <p>Yes — as many as you need. Each event type can have its own duration, location (Zoom, Google Meet, in-person), description, and availability rules. You might have a 20-minute intro call and a 60-minute training session as separate event types.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Will my clients receive reminders?</summary>
+              <p>Yes. Bookly sends an automatic confirmation email when a booking is made and a reminder 24 hours before the appointment. You can customise the timing and content in Workflows.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Can I cancel or reschedule a booking?</summary>
+              <p>Both you and your client can cancel or request a reschedule from the confirmation email. You control whether to allow rescheduling and how much notice is required.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Is my data secure?</summary>
+              <p>Yes. All data is encrypted in transit (TLS) and at rest. We never sell your data or your clients' data to third parties. See our <a href="#" onclick="event.preventDefault(); go('privacy');">Privacy Policy</a> for full details.</p>
+            </details>
+
+            <details class="faq-item">
+              <summary>How do I contact support?</summary>
+              <p>Email us at <a href="mailto:support@bookly.io">support@bookly.io</a> or use the in-app chat. We typically respond within one business day.</p>
+            </details>
+          </div>
+
+          <footer class="info-foot">
+            <a href="#" onclick="event.preventDefault(); go('about');">About</a>
+            <a href="#" onclick="event.preventDefault(); go('privacy');">Privacy Policy</a>
+            <a href="#" onclick="event.preventDefault(); go('terms');">Terms of Service</a>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- PRIVACY POLICY                                        -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" id="screen-privacy">
+      <div class="info-page">
+        <header class="info-header">
+          <button class="btn btn-icon info-back" data-info-back>
+            <svg width="16" height="16"><use href="#i-chev-left" /></svg>
+          </button>
+          <span class="brand-mark">B</span>
+          <span class="brand-name">Bookly</span>
+        </header>
+        <div class="info-body">
+          <h1>Privacy Policy</h1>
+          <p class="info-meta">Last updated: 26 May 2026</p>
+
+          <p>Bookly ("we", "us", "our") is committed to protecting your personal information. This policy explains what data we collect, why we collect it, and how we use it.</p>
+
+          <h2>1. Information we collect</h2>
+          <h3>Account holders</h3>
+          <ul>
+            <li><strong>Identity data:</strong> full name, email address, profile photo (optional)</li>
+            <li><strong>Booking handle:</strong> your chosen <code>bookly.io/handle</code></li>
+            <li><strong>Calendar data:</strong> free/busy information from connected calendars (we do not read event titles or details)</li>
+            <li><strong>Payment data:</strong> processed by Stripe — we never store card numbers</li>
+          </ul>
+          <h3>Booking guests (your clients)</h3>
+          <ul>
+            <li>Name and email address provided at booking</li>
+            <li>Any custom fields you configure for your event types</li>
+            <li>IP address and browser type for fraud prevention</li>
+          </ul>
+
+          <h2>2. How we use your information</h2>
+          <ul>
+            <li>To provide, maintain, and improve the Bookly service</li>
+            <li>To send booking confirmations and reminders</li>
+            <li>To sync appointments with connected calendars</li>
+            <li>To process payments via Stripe</li>
+            <li>To detect and prevent abuse or fraudulent activity</li>
+            <li>To send product updates (you can unsubscribe at any time)</li>
+          </ul>
+
+          <h2>3. Data sharing</h2>
+          <p>We do not sell your data. We share data only with:</p>
+          <ul>
+            <li><strong>Stripe</strong> — for payment processing</li>
+            <li><strong>Google / Microsoft / Apple</strong> — for calendar integration, when you connect those services</li>
+            <li><strong>Transactional email providers</strong> — to deliver confirmations and reminders</li>
+            <li><strong>Law enforcement</strong> — only when required by law</li>
+          </ul>
+
+          <h2>4. Data retention</h2>
+          <p>We retain your account data for as long as your account is active. Booking guest data is retained for 24 months from the booking date, after which it is deleted. You may request earlier deletion at any time.</p>
+
+          <h2>5. Your rights</h2>
+          <p>Depending on your location, you may have rights under GDPR, CCPA, or similar laws, including:</p>
+          <ul>
+            <li>Right to access the data we hold about you</li>
+            <li>Right to correct inaccurate data</li>
+            <li>Right to delete your data ("right to be forgotten")</li>
+            <li>Right to data portability</li>
+            <li>Right to object to marketing communications</li>
+          </ul>
+          <p>To exercise any of these rights, email <a href="mailto:privacy@bookly.io">privacy@bookly.io</a>.</p>
+
+          <h2>6. Cookies</h2>
+          <p>We use essential cookies to keep you logged in and remember your preferences. We use analytics cookies (opt-in only) to understand how the product is used. You can manage cookie preferences in your account settings.</p>
+
+          <h2>7. Security</h2>
+          <p>All data is encrypted in transit via TLS 1.2+. Data at rest is encrypted with AES-256. We conduct regular security audits and hold SOC 2 Type II certification.</p>
+
+          <h2>8. Changes to this policy</h2>
+          <p>We will notify you by email and in-app banner if we make material changes to this policy. Continued use of Bookly after changes take effect constitutes acceptance.</p>
+
+          <h2>9. Contact</h2>
+          <p>Data Controller: Bookly Ltd · <a href="mailto:privacy@bookly.io">privacy@bookly.io</a></p>
+
+          <footer class="info-foot">
+            <a href="#" onclick="event.preventDefault(); go('about');">About</a>
+            <a href="#" onclick="event.preventDefault(); go('faq');">FAQ</a>
+            <a href="#" onclick="event.preventDefault(); go('terms');">Terms of Service</a>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- TERMS OF SERVICE                                      -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" id="screen-terms">
+      <div class="info-page">
+        <header class="info-header">
+          <button class="btn btn-icon info-back" data-info-back>
+            <svg width="16" height="16"><use href="#i-chev-left" /></svg>
+          </button>
+          <span class="brand-mark">B</span>
+          <span class="brand-name">Bookly</span>
+        </header>
+        <div class="info-body">
+          <h1>Terms of Service</h1>
+          <p class="info-meta">Last updated: 26 May 2026</p>
+
+          <p>These Terms of Service ("Terms") govern your access to and use of Bookly ("Service"), operated by Bookly Ltd ("Company"). By creating an account or using the Service, you agree to these Terms.</p>
+
+          <h2>1. Eligibility</h2>
+          <p>You must be at least 16 years old to use Bookly. By using the Service you represent that you meet this requirement and that you have the authority to bind any organisation you represent.</p>
+
+          <h2>2. Your account</h2>
+          <p>You are responsible for keeping your login credentials secure. You must notify us immediately at <a href="mailto:security@bookly.io">security@bookly.io</a> if you suspect unauthorised access. You are responsible for all activity under your account.</p>
+
+          <h2>3. Acceptable use</h2>
+          <p>You agree not to:</p>
+          <ul>
+            <li>Use the Service for any unlawful purpose</li>
+            <li>Harass, spam, or deceive your booking guests</li>
+            <li>Attempt to reverse-engineer, scrape, or disrupt the Service</li>
+            <li>Resell or sublicense access to the Service without prior written consent</li>
+            <li>Use the Service to send unsolicited commercial communications</li>
+          </ul>
+
+          <h2>4. Booking guest data</h2>
+          <p>You act as a data controller for the personal data your clients submit when booking with you. You must have a lawful basis for collecting that data and must comply with applicable data protection laws. Bookly acts as a data processor on your behalf.</p>
+
+          <h2>5. Payments</h2>
+          <p>If you use Bookly's payment features, you agree to Stripe's Terms of Service in addition to these Terms. Bookly charges a platform fee of 2% on paid bookings (Pro plan). Disputes between you and your clients regarding payments are your responsibility to resolve.</p>
+
+          <h2>6. Intellectual property</h2>
+          <p>Bookly and its underlying technology, design, and content are owned by Bookly Ltd. Your data — including your event types, booking content, and client data — remains yours. You grant Bookly a limited licence to process your data to provide the Service.</p>
+
+          <h2>7. Service availability</h2>
+          <p>We aim for 99.9% uptime but do not guarantee uninterrupted access. Scheduled maintenance will be communicated in advance. We are not liable for losses resulting from downtime.</p>
+
+          <h2>8. Limitation of liability</h2>
+          <p>To the maximum extent permitted by law, Bookly's total liability to you for any claim arising from these Terms or your use of the Service shall not exceed the greater of (a) the amount you paid to Bookly in the 12 months preceding the claim, or (b) £100.</p>
+
+          <h2>9. Termination</h2>
+          <p>You may cancel your account at any time from your account settings. We may suspend or terminate your account if you violate these Terms, with or without notice depending on the severity of the violation.</p>
+
+          <h2>10. Governing law</h2>
+          <p>These Terms are governed by the laws of England and Wales. Any disputes will be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
+
+          <h2>11. Changes to these Terms</h2>
+          <p>We may update these Terms from time to time. We will give you at least 30 days' notice of material changes by email. Continued use of the Service after the effective date constitutes acceptance of the updated Terms.</p>
+
+          <h2>12. Contact</h2>
+          <p>Bookly Ltd · <a href="mailto:legal@bookly.io">legal@bookly.io</a></p>
+
+          <footer class="info-foot">
+            <a href="#" onclick="event.preventDefault(); go('about');">About</a>
+            <a href="#" onclick="event.preventDefault(); go('faq');">FAQ</a>
+            <a href="#" onclick="event.preventDefault(); go('privacy');">Privacy Policy</a>
+          </footer>
+        </div>
+      </div>
+    </section>
+
     <!-- More screens injected below -->
     <div id="more-screens-anchor"></div>
 
@@ -445,7 +741,10 @@
       // Screen routing
       // ──────────────────────────────────────────────────
       const screens = () => document.querySelectorAll(".screen");
+      let _prevScreen = "signup";
       function go(name) {
+        const current = document.querySelector(".screen.active");
+        if (current && current.id) _prevScreen = current.id.replace("screen-", "");
         screens().forEach(s => s.classList.remove("active"));
         const target = document.getElementById("screen-" + name);
         if (target) target.classList.add("active");
@@ -456,6 +755,9 @@
         history.replaceState(null, "", "#" + name);
         ensureSidebars();
       }
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("[data-info-back]")) go(_prevScreen);
+      });
       document.querySelectorAll(".screen-nav button").forEach(b => {
         b.addEventListener("click", () => go(b.dataset.screen));
       });
