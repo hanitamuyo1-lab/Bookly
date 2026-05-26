@@ -2011,6 +2011,7 @@
         </div>`;
       document.body.appendChild(overlay);
       overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.hidden = true; });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !overlay.hidden) overlay.hidden = true; });
     }
 
     document.getElementById("link-modal-title").textContent = title;
