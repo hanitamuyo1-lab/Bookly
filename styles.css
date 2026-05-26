@@ -1605,3 +1605,42 @@ h1, h2, h3, h4, p { margin: 0; }
   border-top: 1px solid var(--line);
   margin-top: 12px;
 }
+
+/* ─── Booking preview panel ───────────────────────────────── */
+.pv-tab-group { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.pv-tab { padding: 4px 11px; font-size: 11.5px; font-weight: 500; background: transparent; color: var(--muted); border: 0; cursor: pointer; transition: background 120ms, color 120ms; }
+.pv-tab.active { background: var(--accent); color: #fff; }
+.pv-tab:not(.active):hover { background: var(--surface-2); color: var(--text); }
+
+.pv-urlbar { background: var(--surface-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 5px 14px; display: flex; align-items: center; gap: 6px; }
+.pv-url { font-size: 11px; color: var(--muted); font-family: var(--font-mono); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; }
+
+.pv-pane { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 9px; }
+
+.pv-session-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.pv-event-name { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.pv-meta-row { display: flex; gap: 12px; font-size: 11.5px; color: var(--muted); align-items: center; }
+.pv-meta-row svg { vertical-align: middle; }
+.pv-date-chip { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line-soft); font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+
+.pv-fields { display: flex; flex-direction: column; gap: 5px; }
+.pv-field { display: flex; flex-direction: column; gap: 3px; }
+.pv-field-label { font-size: 11px; font-weight: 500; color: var(--text); }
+.pv-field-input { display: flex; align-items: center; gap: 6px; background: var(--field); border: 1px solid var(--line); border-radius: 5px; padding: 5px 9px; font-size: 11px; color: var(--muted); }
+.pv-type-chip { background: var(--surface-2); border: 1px solid var(--line); border-radius: 3px; padding: 1px 5px; font-size: 10px; font-weight: 600; color: var(--accent); font-family: var(--font-mono); flex-shrink: 0; }
+
+.pv-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.pv-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.pv-cal-dow { font-size: 9.5px; color: var(--muted); font-weight: 600; padding: 2px 0; }
+#pv-cal-days { display: contents; }
+.pv-day { font-size: 11px; padding: 4px 2px; border-radius: 4px; cursor: default; }
+.pv-day-on { color: var(--text); cursor: pointer; }
+.pv-day-on:hover { background: var(--accent-soft); color: var(--accent); }
+.pv-day-off { color: var(--faint); pointer-events: none; }
+.pv-day-today { font-weight: 700; color: var(--accent); }
+.pv-day-selected { background: var(--accent) !important; color: #fff !important; font-weight: 600; }
+
+.pv-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.pv-slot { background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: 5px; text-align: center; font-size: 11px; font-weight: 500; cursor: pointer; transition: background 100ms, border-color 100ms; }
+.pv-slot:hover { border-color: var(--accent); color: var(--accent); }
+.pv-slot-sel { background: var(--accent); color: #fff; border-color: var(--accent); }

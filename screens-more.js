@@ -201,8 +201,73 @@
               </section>
             </div>
 
-            <!-- Right: settings -->
+            <!-- Right: live preview + settings -->
             <div style="display: flex; flex-direction: column; gap: 16px;">
+
+              <!-- ── Live booking preview ── -->
+              <section class="panel" id="booking-preview-panel">
+                <div class="panel-head" style="padding-bottom: 12px;">
+                  <div>
+                    <h3>Live preview</h3>
+                    <div class="subtitle" style="margin-top: 2px;">What your invitee sees</div>
+                  </div>
+                  <div class="pv-tab-group">
+                    <button class="pv-tab active" data-pv-tab="form">Form</button>
+                    <button class="pv-tab" data-pv-tab="cal">Calendar</button>
+                  </div>
+                </div>
+
+                <!-- browser chrome -->
+                <div class="pv-urlbar">
+                  <svg width="10" height="10" style="color:var(--success);flex-shrink:0;"><use href="#i-check" /></svg>
+                  <span class="pv-url">bookly.io/you/<span id="pv-slug">demo</span></span>
+                </div>
+
+                <!-- FORM PANE -->
+                <div class="pv-pane" id="pv-pane-form">
+                  <div class="pv-session-card">
+                    <div class="pv-event-name" id="pv-title">Product demo call</div>
+                    <div class="pv-meta-row">
+                      <span><svg width="11" height="11"><use href="#i-clock" /></svg> <span id="pv-duration">45 min</span></span>
+                      <span><svg width="11" height="11"><use href="#i-video" /></svg> <span id="pv-location">Zoom</span></span>
+                    </div>
+                    <div class="pv-date-chip">
+                      <svg width="10" height="10"><use href="#i-cal" /></svg>
+                      <span id="pv-sample-date">Thu, 29 May · 10:30 – 11:15</span>
+                    </div>
+                  </div>
+                  <div id="pv-fields" class="pv-fields"></div>
+                  <button class="btn btn-primary" style="width:100%;height:34px;font-size:12.5px;margin-top:2px;" onclick="go('public-pick')">
+                    Try full booking flow →
+                  </button>
+                </div>
+
+                <!-- CALENDAR PANE -->
+                <div class="pv-pane" id="pv-pane-cal" style="display:none;">
+                  <div class="pv-session-card" style="margin-bottom:10px;">
+                    <div class="pv-event-name" id="pv-cal-title">Product demo call</div>
+                    <div class="pv-meta-row">
+                      <span><svg width="11" height="11"><use href="#i-clock" /></svg> <span id="pv-cal-duration">45 min</span></span>
+                      <span><svg width="11" height="11"><use href="#i-video" /></svg> <span id="pv-cal-location">Zoom</span></span>
+                    </div>
+                  </div>
+                  <div class="pv-cal-header">
+                    <button class="btn btn-icon" style="width:22px;height:22px;" onclick="pvCalPrev()"><svg width="12" height="12"><use href="#i-chev-left" /></svg></button>
+                    <span id="pv-cal-month" style="font-size:12px;font-weight:600;"></span>
+                    <button class="btn btn-icon" style="width:22px;height:22px;" onclick="pvCalNext()"><svg width="12" height="12"><use href="#i-chev-right" /></svg></button>
+                  </div>
+                  <div class="pv-cal-grid">
+                    <div class="pv-cal-dow">S</div><div class="pv-cal-dow">M</div><div class="pv-cal-dow">T</div><div class="pv-cal-dow">W</div><div class="pv-cal-dow">T</div><div class="pv-cal-dow">F</div><div class="pv-cal-dow">S</div>
+                    <div id="pv-cal-days"></div>
+                  </div>
+                  <div id="pv-slots" class="pv-slots"></div>
+                  <button class="btn btn-primary" style="width:100%;height:34px;font-size:12.5px;margin-top:8px;" onclick="go('public-pick')">
+                    Try full booking flow →
+                  </button>
+                </div>
+              </section>
+
+              <!-- Visibility -->
               <section class="panel">
                 <div class="panel-head"><h3>Visibility</h3></div>
                 <div class="panel-body" style="display: flex; flex-direction: column; gap: 12px; padding: 18px 22px;">
@@ -223,55 +288,43 @@
                 </div>
               </section>
 
+              <!-- Limits -->
               <section class="panel">
                 <div class="panel-head"><h3>Limits</h3></div>
                 <div class="panel-body" style="display: flex; flex-direction: column; gap: 10px; padding: 18px 22px; font-size: 13px;">
                   <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--muted);">Min. notice</span>
-                    <strong style="font-weight: 600;">2 hours</strong>
+                    <span style="color: var(--muted);">Min. notice</span><strong style="font-weight: 600;">2 hours</strong>
                   </div>
                   <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--muted);">Max. days in advance</span>
-                    <strong style="font-weight: 600;">60 days</strong>
+                    <span style="color: var(--muted);">Max. days in advance</span><strong style="font-weight: 600;">60 days</strong>
                   </div>
                   <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--muted);">Buffer before</span>
-                    <strong style="font-weight: 600;">5 min</strong>
+                    <span style="color: var(--muted);">Buffer before</span><strong style="font-weight: 600;">5 min</strong>
                   </div>
                   <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--muted);">Buffer after</span>
-                    <strong style="font-weight: 600;">10 min</strong>
+                    <span style="color: var(--muted);">Buffer after</span><strong style="font-weight: 600;">10 min</strong>
                   </div>
                   <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--muted);">Daily cap</span>
-                    <strong style="font-weight: 600;">6 demos</strong>
+                    <span style="color: var(--muted);">Daily cap</span><strong style="font-weight: 600;">6 demos</strong>
                   </div>
                 </div>
               </section>
 
+              <!-- Reminders -->
               <section class="panel">
                 <div class="panel-head"><h3>Reminders</h3></div>
                 <div class="panel-body" style="display: flex; flex-direction: column; gap: 10px; padding: 18px 22px; font-size: 13px;">
                   <div style="display: flex; align-items: center; gap: 10px;">
                     <svg width="16" height="16" style="color: var(--accent);"><use href="#i-mail" /></svg>
-                    <div>
-                      <strong style="font-weight: 600;">24 hours before</strong>
-                      <div style="color: var(--muted); font-size: 12px; margin-top: 2px;">Email reminder to invitee.</div>
-                    </div>
+                    <div><strong style="font-weight: 600;">24 hours before</strong><div style="color: var(--muted); font-size: 12px; margin-top: 2px;">Email reminder to invitee.</div></div>
                   </div>
                   <div style="display: flex; align-items: center; gap: 10px;">
                     <svg width="16" height="16" style="color: var(--accent);"><use href="#i-bell" /></svg>
-                    <div>
-                      <strong style="font-weight: 600;">1 hour before</strong>
-                      <div style="color: var(--muted); font-size: 12px; margin-top: 2px;">Email + push reminder.</div>
-                    </div>
+                    <div><strong style="font-weight: 600;">1 hour before</strong><div style="color: var(--muted); font-size: 12px; margin-top: 2px;">Email + push reminder.</div></div>
                   </div>
                   <div style="display: flex; align-items: center; gap: 10px;">
                     <svg width="16" height="16" style="color: var(--accent);"><use href="#i-check" /></svg>
-                    <div>
-                      <strong style="font-weight: 600;">Right after booking</strong>
-                      <div style="color: var(--muted); font-size: 12px; margin-top: 2px;">Confirmation email with meeting link.</div>
-                    </div>
+                    <div><strong style="font-weight: 600;">Right after booking</strong><div style="color: var(--muted); font-size: 12px; margin-top: 2px;">Confirmation email with meeting link.</div></div>
                   </div>
                 </div>
               </section>
@@ -1172,6 +1225,103 @@
     publicFormActions.before(guestsField);
   }
 
+  // ── Live booking preview ──────────────────────────────────────
+  const PV_SLOT_TIMES = ["09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30"];
+  const PV_BLOCKED_DOW = new Set([0, 3, 6]);
+  let pvYear, pvMonth;
+
+  function pvBuildCal(year, month) {
+    pvYear = year; pvMonth = month;
+    const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const el = document.getElementById("pv-cal-month");
+    if (el) el.textContent = `${MONTHS[month]} ${year}`;
+    const grid = document.getElementById("pv-cal-days");
+    if (!grid) return;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const first = new Date(year, month, 1).getDay();
+    const days = new Date(year, month + 1, 0).getDate();
+    let html = "";
+    for (let i = 0; i < first; i++) html += `<span></span>`;
+    for (let d = 1; d <= days; d++) {
+      const date = new Date(year, month, d);
+      const past = date < today;
+      const blocked = PV_BLOCKED_DOW.has(date.getDay());
+      const isToday = date.getTime() === today.getTime();
+      let cls = "pv-day";
+      if (past || blocked) cls += " pv-day-off";
+      else cls += " pv-day-on";
+      if (isToday) cls += " pv-day-today";
+      html += `<span class="${cls}" onclick="pvSelectDay(this,${year},${month},${d})">${d}</span>`;
+    }
+    grid.innerHTML = html;
+    pvRenderSlots([]);
+  }
+
+  window.pvCalPrev = function() { pvMonth--; if (pvMonth < 0) { pvMonth = 11; pvYear--; } pvBuildCal(pvYear, pvMonth); };
+  window.pvCalNext = function() { pvMonth++; if (pvMonth > 11) { pvMonth = 0; pvYear++; } pvBuildCal(pvYear, pvMonth); };
+
+  window.pvSelectDay = function(el, y, m, d) {
+    document.querySelectorAll(".pv-day-selected").forEach(e => e.classList.remove("pv-day-selected"));
+    el.classList.add("pv-day-selected");
+    pvRenderSlots(PV_SLOT_TIMES, y, m, d);
+  };
+
+  function pvRenderSlots(slots) {
+    const el = document.getElementById("pv-slots");
+    if (!el) return;
+    if (!slots.length) {
+      el.innerHTML = `<p style="font-size:11.5px;color:var(--muted);text-align:center;padding:8px 0;">Pick a date to see times</p>`;
+      return;
+    }
+    el.innerHTML = slots.map(t =>
+      `<button class="pv-slot" onclick="this.classList.toggle('pv-slot-sel')">${t}</button>`
+    ).join("");
+  }
+
+  const PV_TYPE_ICON = { Text:"Aa", Email:"@", Select:"▾", "Long text":"≡" };
+
+  function updateBookingPreview(title, duration, location, slug, questions) {
+    const set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    set("pv-title", title);
+    set("pv-duration", duration);
+    set("pv-location", location);
+    set("pv-slug", slug);
+    set("pv-cal-title", title);
+    set("pv-cal-duration", duration);
+    set("pv-cal-location", location);
+
+    // Update sample date chip
+    const now = new Date();
+    const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const MONS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    // find next available weekday
+    let sample = new Date(now); sample.setDate(sample.getDate() + 2);
+    while (PV_BLOCKED_DOW.has(sample.getDay())) sample.setDate(sample.getDate() + 1);
+    const dateStr = `${DAYS[sample.getDay()]}, ${sample.getDate()} ${MONS[sample.getMonth()]} · 10:30`;
+    set("pv-sample-date", dateStr);
+
+    // Render form fields preview
+    const container = document.getElementById("pv-fields");
+    if (container) {
+      container.innerHTML = questions.map(q => {
+        const icon = PV_TYPE_ICON[q.type] || "Aa";
+        return `<div class="pv-field">
+          <div class="pv-field-label">${q.label}${q.required ? ' <span style="color:#ef4444">*</span>' : ""}</div>
+          <div class="pv-field-input"><span class="pv-type-chip">${icon}</span>${q.type}</div>
+        </div>`;
+      }).join("") + `<div class="pv-field">
+        <div class="pv-field-label" style="color:var(--muted);">Add guests <span style="opacity:.6">(optional)</span></div>
+        <div class="pv-field-input"><span class="pv-type-chip">@</span>Email</div>
+      </div>`;
+    }
+
+    // Init calendar if needed
+    if (!pvYear) {
+      const n = new Date();
+      pvBuildCal(n.getFullYear(), n.getMonth());
+    }
+  }
+
   function updateQuestionCount() {
     const count = selectedQuestionRows().filter(row => row.querySelector(".toggle")?.classList.contains("on")).length;
     const badge = [...(editor?.querySelectorAll(".tab") || [])].find(tab => tab.textContent.includes("Questions"))?.querySelector(".count");
@@ -1213,6 +1363,11 @@
     updateQuestionCount();
     renderPublicBookingForm();
     onEditorLocationChange(document.getElementById("editor-location-select")?.value || "");
+
+    const activeQuestions = selectedQuestionRows()
+      .map(questionFromRow)
+      .filter(q => q.active);
+    updateBookingPreview(title, duration, location, slug, activeQuestions.length ? activeQuestions : DEFAULT_QUESTIONS);
   }
 
   // ── Editor location hint (Zoom / Teams link preview) ──────────
@@ -1434,6 +1589,20 @@
         const isOn = visibilityToggle.classList.toggle("on");
         const label = visibilityToggle.closest("label")?.querySelector("strong")?.textContent?.trim() || "Setting";
         editorStatus(`${label} is now ${isOn ? "on" : "off"}.`);
+      }
+
+      // Preview tab switcher
+      const pvTab = e.target.closest(".pv-tab");
+      if (pvTab) {
+        const tabName = pvTab.dataset.pvTab;
+        editor.querySelectorAll(".pv-tab").forEach(t => t.classList.toggle("active", t === pvTab));
+        editor.querySelectorAll(".pv-pane").forEach(p => {
+          p.style.display = p.id === `pv-pane-${tabName}` ? "" : "none";
+        });
+        if (tabName === "cal" && !pvYear) {
+          const n = new Date();
+          pvBuildCal(n.getFullYear(), n.getMonth());
+        }
       }
     });
 
