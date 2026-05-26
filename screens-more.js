@@ -1566,8 +1566,8 @@
     "google-meet": !!tokens.google,  // Meet comes from Google Calendar API
     "outlook-cal": true,  // ICS download — always available, no auth needed
     "apple-cal":   false,
-    "zoom":        false,
-    "ms-teams":    false,
+    "zoom":     !!localStorage.getItem("bookly_zoom_link"),
+    "ms-teams": !!localStorage.getItem("bookly_teams_link"),
   };
 
   function refreshIntegrationUI() {
@@ -1580,6 +1580,18 @@
         if (statusEl) { statusEl.textContent = "Ready"; statusEl.className = "integration-status connected"; }
         if (btnEl)    btnEl.style.display = "none";
         if (footEl)   footEl.textContent  = ".ics download on confirmation";
+        return;
+      }
+
+      if (id === "zoom" || id === "ms-teams") {
+        const storageKey = id === "zoom" ? "bookly_zoom_link" : "bookly_teams_link";
+        const savedLink  = localStorage.getItem(storageKey);
+        if (statusEl) {
+          statusEl.textContent = savedLink ? "Connected" : "Not connected";
+          statusEl.className   = `integration-status ${savedLink ? "connected" : "disconnected"}`;
+        }
+        if (btnEl) btnEl.textContent = savedLink ? "Change link" : "Connect";
+        if (footEl) footEl.textContent = savedLink || "";
         return;
       }
 
@@ -1676,13 +1688,13 @@
     if (id === "google-cal" || id === "google-meet") {
       connected[id] ? disconnectGoogle() : connectGoogle();
     } else if (id === "outlook-cal") {
-      connected[id] ? disconnectOutlook() : connectOutlook();
+      // ICS — no action needed, button is hidden
+    } else if (id === "zoom") {
+      showLinkModal("zoom");
+    } else if (id === "ms-teams") {
+      showLinkModal("ms-teams");
     } else if (id === "apple-cal") {
       showSetupModal("apple");
-    } else if (id === "zoom") {
-      showSetupModal("zoom");
-    } else if (id === "ms-teams") {
-      showSetupModal("teams");
     }
   };
 
@@ -1838,19 +1850,122 @@
         const meetLink = event?.conferenceData?.entryPoints?.find(e => e.entryPointType === "video")?.uri;
         if (meetLink) {
           document.querySelectorAll("[data-confirm-location]").forEach(el => {
-            el.textContent = "Google Meet";
-            el.href = meetLink;
+            el.textContent = "Google Meet"; el.href = meetLink;
           });
           document.querySelectorAll("[data-email-location]").forEach(el => {
             el.textContent = `Google Meet — ${meetLink}`;
           });
           showIntegrationToast("Google Calendar event created with Meet link!");
+          return;
         }
+      }
+      // Fallback: use Zoom or Teams personal room link if configured
+      const fallback = getConfirmationMeetLink();
+      if (fallback) {
+        document.querySelectorAll("[data-confirm-location]").forEach(el => {
+          el.textContent = fallback.label; el.href = fallback.url;
+        });
+        document.querySelectorAll("[data-email-location]").forEach(el => {
+          el.textContent = `${fallback.label} — ${fallback.url}`;
+        });
       }
     }, 950);
   };
 
   // ── Toast notification ────────────────────────────────────────
+  // ── Zoom / Teams personal link modal ─────────────────────────
+  function showLinkModal(id) {
+    const isZoom   = id === "zoom";
+    const title    = isZoom ? "Connect Zoom" : "Connect Microsoft Teams";
+    const hint     = isZoom
+      ? "Your personal Zoom room link — e.g. zoom.us/j/1234567890"
+      : "Your Teams meeting link — e.g. teams.microsoft.com/l/meetup-join/…";
+    const placeholder = isZoom ? "https://zoom.us/j/your-room-id" : "https://teams.microsoft.com/l/meetup-join/…";
+    const storageKey  = isZoom ? "bookly_zoom_link" : "bookly_teams_link";
+    const current     = localStorage.getItem(storageKey) || "";
+
+    let overlay = document.getElementById("link-modal-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "link-modal-overlay";
+      overlay.className = "setup-modal-overlay";
+      overlay.innerHTML = `
+        <div class="setup-modal">
+          <div class="setup-modal-head">
+            <h3 id="link-modal-title"></h3>
+            <button class="btn btn-icon" onclick="document.getElementById('link-modal-overlay').hidden=true">
+              <svg width="16" height="16"><use href="#i-x" /></svg>
+            </button>
+          </div>
+          <div style="padding:16px 24px 8px;">
+            <p id="link-modal-hint" style="font-size:13px;color:var(--muted);margin:0 0 10px;"></p>
+            <div class="field">
+              <label>Meeting link</label>
+              <input id="link-modal-input" type="url" style="font-size:13px;" />
+            </div>
+            <p style="font-size:12px;color:var(--muted);margin:8px 0 0;">
+              Find your personal room link in your Zoom or Teams app settings.
+              This link will be included in every booking confirmation.
+            </p>
+          </div>
+          <div class="setup-modal-foot" style="gap:8px;">
+            <button class="btn btn-danger btn-sm" id="link-modal-remove" onclick="">Remove</button>
+            <div style="flex:1;"></div>
+            <button class="btn btn-secondary" onclick="document.getElementById('link-modal-overlay').hidden=true">Cancel</button>
+            <button class="btn btn-primary" id="link-modal-save">Save</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.hidden = true; });
+    }
+
+    document.getElementById("link-modal-title").textContent = title;
+    document.getElementById("link-modal-hint").textContent  = hint;
+    const input = document.getElementById("link-modal-input");
+    input.placeholder = placeholder;
+    input.value = current;
+
+    const removeBtn = document.getElementById("link-modal-remove");
+    removeBtn.style.display = current ? "" : "none";
+    removeBtn.onclick = () => {
+      localStorage.removeItem(storageKey);
+      connected[id] = false;
+      refreshIntegrationUI();
+      overlay.hidden = true;
+      showIntegrationToast(`${isZoom ? "Zoom" : "Teams"} link removed.`);
+    };
+
+    document.getElementById("link-modal-save").onclick = () => {
+      const val = input.value.trim();
+      if (!val) { input.focus(); return; }
+      if (!val.startsWith("http")) {
+        showIntegrationToast("Please enter a valid URL starting with https://");
+        return;
+      }
+      localStorage.setItem(storageKey, val);
+      connected[id] = true;
+      refreshIntegrationUI();
+      overlay.hidden = true;
+      showIntegrationToast(`${isZoom ? "Zoom" : "Teams"} link saved! It will appear in booking confirmations.`);
+    };
+
+    overlay.hidden = false;
+    setTimeout(() => input.focus(), 50);
+  }
+
+  // ── Use Zoom/Teams link in confirmation if Google not connected ─
+  function getConfirmationMeetLink() {
+    if (tokens.google) return null; // Google Meet will be set by API
+    const zoom  = localStorage.getItem("bookly_zoom_link");
+    const teams = localStorage.getItem("bookly_teams_link");
+    const loc   = bookingState.location;
+    if (loc === "Zoom"  && zoom)  return { label: "Zoom",            url: zoom };
+    if (loc === "Teams" && teams) return { label: "Microsoft Teams", url: teams };
+    if (zoom)  return { label: "Zoom",            url: zoom };
+    if (teams) return { label: "Microsoft Teams", url: teams };
+    return null;
+  }
+
   function showIntegrationToast(msg) {
     let toast = document.getElementById("int-toast");
     if (!toast) {
