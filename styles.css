@@ -953,6 +953,11 @@ h1, h2, h3, h4, p { margin: 0; }
   .slot-pair { grid-template-columns: 1fr 68px; }
   .public-right h2 { font-size: 17px; }
   .confirm-actions .btn { width: 100%; justify-content: center; }
+  .field input,
+  .field select,
+  .field textarea { height: 44px; font-size: 16px; }
+  .field textarea { height: auto; min-height: 88px; }
+  .confirm-form { gap: 16px; }
   .info-header { padding: 16px 18px; }
   .info-body { padding: 28px 18px 60px; }
   .info-body h1 { font-size: 22px; }

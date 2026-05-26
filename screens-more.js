@@ -32,7 +32,7 @@
           <div class="tabs" style="margin: -8px 0 0;">
             <button class="tab active">Event setup</button>
             <button class="tab">Limits</button>
-            <button class="tab">Questions <span class="count">5</span></button>
+            <button class="tab">Questions <span class="count">6</span></button>
             <button class="tab">Reminders</button>
             <button class="tab">Workflows</button>
           </div>
@@ -175,6 +175,20 @@
                         <div class="q-meta">
                           <span class="q-type-badge">Long text</span>
                           <span>Optional</span>
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 4px;">
+                        <span class="toggle on" data-toggle></span>
+                        <button class="btn btn-icon"><svg width="15" height="15"><use href="#i-trash" /></svg></button>
+                      </div>
+                    </div>
+                    <div class="question-row">
+                      <svg class="q-handle" width="18" height="18"><use href="#i-handle" /></svg>
+                      <div class="q-info">
+                        <div class="q-label">Are you a new customer? <span style="color: #ef4444;">*</span></div>
+                        <div class="q-meta">
+                          <span class="q-type-badge">Select</span>
+                          <span>Yes · No · Not sure</span>
                         </div>
                       </div>
                       <div style="display: flex; gap: 4px;">
@@ -660,42 +674,6 @@
             </div>
 
             <form class="confirm-form" id="booking-confirm-form" novalidate onsubmit="event.preventDefault(); submitBooking(this);">
-              <div class="field">
-                <label>Your name <span class="req">*</span></label>
-                <input type="text" placeholder="Your full name" required />
-              </div>
-
-              <div class="field">
-                <label>Email <span class="req">*</span></label>
-                <input type="email" placeholder="you@example.com" required />
-              </div>
-
-              <div class="field">
-                <label>Company name</label>
-                <input type="text" placeholder="Your company (optional)" />
-              </div>
-
-              <div class="field">
-                <label>Team size <span class="req">*</span></label>
-                <select required>
-                  <option>1–10 people</option>
-                  <option selected>11–50 people</option>
-                  <option>51–200 people</option>
-                  <option>200+ people</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label>Anything you'd like the host to know?</label>
-                <textarea rows="3" placeholder="Optional message…"></textarea>
-                <span class="hint">This helps the host prepare for your session.</span>
-              </div>
-
-              <div class="field">
-                <label>Add guests <span style="color: var(--faint); font-weight: 500;">(optional)</span></label>
-                <input type="text" placeholder="email@example.com, email2@example.com" />
-              </div>
-
               <div class="confirm-actions">
                 <button type="button" class="btn btn-secondary" onclick="go('public-pick')">
                   <svg width="14" height="14"><use href="#i-arrow-left" /></svg>
@@ -1119,36 +1097,59 @@
 
   function controlForQuestion(question) {
     const required = question.required ? " required" : "";
+    const lbl = question.label.toLowerCase();
+
     if (question.type.toLowerCase().includes("email")) {
       return `<input type="email" placeholder="you@example.com"${required} />`;
     }
+    if (question.type.toLowerCase().includes("long")) {
+      return `<textarea rows="3" placeholder="Optional: topics to cover, goals, or questions you have"></textarea>
+        <span class="hint">This helps the host prepare for your session.</span>`;
+    }
     if (question.type.toLowerCase().includes("select")) {
+      if (lbl.includes("new customer") || lbl.includes("existing")) {
+        return `<select${required}>
+          <option value="">Select an option</option>
+          <option>Yes, I'm a new customer</option>
+          <option>No, I'm an existing customer</option>
+          <option>Not sure</option>
+        </select>`;
+      }
       return `<select${required}>
-        <option>1-10 people</option>
-        <option selected>11-50 people</option>
-        <option>51-200 people</option>
+        <option value="">Select team size</option>
+        <option>1–10 people</option>
+        <option>11–50 people</option>
+        <option>51–200 people</option>
         <option>200+ people</option>
       </select>`;
     }
-    if (question.type.toLowerCase().includes("long")) {
-      return `<textarea rows="3">Launch planning, pricing, and choosing the right package.</textarea>
-        <span class="hint">This helps the host prepare for your session.</span>`;
+    if (lbl.includes("name")) {
+      return `<input type="text" placeholder="Your full name"${required} />`;
     }
-    const lbl = question.label.toLowerCase();
-    const defaultValue = lbl.includes("company")
-      ? ""
-      : "";
+    if (lbl.includes("company")) {
+      return `<input type="text" placeholder="Your company (optional)"${required} />`;
+    }
     return `<input type="text" placeholder=""${required} />`;
   }
 
+  const DEFAULT_QUESTIONS = [
+    { label: "Your name", type: "Text", required: true, active: true },
+    { label: "Email", type: "Email", required: true, active: true },
+    { label: "Company name", type: "Text", required: false, active: true },
+    { label: "Team size", type: "Select", required: true, active: true },
+    { label: "What would you like to cover in the demo?", type: "Long text", required: false, active: true },
+    { label: "Are you a new customer?", type: "Select", required: true, active: true },
+  ];
+
   function renderPublicBookingForm() {
-    if (!publicForm || !publicFormActions || !editor) return;
+    if (!publicForm || !publicFormActions) return;
     [...publicForm.children].forEach(el => {
       if (el.classList.contains("field")) el.remove();
     });
-    const questions = selectedQuestionRows()
+    const editorQuestions = selectedQuestionRows()
       .map(questionFromRow)
       .filter(question => question.active);
+    const questions = editorQuestions.length ? editorQuestions : DEFAULT_QUESTIONS;
 
     questions.forEach(question => {
       const field = document.createElement("div");
@@ -1160,6 +1161,15 @@
       `;
       publicFormActions.before(field);
     });
+
+    const guestsField = document.createElement("div");
+    guestsField.className = "field";
+    guestsField.dataset.renderedQuestion = "";
+    guestsField.innerHTML = `
+      <label>Add guests <span style="color: var(--faint); font-weight: 500;">(optional)</span></label>
+      <input type="text" placeholder="email@example.com, email2@example.com" />
+    `;
+    publicFormActions.before(guestsField);
   }
 
   function updateQuestionCount() {
@@ -1511,6 +1521,7 @@
     document.querySelectorAll("[data-form-date]").forEach(el => el.textContent = bookingState.date);
     document.querySelectorAll("[data-form-time]").forEach(el => el.textContent = timeRange);
 
+    renderPublicBookingForm();
     go("public-form");
   };
 
