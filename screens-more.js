@@ -362,7 +362,7 @@
               <div class="panel-head">
                 <div>
                   <h3>Weekly hours</h3>
-                  <div class="subtitle">Default schedule · Mon–Fri</div>
+                  <div class="subtitle">Default schedule · Mon–Sun (Sat–Sun close 13:00)</div>
                 </div>
                 <button class="btn btn-secondary btn-sm" type="button">
                   Default schedule
