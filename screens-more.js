@@ -515,27 +515,29 @@
               <h3 style="font-size: 14px; font-weight: 600;">Available integrations</h3>
               <p style="margin-top: 4px; font-size: 12.5px; color: var(--muted);">Calendars and video tools that work out of the box.</p>
             </div>
-            <div class="integration-grid">
+            <div class="integration-grid" id="integration-grid">
               ${[
-                ["Google Calendar", "google", "G", "Conflict check + auto-create events on your calendar.", "connected", "2 accounts connected"],
-                ["Outlook Calendar", "outlook", "O", "Microsoft 365 and Outlook.com calendars.", "connected", "1 account connected"],
-                ["Apple Calendar", "apple", "🍎", "Sync via CalDAV for iCloud and macOS calendars.", "disconnected", "Not connected"],
-                ["Google Meet", "meet", "M", "Auto-generate a Meet link for every booking.", "connected", "Connected"],
-                ["Zoom", "zoom", "Z", "Auto-create unique Zoom meetings for each booking.", "connected", "Connected"],
-                ["Microsoft Teams", "teams", "T", "Create Teams meetings on confirmation.", "disconnected", "Not connected"],
-              ].map(([name, cls, glyph, desc, status, foot]) => `
-                <div class="integration-card">
+                { id:"google-cal",  name:"Google Calendar",    cls:"google",  glyph:"G", desc:"Conflict check + auto-create Google Calendar events on confirmation." },
+                { id:"outlook-cal", name:"Outlook Calendar",   cls:"outlook", glyph:"O", desc:"Microsoft 365 and Outlook.com — reads busy times, writes bookings." },
+                { id:"apple-cal",   name:"Apple Calendar",     cls:"apple",   glyph:"🍎",desc:"Sync via CalDAV for iCloud and macOS calendars." },
+                { id:"google-meet", name:"Google Meet",        cls:"meet",    glyph:"M", desc:"Auto-generate a unique Meet link for every confirmed booking." },
+                { id:"zoom",        name:"Zoom",               cls:"zoom",    glyph:"Z", desc:"Auto-create Zoom meetings on confirmation." },
+                { id:"ms-teams",    name:"Microsoft Teams",    cls:"teams",   glyph:"T", desc:"Create Teams meetings on confirmation." },
+              ].map(({ id, name, cls, glyph, desc }) => `
+                <div class="integration-card" data-integration="${id}">
                   <div class="integration-head">
                     <div class="integration-logo ${cls}">${glyph}</div>
                     <div>
                       <div class="integration-name">${name}</div>
-                      <div class="integration-status ${status}">${status === "connected" ? "Connected" : "Not connected"}</div>
+                      <div class="integration-status disconnected" data-int-status="${id}">Not connected</div>
                     </div>
                   </div>
                   <div class="integration-desc">${desc}</div>
                   <div class="integration-foot">
-                    <span class="accounts">${foot}</span>
-                    <button class="btn btn-secondary btn-sm" type="button">${status === "connected" ? "Manage" : "Connect"}</button>
+                    <span class="accounts" data-int-foot="${id}"></span>
+                    <button class="btn btn-secondary btn-sm" type="button"
+                      onclick="handleIntegrationConnect('${id}')"
+                      data-int-btn="${id}">Connect</button>
                   </div>
                 </div>
               `).join("")}
@@ -737,15 +739,26 @@
               <svg width="16" height="16" style="color: var(--muted); margin-top: 2px;"><use href="#i-mail" /></svg>
               <span style="min-width: 0;"><span style="color: var(--muted); font-size: 12.5px;">Sent to</span> <strong data-confirm-email style="font-weight: 600;">your@email.com</strong></span>
             </div>
-            <div style="display: flex; gap: 8px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
               <button class="btn btn-secondary" type="button" onclick="go('manage')">
                 <svg width="14" height="14"><use href="#i-settings" /></svg>
                 Manage booking
               </button>
-              <button class="btn btn-primary" type="button">
-                <svg width="14" height="14"><use href="#i-cal" /></svg>
-                Add to calendar
-              </button>
+              <div class="cal-add-wrap" style="position:relative;">
+                <button class="btn btn-primary" type="button" id="cal-add-btn" onclick="toggleCalDropdown()">
+                  <svg width="14" height="14"><use href="#i-cal" /></svg>
+                  Add to calendar
+                  <svg width="12" height="12"><use href="#i-chev-down" /></svg>
+                </button>
+                <div class="cal-dropdown" id="cal-dropdown" hidden>
+                  <a id="add-google-cal" href="#" target="_blank" rel="noopener" class="cal-option">
+                    <span class="cal-option-logo google">G</span>Google Calendar
+                  </a>
+                  <a id="add-outlook-cal" href="#" target="_blank" rel="noopener" class="cal-option">
+                    <span class="cal-option-logo outlook">O</span>Outlook Calendar
+                  </a>
+                </div>
+              </div>
             </div>
             <div style="font-size: 12px; color: var(--muted); margin-top: 6px;">We'll send a reminder 24 hours and 1 hour before the meeting.</div>
           </section>
@@ -1530,4 +1543,361 @@
 
   // Boot after everything injected
   if (typeof boot === "function") boot();
+
+  // ─────────────────────────────────────────────────────────────
+  // CALENDAR & VIDEO INTEGRATIONS
+  // ─────────────────────────────────────────────────────────────
+  // To enable real OAuth, add your credentials below then redeploy.
+  // Get Google Client ID:  console.cloud.google.com → APIs & Services → Credentials
+  // Get Microsoft Client ID: portal.azure.com → App registrations
+  const GOOGLE_CLIENT_ID    = "";   // e.g. "1234.apps.googleusercontent.com"
+  const MICROSOFT_CLIENT_ID = "";   // e.g. "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  const MICROSOFT_TENANT    = "common";
+
+  // Token store (session-scoped for security — cleared on page close)
+  const tokens = {
+    google: sessionStorage.getItem("bookly_google_token") || "",
+    microsoft: sessionStorage.getItem("bookly_ms_token")  || "",
+  };
+
+  // Which integrations are connected
+  const connected = {
+    "google-cal":  !!tokens.google,
+    "google-meet": !!tokens.google,  // Meet comes from Google Calendar API
+    "outlook-cal": !!tokens.microsoft,
+    "apple-cal":   false,
+    "zoom":        false,
+    "ms-teams":    false,
+  };
+
+  function refreshIntegrationUI() {
+    Object.entries(connected).forEach(([id, isConnected]) => {
+      const statusEl = document.querySelector(`[data-int-status="${id}"]`);
+      const btnEl    = document.querySelector(`[data-int-btn="${id}"]`);
+      const footEl   = document.querySelector(`[data-int-foot="${id}"]`);
+      if (statusEl) {
+        statusEl.textContent = isConnected ? "Connected" : "Not connected";
+        statusEl.className   = `integration-status ${isConnected ? "connected" : "disconnected"}`;
+      }
+      if (btnEl) btnEl.textContent = isConnected ? "Disconnect" : "Connect";
+      if (footEl) {
+        footEl.textContent = isConnected
+          ? (id === "google-cal" ? "Calendar + Meet enabled" : id === "outlook-cal" ? "Calendar connected" : "Connected")
+          : "";
+      }
+    });
+  }
+  refreshIntegrationUI();
+
+  // ── Google OAuth ──────────────────────────────────────────────
+  function connectGoogle() {
+    if (!window.google?.accounts?.oauth2) {
+      showIntegrationToast("Google Sign-In library not loaded yet — try again in a moment.");
+      return;
+    }
+    if (!GOOGLE_CLIENT_ID) { showSetupModal("google"); return; }
+    google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: "https://www.googleapis.com/auth/calendar.events",
+      callback(resp) {
+        if (resp.access_token) {
+          tokens.google = resp.access_token;
+          sessionStorage.setItem("bookly_google_token", resp.access_token);
+          connected["google-cal"]  = true;
+          connected["google-meet"] = true;
+          refreshIntegrationUI();
+          showIntegrationToast("Google Calendar & Meet connected!");
+        }
+      }
+    }).requestAccessToken();
+  }
+
+  function disconnectGoogle() {
+    tokens.google = "";
+    sessionStorage.removeItem("bookly_google_token");
+    connected["google-cal"]  = false;
+    connected["google-meet"] = false;
+    refreshIntegrationUI();
+    showIntegrationToast("Google Calendar disconnected.");
+  }
+
+  // ── Microsoft OAuth (MSAL) ────────────────────────────────────
+  let msalApp = null;
+  function getMsal() {
+    if (msalApp) return msalApp;
+    if (!window.msal || !MICROSOFT_CLIENT_ID) return null;
+    msalApp = new msal.PublicClientApplication({
+      auth: {
+        clientId: MICROSOFT_CLIENT_ID,
+        authority: `https://login.microsoftonline.com/${MICROSOFT_TENANT}`,
+        redirectUri: location.origin + location.pathname,
+      },
+      cache: { cacheLocation: "sessionStorage" },
+    });
+    return msalApp;
+  }
+
+  async function connectOutlook() {
+    if (!MICROSOFT_CLIENT_ID) { showSetupModal("outlook"); return; }
+    const app = getMsal();
+    if (!app) { showIntegrationToast("MSAL library not loaded yet — try again in a moment."); return; }
+    try {
+      const scopes = ["Calendars.ReadWrite"];
+      const result = await app.loginPopup({ scopes });
+      const tokenResult = await app.acquireTokenSilent({ scopes, account: result.account });
+      tokens.microsoft = tokenResult.accessToken;
+      sessionStorage.setItem("bookly_ms_token", tokens.microsoft);
+      connected["outlook-cal"] = true;
+      refreshIntegrationUI();
+      showIntegrationToast("Outlook Calendar connected!");
+    } catch (e) {
+      showIntegrationToast("Outlook sign-in was cancelled or failed.");
+    }
+  }
+
+  function disconnectOutlook() {
+    tokens.microsoft = "";
+    sessionStorage.removeItem("bookly_ms_token");
+    connected["outlook-cal"] = false;
+    refreshIntegrationUI();
+    showIntegrationToast("Outlook Calendar disconnected.");
+  }
+
+  // ── Handle connect/disconnect button clicks ───────────────────
+  window.handleIntegrationConnect = function(id) {
+    if (id === "google-cal" || id === "google-meet") {
+      connected[id] ? disconnectGoogle() : connectGoogle();
+    } else if (id === "outlook-cal") {
+      connected[id] ? disconnectOutlook() : connectOutlook();
+    } else if (id === "apple-cal") {
+      showSetupModal("apple");
+    } else if (id === "zoom") {
+      showSetupModal("zoom");
+    } else if (id === "ms-teams") {
+      showSetupModal("teams");
+    }
+  };
+
+  // ── Date helpers ──────────────────────────────────────────────
+  const MONTH_IDX = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  function bookingToDate(dateStr, timeStr) {
+    // dateStr: "Mon, 26 May 2026"
+    const clean = dateStr.replace(/^[A-Za-z]+,\s*/, "").trim();
+    const parts  = clean.split(/\s+/);
+    const day    = parseInt(parts[0]);
+    const month  = MONTH_IDX[parts[1]] ?? 0;
+    const year   = parseInt(parts[2]) || new Date().getFullYear();
+    const [h, m] = timeStr.split(":").map(Number);
+    return new Date(year, month, day, h, m, 0);
+  }
+
+  function toGCalFmt(d) {
+    return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  }
+
+  // ── Calendar URL builders (no auth required) ──────────────────
+  function googleCalUrl(booking) {
+    const start = toGCalFmt(bookingToDate(booking.date, booking.time));
+    const end   = toGCalFmt(bookingToDate(booking.date, booking.endTime));
+    const p = new URLSearchParams({
+      action: "TEMPLATE",
+      text: booking.eventName,
+      dates: `${start}/${end}`,
+      details: "Booked via Bookly",
+      ...(booking.location !== "In-person" ? {} : { location: booking.location }),
+    });
+    return `https://calendar.google.com/calendar/render?${p}`;
+  }
+
+  function outlookCalUrl(booking) {
+    const start = bookingToDate(booking.date, booking.time).toISOString();
+    const end   = bookingToDate(booking.date, booking.endTime).toISOString();
+    const p = new URLSearchParams({
+      path: "/calendar/action/compose",
+      rru: "addevent",
+      subject: booking.eventName,
+      startdt: start,
+      enddt: end,
+      body: "Booked via Bookly",
+      ...(booking.location !== "In-person" ? {} : { location: booking.location }),
+    });
+    return `https://outlook.live.com/calendar/0/deeplink/compose?${p}`;
+  }
+
+  // ── Create Google Calendar event + Meet link via API ──────────
+  async function createGoogleEvent(booking, guestEmail) {
+    if (!tokens.google) return null;
+    const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const body = {
+      summary: booking.eventName,
+      description: `Booked via Bookly by ${guestEmail}`,
+      start: { dateTime: bookingToDate(booking.date, booking.time).toISOString(), timeZone: tzName },
+      end:   { dateTime: bookingToDate(booking.date, booking.endTime).toISOString(), timeZone: tzName },
+      attendees: [{ email: guestEmail }],
+      conferenceData: {
+        createRequest: {
+          requestId: `bookly-${Date.now()}`,
+          conferenceSolutionKey: { type: "hangoutsMeet" },
+        },
+      },
+    };
+    try {
+      const res = await fetch(
+        "https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&sendUpdates=all",
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${tokens.google}`, "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      );
+      if (!res.ok) throw new Error(res.status);
+      return await res.json();
+    } catch (e) {
+      console.warn("Google Calendar API error:", e);
+      return null;
+    }
+  }
+
+  // ── Wire "Add to Calendar" dropdown ──────────────────────────
+  window.toggleCalDropdown = function() {
+    const menu = document.getElementById("cal-dropdown");
+    if (menu) menu.hidden = !menu.hidden;
+  };
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".cal-add-wrap")) {
+      const menu = document.getElementById("cal-dropdown");
+      if (menu) menu.hidden = true;
+    }
+  });
+
+  function updateCalLinks() {
+    const gLink = document.getElementById("add-google-cal");
+    const oLink = document.getElementById("add-outlook-cal");
+    if (gLink) gLink.href = googleCalUrl(bookingState);
+    if (oLink) oLink.href = outlookCalUrl(bookingState);
+  }
+
+  // ── Hook into submitBooking to create real event ──────────────
+  const _origSubmit = window.submitBooking;
+  window.submitBooking = async function(form) {
+    _origSubmit(form);
+    // After the 900ms delay the confirmation screen shows;
+    // fire Calendar API call in parallel (updates Meet link if successful)
+    const emailInput = form.querySelector('input[type="email"]');
+    const guestEmail = emailInput?.value || "";
+    setTimeout(async () => {
+      updateCalLinks();
+      if (tokens.google && guestEmail) {
+        const event = await createGoogleEvent(bookingState, guestEmail);
+        const meetLink = event?.conferenceData?.entryPoints?.find(e => e.entryPointType === "video")?.uri;
+        if (meetLink) {
+          document.querySelectorAll("[data-confirm-location]").forEach(el => {
+            el.textContent = "Google Meet";
+            el.href = meetLink;
+          });
+          document.querySelectorAll("[data-email-location]").forEach(el => {
+            el.textContent = `Google Meet — ${meetLink}`;
+          });
+          showIntegrationToast("Google Calendar event created with Meet link!");
+        }
+      }
+    }, 950);
+  };
+
+  // ── Toast notification ────────────────────────────────────────
+  function showIntegrationToast(msg) {
+    let toast = document.getElementById("int-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "int-toast";
+      toast.className = "int-toast";
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add("visible");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove("visible"), 3500);
+  }
+
+  // ── Setup modal (when credentials not configured) ─────────────
+  const SETUP_INSTRUCTIONS = {
+    google: {
+      title: "Connect Google Calendar",
+      steps: [
+        "Go to console.cloud.google.com",
+        "Create a project → enable the Google Calendar API",
+        'Create OAuth credentials (type: "Web application")',
+        "Add your Bookly domain to Authorised JavaScript origins",
+        "Copy the Client ID into GOOGLE_CLIENT_ID in screens-more.js",
+      ],
+    },
+    outlook: {
+      title: "Connect Outlook Calendar",
+      steps: [
+        "Go to portal.azure.com → App registrations → New registration",
+        "Set Supported account types to 'Any Microsoft account'",
+        "Add a SPA redirect URI matching your Bookly domain",
+        "Under API permissions add Calendars.ReadWrite",
+        "Copy the Application (client) ID into MICROSOFT_CLIENT_ID in screens-more.js",
+      ],
+    },
+    apple: {
+      title: "Connect Apple Calendar",
+      steps: [
+        "Apple Calendar uses CalDAV — requires a server-side component",
+        "Set up a CalDAV server or use a service like iCloud",
+        "This integration requires a Bookly backend (Next.js + Supabase)",
+        "Contact support for help setting up Apple Calendar sync",
+      ],
+    },
+    zoom: {
+      title: "Connect Zoom",
+      steps: [
+        "Go to marketplace.zoom.us → Develop → Build App",
+        "Create an OAuth app and get your Client ID & Secret",
+        "This integration requires a Bookly backend for the OAuth callback",
+        "Contact support for help setting up Zoom integration",
+      ],
+    },
+    teams: {
+      title: "Connect Microsoft Teams",
+      steps: [
+        "Teams meetings are created via the Microsoft Graph API",
+        "Follow the same steps as Outlook Calendar setup",
+        "Add OnlineMeetings.ReadWrite to your Azure app permissions",
+        "Contact support for help enabling Teams meeting creation",
+      ],
+    },
+  };
+
+  function showSetupModal(type) {
+    const info = SETUP_INSTRUCTIONS[type];
+    if (!info) return;
+    let overlay = document.getElementById("setup-modal-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "setup-modal-overlay";
+      overlay.className = "setup-modal-overlay";
+      overlay.innerHTML = `
+        <div class="setup-modal">
+          <div class="setup-modal-head">
+            <h3 id="setup-modal-title"></h3>
+            <button class="btn btn-icon" onclick="document.getElementById('setup-modal-overlay').hidden=true">
+              <svg width="16" height="16"><use href="#i-x" /></svg>
+            </button>
+          </div>
+          <p class="setup-modal-sub">Follow these steps to enable this integration:</p>
+          <ol id="setup-modal-steps" class="setup-steps"></ol>
+          <div class="setup-modal-foot">
+            <button class="btn btn-secondary" onclick="document.getElementById('setup-modal-overlay').hidden=true">Close</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.hidden = true; });
+    }
+    document.getElementById("setup-modal-title").textContent = info.title;
+    document.getElementById("setup-modal-steps").innerHTML = info.steps.map(s => `<li>${s}</li>`).join("");
+    overlay.hidden = false;
+  }
+
 })();

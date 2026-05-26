@@ -1455,3 +1455,120 @@ h1, h2, h3, h4, p { margin: 0; }
   text-decoration: none;
 }
 .auth-legal a:hover { color: var(--accent); }
+
+/* ─────────────────────────────────────────────────────────────
+   Integration status badges
+   ───────────────────────────────────────────────────────────── */
+.integration-status.connected   { color: var(--success); }
+.integration-status.disconnected { color: var(--muted); }
+
+/* ─────────────────────────────────────────────────────────────
+   "Add to Calendar" dropdown
+   ───────────────────────────────────────────────────────────── */
+.cal-add-wrap { position: relative; }
+.cal-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  overflow: hidden;
+}
+.cal-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  transition: background 100ms;
+}
+.cal-option:hover { background: var(--surface-2); }
+.cal-option-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.cal-option-logo.google  { background: #e8f0fe; color: #1a73e8; }
+.cal-option-logo.outlook { background: #e3f2fd; color: #0078d4; }
+
+/* ─────────────────────────────────────────────────────────────
+   Toast notification
+   ───────────────────────────────────────────────────────────── */
+.int-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--ink);
+  color: var(--ink-text);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 100px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease;
+  white-space: nowrap;
+  z-index: 9999;
+}
+.int-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Setup modal
+   ───────────────────────────────────────────────────────────── */
+.setup-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: grid;
+  place-items: center;
+  z-index: 9000;
+  padding: 20px;
+}
+.setup-modal {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  width: min(520px, 100%);
+  overflow: hidden;
+}
+.setup-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.setup-modal-head h3 { font-size: 16px; font-weight: 700; margin: 0; }
+.setup-modal-sub { font-size: 13px; color: var(--muted); padding: 14px 24px 4px; margin: 0; }
+.setup-steps {
+  padding: 8px 24px 4px 44px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.setup-steps li { font-size: 13.5px; color: var(--text); line-height: 1.5; }
+.setup-modal-foot {
+  padding: 16px 24px 20px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+}
