@@ -641,7 +641,7 @@
         <article class="public-card">
           <aside class="public-left">
             <div class="pub-logo">
-              <span class="brand-mark">B</span>
+              <svg class="brand-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bookly"><rect width="32" height="32" rx="7.5" fill="#d11124"/><rect x="10.5" y="6" width="3" height="7.5" rx="1.5" fill="white"/><rect x="18.5" y="6" width="3" height="7.5" rx="1.5" fill="white"/><rect x="5.5" y="9.5" width="21" height="17" rx="3" fill="white"/><path d="M10.5 19.5L14 23L21.5 14" stroke="#d11124" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span>Bookly</span>
             </div>
             <div class="pub-profile">
@@ -712,7 +712,7 @@
         <article class="public-card">
           <aside class="public-left">
             <div class="pub-logo">
-              <span class="brand-mark">B</span>
+              <svg class="brand-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bookly"><rect width="32" height="32" rx="7.5" fill="#d11124"/><rect x="10.5" y="6" width="3" height="7.5" rx="1.5" fill="white"/><rect x="18.5" y="6" width="3" height="7.5" rx="1.5" fill="white"/><rect x="5.5" y="9.5" width="21" height="17" rx="3" fill="white"/><path d="M10.5 19.5L14 23L21.5 14" stroke="#d11124" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span>Bookly</span>
             </div>
             <div class="pub-profile">

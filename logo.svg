@@ -1,0 +1,13 @@
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" rx="46" fill="#d11124"/>
+  <!-- Calendar ring pegs -->
+  <rect x="64" y="36" width="20" height="50" rx="10" fill="white"/>
+  <rect x="116" y="36" width="20" height="50" rx="10" fill="white"/>
+  <!-- Calendar page body -->
+  <rect x="30" y="60" width="140" height="110" rx="18" fill="white"/>
+  <!-- Checkmark -->
+  <path d="M65 125 L88 148 L138 90"
+        stroke="#d11124" stroke-width="16"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
