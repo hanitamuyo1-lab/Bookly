@@ -119,7 +119,7 @@
 
             <div class="field">
               <label>Full name</label>
-              <input type="text" placeholder="Annie Mumba" />
+              <input type="text" placeholder="Full name" />
             </div>
             <div class="field">
               <label>Work email</label>
@@ -165,9 +165,9 @@
             <h2>Welcome back.</h2>
             <p>Your event types, availability, and bookings are right where you left them.</p>
             <div class="auth-feature-list">
-              <div class="row"><svg><use href="#i-zap" /></svg>3 bookings today · next one in 42 minutes</div>
-              <div class="row"><svg><use href="#i-cal" /></svg>Google Calendar synced 2 minutes ago</div>
-              <div class="row"><svg><use href="#i-bell" /></svg>Reminder for Maya sent at 09:30</div>
+              <div class="row"><svg><use href="#i-zap" /></svg>Bookings sync to your calendar automatically</div>
+              <div class="row"><svg><use href="#i-cal" /></svg>Connect Google, Outlook, or Apple Calendar</div>
+              <div class="row"><svg><use href="#i-bell" /></svg>Automated reminders reduce no-shows</div>
             </div>
           </div>
         </aside>
@@ -194,7 +194,7 @@
 
             <div class="field">
               <label>Email</label>
-              <input type="email" value="annie@bookly.io" />
+              <input type="email" placeholder="you@example.com" />
             </div>
             <div class="field">
               <label>
@@ -203,7 +203,7 @@
                   <a href="#" style="font-weight: 500; color: var(--muted); font-size: 12px;">Forgot?</a>
                 </span>
               </label>
-              <input type="password" value="••••••••••" />
+              <input type="password" placeholder="Your password" />
             </div>
             <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); cursor: pointer;">
               <input type="checkbox" checked style="width: auto; height: auto;" /> Remember me on this device
@@ -275,8 +275,8 @@
           <div class="user-card">
             <span class="user-thumb"></span>
             <div class="info">
-              <strong>Annie</strong>
-              <small>annie@bookly.io</small>
+              <strong>Your Name</strong>
+              <small>your@email.com</small>
             </div>
             <svg width="14" height="14" style="color: var(--ink-faint)"><use href="#i-chev-down" /></svg>
           </div>
@@ -293,8 +293,8 @@
         <section class="workspace">
           <header class="topbar">
             <div>
-              <h2>Good morning, Annie</h2>
-              <p class="subtitle">3 bookings today · Your next call starts in 42 minutes.</p>
+              <h2>Good morning</h2>
+              <p class="subtitle">Here's an overview of your scheduling activity.</p>
             </div>
             <div class="topbar-right">
               <button class="btn btn-secondary" type="button" onclick="go('public-pick')">
@@ -311,23 +311,23 @@
           <section class="summary-grid">
             <article class="metric">
               <div class="label">Bookings this week</div>
-              <div class="value">42</div>
-              <div class="delta up">↑ 18% vs last week</div>
+              <div class="value">—</div>
+              <div class="delta">Connect your calendar to start</div>
             </article>
             <article class="metric">
               <div class="label">Awaiting confirmation</div>
-              <div class="value">1</div>
-              <div class="delta">Maya Johnson — Demo call</div>
+              <div class="value">—</div>
+              <div class="delta">No pending bookings</div>
             </article>
             <article class="metric">
               <div class="label">Conflicts blocked</div>
-              <div class="value">7</div>
-              <div class="delta">Across 3 connected calendars</div>
+              <div class="value">—</div>
+              <div class="delta">No calendars connected yet</div>
             </article>
             <article class="metric">
               <div class="label">Reminders sent</div>
-              <div class="value">68</div>
-              <div class="delta">100% delivery rate</div>
+              <div class="value">—</div>
+              <div class="delta">Automated once bookings start</div>
             </article>
           </section>
 
@@ -354,12 +354,12 @@
                 <span class="accent-bar"></span>
                 <div class="event-main">
                   <h4>Training</h4>
-                  <span class="slug">bookly.io/annie/training</span>
+                  <span class="slug">bookly.io/you/training</span>
                   <div class="event-meta-pills">
                     <span class="pill"><svg><use href="#i-clock" /></svg>60 min</span>
                     <span class="pill accent"><svg><use href="#i-zap" /></svg>Group session</span>
                     <span class="pill"><svg><use href="#i-video" /></svg>Google Meet</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>73 booked</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
                   </div>
                 </div>
                 <div class="event-actions">
@@ -374,12 +374,12 @@
                 <span class="accent-bar"></span>
                 <div class="event-main">
                   <h4>School</h4>
-                  <span class="slug">bookly.io/annie/school</span>
+                  <span class="slug">bookly.io/you/school</span>
                   <div class="event-meta-pills">
                     <span class="pill"><svg><use href="#i-clock" /></svg>20 min</span>
                     <span class="pill accent"><svg><use href="#i-zap" /></svg>Parent/teacher</span>
                     <span class="pill"><svg><use href="#i-video" /></svg>Zoom</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>26 booked</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
                   </div>
                 </div>
                 <div class="event-actions">
@@ -394,12 +394,12 @@
                 <span class="accent-bar"></span>
                 <div class="event-main">
                   <h4>Work</h4>
-                  <span class="slug">bookly.io/annie/work</span>
+                  <span class="slug">bookly.io/you/work</span>
                   <div class="event-meta-pills">
                     <span class="pill"><svg><use href="#i-clock" /></svg>30 min</span>
                     <span class="pill free"><svg><use href="#i-money" /></svg>Free</span>
                     <span class="pill"><svg><use href="#i-video" /></svg>Google Meet</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>58 booked</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
                   </div>
                 </div>
                 <div class="event-actions">
@@ -414,12 +414,12 @@
                 <span class="accent-bar"></span>
                 <div class="event-main">
                   <h4>Hospital</h4>
-                  <span class="slug">bookly.io/annie/hospital</span>
+                  <span class="slug">bookly.io/you/hospital</span>
                   <div class="event-meta-pills">
                     <span class="pill"><svg><use href="#i-clock" /></svg>25 min</span>
                     <span class="pill free"><svg><use href="#i-money" /></svg>Free</span>
                     <span class="pill"><svg><use href="#i-video" /></svg>Zoom</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>41 booked</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
                   </div>
                 </div>
                 <div class="event-actions">
@@ -434,11 +434,11 @@
                 <span class="accent-bar"></span>
                 <div class="event-main">
                   <h4>Business (Salon Bar)</h4>
-                  <span class="slug">bookly.io/annie/salon-bar</span>
+                  <span class="slug">bookly.io/you/salon-bar</span>
                   <div class="event-meta-pills">
                     <span class="pill"><svg><use href="#i-clock" /></svg>45 min</span>
                     <span class="pill accent"><svg><use href="#i-pin" /></svg>In-person</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>142 booked</span>
+                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
                   </div>
                 </div>
                 <div class="event-actions">

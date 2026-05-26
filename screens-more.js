@@ -17,7 +17,7 @@
                 All event types
               </a>
               <h2>Product demo call</h2>
-              <p class="subtitle">bookly.io/annie/demo · 45 min · Zoom</p>
+              <p class="subtitle">bookly.io/you/demo · 45 min · Zoom</p>
             </div>
             <div class="topbar-right">
               <button class="btn btn-secondary" type="button" onclick="go('public-pick')">
@@ -87,7 +87,7 @@
                   <div class="field">
                     <label>Public URL</label>
                     <div style="display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden;">
-                      <span style="padding: 0 12px; display: grid; place-items: center; background: var(--surface-2); border-right: 1px solid var(--line); color: var(--muted); font-size: 13px; font-family: var(--font-mono);">bookly.io/annie/</span>
+                      <span style="padding: 0 12px; display: grid; place-items: center; background: var(--surface-2); border-right: 1px solid var(--line); color: var(--muted); font-size: 13px; font-family: var(--font-mono);">bookly.io/you/</span>
                       <input style="border: 0; border-radius: 0; flex: 1;" value="demo" />
                       <button class="btn btn-ghost" type="button" style="height: 38px; border-radius: 0; border-left: 1px solid var(--line); padding: 0 12px;">
                         <svg width="14" height="14"><use href="#i-copy" /></svg>
@@ -472,8 +472,8 @@
                 <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
                   <div class="integration-logo google" style="width: 32px; height: 32px; font-size: 13px;">G</div>
                   <div>
-                    <div style="font-size: 13.5px; font-weight: 600;">annie@bookly.io</div>
-                    <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Google Calendar · checks for conflicts · synced 2 minutes ago</div>
+                    <div style="font-size: 13.5px; font-weight: 600;">your@email.com</div>
+                    <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Google Calendar · checks for conflicts</div>
                   </div>
                   <div style="display: flex; gap: 6px; align-items: center;">
                     <span class="pill accent" style="background: var(--accent-soft); color: var(--accent-text);">Primary · creates events</span>
@@ -483,8 +483,8 @@
                 <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
                   <div class="integration-logo google" style="width: 32px; height: 32px; font-size: 13px;">G</div>
                   <div>
-                    <div style="font-size: 13.5px; font-weight: 600;">annie.personal@gmail.com</div>
-                    <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Google Calendar · checks for conflicts · synced 8 minutes ago</div>
+                    <div style="font-size: 13.5px; font-weight: 600;">personal@gmail.com</div>
+                    <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Google Calendar · checks for conflicts</div>
                   </div>
                   <div style="display: flex; gap: 6px; align-items: center;">
                     <span class="toggle on" data-toggle></span>
@@ -494,8 +494,8 @@
                 <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
                   <div class="integration-logo outlook" style="width: 32px; height: 32px; font-size: 13px;">O</div>
                   <div>
-                    <div style="font-size: 13.5px; font-weight: 600;">annie@acme.com</div>
-                    <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Outlook · checks for conflicts · synced 1 minute ago</div>
+                    <div style="font-size: 13.5px; font-weight: 600;">work@company.com</div>
+                    <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Outlook · checks for conflicts</div>
                   </div>
                   <div style="display: flex; gap: 6px; align-items: center;">
                     <span class="toggle on" data-toggle></span>
@@ -520,8 +520,8 @@
                 ["Google Calendar", "google", "G", "Conflict check + auto-create events on your calendar.", "connected", "2 accounts connected"],
                 ["Outlook Calendar", "outlook", "O", "Microsoft 365 and Outlook.com calendars.", "connected", "1 account connected"],
                 ["Apple Calendar", "apple", "🍎", "Sync via CalDAV for iCloud and macOS calendars.", "disconnected", "Not connected"],
-                ["Google Meet", "meet", "M", "Auto-generate a Meet link for every booking.", "connected", "Default for Intro call"],
-                ["Zoom", "zoom", "Z", "Auto-create unique Zoom meetings for each booking.", "connected", "Default for Demo call"],
+                ["Google Meet", "meet", "M", "Auto-generate a Meet link for every booking.", "connected", "Connected"],
+                ["Zoom", "zoom", "Z", "Auto-create unique Zoom meetings for each booking.", "connected", "Connected"],
                 ["Microsoft Teams", "teams", "T", "Create Teams meetings on confirmation.", "disconnected", "Not connected"],
               ].map(([name, cls, glyph, desc, status, foot]) => `
                 <div class="integration-card">
@@ -557,15 +557,15 @@
               <span>Bookly</span>
             </div>
             <div class="pub-profile">
-              <div class="role">Annie · Founder & strategy advisor</div>
-              <h1>Book a Strategic Session</h1>
+              <div class="role">Your Name · your role</div>
+              <h1>Book a session</h1>
             </div>
             <div class="session-card">
               <div class="session-head">
-                <span class="session-name">Strategic Sessions</span>
+                <span class="session-name">Your Event</span>
                 <span class="free-badge">Free</span>
               </div>
-              <p class="session-desc">A focused 1-on-1 to map your next 90 days — pricing, positioning, and the single biggest unlock. No fee, no pitch.</p>
+              <p class="session-desc">Select a date and time that works for you.</p>
               <div class="session-meta">
                 <div class="row"><svg><use href="#i-clock" /></svg><strong>45 minutes</strong></div>
                 <div class="row"><svg><use href="#i-video" /></svg>Google Meet · link in invite</div>
@@ -591,49 +591,23 @@
             <div class="pick-grid">
               <div class="calendar-block">
                 <div class="month-head">
-                  <strong>May 2026</strong>
+                  <strong id="cal-month-label">Loading…</strong>
                   <div style="display: flex; gap: 4px;">
-                    <button class="btn btn-icon" type="button"><svg width="16" height="16"><use href="#i-chev-left" /></svg></button>
-                    <button class="btn btn-icon" type="button"><svg width="16" height="16"><use href="#i-chev-right" /></svg></button>
+                    <button class="btn btn-icon" type="button" id="cal-prev"><svg width="16" height="16"><use href="#i-chev-left" /></svg></button>
+                    <button class="btn btn-icon" type="button" id="cal-next"><svg width="16" height="16"><use href="#i-chev-right" /></svg></button>
                   </div>
                 </div>
                 <div class="weekdays">
                   <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
                 </div>
-                <div class="calendar" id="public-cal">
-                  ${[28,29,30].map(d=>`<button class="cal-cell muted" disabled>${d}</button>`).join("")}
-                  ${[1,2,3,4].map(d=>`<button class="cal-cell muted" disabled>${d}</button>`).join("")}
-                  ${[5,6,7,8].map(d=>`<button class="cal-cell available" data-day="${d}">${d}</button>`).join("")}
-                  ${[9,10,11].map(d=>`<button class="cal-cell blocked" disabled>${d}</button>`).join("")}
-                  <button class="cal-cell available selected" data-day="12">12</button>
-                  <button class="cal-cell available" data-day="13">13</button>
-                  <button class="cal-cell today available" data-day="14">14</button>
-                  <button class="cal-cell available" data-day="15">15</button>
-                  ${[16,17,18].map(d=>`<button class="cal-cell blocked" disabled>${d}</button>`).join("")}
-                  ${[19,20,21,22,23].map(d=>`<button class="cal-cell available" data-day="${d}">${d}</button>`).join("")}
-                  ${[24,25].map(d=>`<button class="cal-cell blocked" disabled>${d}</button>`).join("")}
-                  ${[26,27,28,29,30].map(d=>`<button class="cal-cell available" data-day="${d}">${d}</button>`).join("")}
-                  <button class="cal-cell blocked" disabled>31</button>
-                  <button class="cal-cell muted" disabled>1</button>
-                </div>
+                <div class="calendar" id="public-cal"></div>
               </div>
 
               <div class="slot-col">
-                <div class="slot-col-head" id="public-slot-day">Tue, 12 May</div>
+                <div class="slot-col-head" id="public-slot-day">Select a date</div>
                 <div class="slot-col-sub">Times shown in your timezone</div>
                 <div class="slot-list" id="public-slot-list">
-                  <button class="slot" type="button">09:00</button>
-                  <button class="slot" type="button">09:30</button>
-                  <div class="slot-pair">
-                    <button class="slot selected" type="button">10:30</button>
-                    <button class="slot next" type="button" onclick="goBookingNext()">Next</button>
-                  </div>
-                  <button class="slot" type="button">11:00</button>
-                  <button class="slot" type="button">13:00</button>
-                  <button class="slot" type="button">13:30</button>
-                  <button class="slot" type="button">14:00</button>
-                  <button class="slot" type="button">15:30</button>
-                  <button class="slot" type="button">16:00</button>
+                  <p style="font-size:13px;color:var(--muted);padding:8px 0;">Pick a date on the left to see available times.</p>
                 </div>
               </div>
             </div>
@@ -654,15 +628,15 @@
               <span>Bookly</span>
             </div>
             <div class="pub-profile">
-              <div class="role">Annie · Founder & strategy advisor</div>
-              <h1>Book a Strategic Session</h1>
+              <div class="role">Your Name · your role</div>
+              <h1>Book a session</h1>
             </div>
             <div class="session-card">
               <div class="session-head">
-                <span class="session-name">Strategic Sessions</span>
+                <span class="session-name">Your Event</span>
                 <span class="free-badge">Free</span>
               </div>
-              <p class="session-desc">A focused 1-on-1 to map your next 90 days — pricing, positioning, and the single biggest unlock.</p>
+              <p class="session-desc">Enter your details below to confirm your booking.</p>
               <div class="session-meta">
                 <div class="row"><svg><use href="#i-clock" /></svg><strong>45 minutes</strong></div>
                 <div class="row"><svg><use href="#i-video" /></svg>Google Meet</div>
@@ -695,7 +669,7 @@
 
               <div class="field">
                 <label>Company name</label>
-                <input type="text" value="Norther Studio" />
+                <input type="text" placeholder="Your company (optional)" />
               </div>
 
               <div class="field">
@@ -709,9 +683,9 @@
               </div>
 
               <div class="field">
-                <label>What would you like to cover in the demo?</label>
-                <textarea rows="3">Launch planning, pricing, and choosing the right package.</textarea>
-                <span class="hint">Helps Annie prepare for your session.</span>
+                <label>Anything you'd like the host to know?</label>
+                <textarea rows="3" placeholder="Optional message…"></textarea>
+                <span class="hint">This helps the host prepare for your session.</span>
               </div>
 
               <div class="field">
@@ -752,16 +726,16 @@
             </div>
             <div style="display: grid; grid-template-columns: auto 1fr; column-gap: 12px; row-gap: 10px; padding: 18px 20px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface-2); width: 100%; max-width: 480px; text-align: left; font-size: 13.5px;">
               <svg width="16" height="16" style="color: var(--muted); margin-top: 2px;"><use href="#i-cal" /></svg>
-              <strong data-confirm-date style="font-weight: 600;">Tuesday, 12 May 2026</strong>
+              <strong data-confirm-date style="font-weight: 600;">—</strong>
 
               <svg width="16" height="16" style="color: var(--muted); margin-top: 2px;"><use href="#i-clock" /></svg>
-              <span><strong data-confirm-time style="font-weight: 600;">10:30 – 11:15</strong> <span style="color: var(--muted); font-size: 12.5px;" id="tz-name-done">Your timezone</span></span>
+              <span><strong data-confirm-time style="font-weight: 600;">—</strong> <span style="color: var(--muted); font-size: 12.5px;" id="tz-name-done">Your timezone</span></span>
 
               <svg width="16" height="16" style="color: var(--muted); margin-top: 2px;"><use href="#i-video" /></svg>
               <span><a data-confirm-location href="#" style="color: var(--accent); font-weight: 600;">Google Meet</a> <span style="color: var(--muted); font-size: 12.5px;">· link in your email</span></span>
 
               <svg width="16" height="16" style="color: var(--muted); margin-top: 2px;"><use href="#i-mail" /></svg>
-              <span style="min-width: 0;"><span style="color: var(--muted); font-size: 12.5px;">Sent to</span> <strong data-confirm-email style="font-weight: 600;">maya@example.com</strong></span>
+              <span style="min-width: 0;"><span style="color: var(--muted); font-size: 12.5px;">Sent to</span> <strong data-confirm-email style="font-weight: 600;">your@email.com</strong></span>
             </div>
             <div style="display: flex; gap: 8px;">
               <button class="btn btn-secondary" type="button" onclick="go('manage')">
@@ -786,26 +760,26 @@
           <div class="email-preview">
             <div class="email-head">
               <div class="email-meta">
-                <span>From: Annie via Bookly &lt;hi@bookly.io&gt;</span>
-                <span data-email-to>To: maya@example.com</span>
+                <span>From: Your Name via Bookly &lt;hi@bookly.io&gt;</span>
+                <span data-email-to>To: your@email.com</span>
               </div>
-              <div class="email-subject" data-email-subject>Your Strategic Session is confirmed for Tue, 12 May</div>
+              <div class="email-subject" data-email-subject>Your booking is confirmed</div>
             </div>
             <div class="email-body">
-              <h3 data-email-greeting>Hi Maya — see you Tuesday.</h3>
-              <p data-email-intro>Thanks for booking a Strategic Session. The meeting is on your calendar and ours. Here are the details:</p>
+              <h3 data-email-greeting>Hi there — you're booked!</h3>
+              <p data-email-intro>Thanks for booking. The meeting is on your calendar and ours. Here are the details:</p>
               <div class="event-box">
-                <div class="row"><svg><use href="#i-cal" /></svg><strong data-email-date>Tuesday, 12 May 2026</strong></div>
-                <div class="row"><svg><use href="#i-clock" /></svg><strong data-email-time>10:30 – 11:15</strong> · <span data-email-tz>Europe/Lisbon</span></div>
-                <div class="row"><svg><use href="#i-video" /></svg><span data-email-location>Google Meet — meet.google.com/xyz-abcd-efg</span></div>
-                <div class="row"><svg><use href="#i-users" /></svg><span data-email-attendees>Annie Mumba &amp; Maya Johnson</span></div>
+                <div class="row"><svg><use href="#i-cal" /></svg><strong data-email-date>—</strong></div>
+                <div class="row"><svg><use href="#i-clock" /></svg><strong data-email-time>—</strong> · <span data-email-tz>Your timezone</span></div>
+                <div class="row"><svg><use href="#i-video" /></svg><span data-email-location>Meeting link in your invite</span></div>
+                <div class="row"><svg><use href="#i-users" /></svg><span data-email-attendees>Host &amp; Guest</span></div>
               </div>
               <p>We'll send a reminder 24 hours and 1 hour before. If something comes up, you can reschedule or cancel without back-and-forth:</p>
               <div class="actions">
                 <a class="btn-link primary" href="#">Add to calendar</a>
                 <a class="btn-link secondary" href="#" onclick="event.preventDefault(); go('manage');">Reschedule or cancel</a>
               </div>
-              <p style="color: var(--muted); font-size: 12.5px; margin-top: 24px;">— Annie &amp; the Bookly team</p>
+              <p style="color: var(--muted); font-size: 12.5px; margin-top: 24px;">— The Bookly team</p>
             </div>
           </div>
         </div>
@@ -819,8 +793,8 @@
       <main class="public-shell" style="padding: 60px 20px;">
         <div class="manage-card">
           <div class="manage-banner">
-            <div class="session-name">Strategic Session · with Annie</div>
-            <h1>Tue, 12 May at 10:30</h1>
+            <div class="session-name" data-manage-event>Your booking</div>
+            <h1 data-manage-datetime>—</h1>
             <div class="when">
               <span><svg width="14" height="14"><use href="#i-clock" /></svg>45 minutes</span>
               <span><svg width="14" height="14"><use href="#i-globe" /></svg><span id="tz-name-manage">Europe/Lisbon</span></span>
@@ -839,15 +813,15 @@
               <div class="row">
                 <svg><use href="#i-users" /></svg>
                 <div style="flex: 1; min-width: 0;">
-                  <strong style="display: block;">Maya Johnson</strong>
-                  <span style="font-size: 11.5px;">maya@example.com</span>
+                  <strong style="display: block;" data-manage-name>Guest</strong>
+                  <span style="font-size: 11.5px;" data-manage-email>—</span>
                 </div>
               </div>
               <div class="row">
                 <svg><use href="#i-bell" /></svg>
                 <div style="flex: 1; min-width: 0;">
                   <strong style="display: block;">Reminders scheduled</strong>
-                  <span style="font-size: 11.5px;">Monday 10:30 · Tuesday 09:30</span>
+                  <span style="font-size: 11.5px;">24 hours and 1 hour before</span>
                 </div>
               </div>
             </div>
@@ -865,7 +839,7 @@
 
             <div class="manage-cancel-pane" id="cancel-pane" hidden>
               <h4>Are you sure you want to cancel?</h4>
-              <p>This will free up the slot on Annie's calendar and notify her by email. The invitee will be notified too.</p>
+              <p>This will free up the slot on the host's calendar. Both you and the host will be notified by email.</p>
               <div class="field" style="margin: 12px 0;">
                 <label style="color: var(--danger);">Reason (optional)</label>
                 <textarea rows="2" placeholder="Something came up at work…" style="background: white;"></textarea>
@@ -886,7 +860,7 @@
         <div class="cancelled-state">
           <div class="ico"><svg width="28" height="28"><use href="#i-x" /></svg></div>
           <h2>Booking cancelled</h2>
-          <p>Your 10:30 Strategic Session on Tue, 12 May has been cancelled. We've let Annie know — you'll get an email confirmation shortly.</p>
+          <p>Your booking has been cancelled. The host has been notified — you'll receive an email confirmation shortly.</p>
           <div style="display: flex; gap: 8px; justify-content: center; margin-top: 18px;">
             <button class="btn btn-secondary" type="button" onclick="go('public-pick')">
               <svg width="14" height="14"><use href="#i-cal" /></svg>
@@ -920,14 +894,97 @@
   });
 
   // ──────────────────────────────────────────────────
-  // Public calendar date selection
+  // Dynamic calendar
   // ──────────────────────────────────────────────────
-  const monthDays = {
-    5: "Mon, 5 May", 6: "Tue, 6 May", 7: "Wed, 7 May", 8: "Thu, 8 May",
-    12: "Tue, 12 May", 13: "Wed, 13 May", 14: "Thu, 14 May", 15: "Fri, 15 May",
-    19: "Tue, 19 May", 20: "Wed, 20 May", 21: "Thu, 21 May", 22: "Fri, 22 May", 23: "Sat, 23 May",
-    26: "Tue, 26 May", 27: "Wed, 27 May", 28: "Thu, 28 May", 29: "Fri, 29 May", 30: "Sat, 30 May"
-  };
+  const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const DAY_SHORT   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+  // Days blocked as "unavailable" (0=Sun,6=Sat always blocked; this adds Wed off)
+  const BLOCKED_DOW = new Set([0, 3, 6]); // Sun, Wed, Sat
+
+  let calYear, calMonth;
+  (function initCal() {
+    const now = new Date();
+    calYear  = now.getFullYear();
+    calMonth = now.getMonth();
+  })();
+
+  function buildCalendar(year, month) {
+    const today     = new Date(); today.setHours(0,0,0,0);
+    const firstDay  = new Date(year, month, 1);
+    const lastDay   = new Date(year, month + 1, 0);
+    const totalDays = lastDay.getDate();
+    // Start on Monday (getDay: 0=Sun → shift to Mon-based)
+    const startDow  = (firstDay.getDay() + 6) % 7;
+    const prevLast  = new Date(year, month, 0).getDate();
+
+    let html = "";
+    // Prev-month padding
+    for (let i = startDow - 1; i >= 0; i--) {
+      html += `<button class="cal-cell muted" disabled>${prevLast - i}</button>`;
+    }
+    // Current month
+    for (let d = 1; d <= totalDays; d++) {
+      const date   = new Date(year, month, d);
+      const isPast = date < today;
+      const dow    = date.getDay();
+      const isBlocked = BLOCKED_DOW.has(dow);
+      const isToday   = date.getTime() === today.getTime();
+      let cls = "cal-cell";
+      let extra = "";
+      if (isPast) {
+        cls += " muted"; extra = " disabled";
+      } else if (isBlocked) {
+        cls += " blocked"; extra = " disabled";
+      } else {
+        cls += " available";
+        if (isToday) cls += " today";
+        extra = ` data-day="${d}" data-date="${year}-${month+1}-${d}"`;
+      }
+      html += `<button class="${cls}"${extra}>${d}</button>`;
+    }
+    // Next-month padding
+    const filled = (startDow + totalDays);
+    const remainder = filled % 7;
+    if (remainder !== 0) {
+      for (let d = 1; d <= 7 - remainder; d++) {
+        html += `<button class="cal-cell muted" disabled>${d}</button>`;
+      }
+    }
+    return html;
+  }
+
+  function renderCalendar() {
+    const pubCal = document.getElementById("public-cal");
+    const label  = document.getElementById("cal-month-label");
+    if (!pubCal) return;
+    if (label) label.textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+    pubCal.innerHTML = buildCalendar(calYear, calMonth);
+    // Reset slot panel
+    const pubDay  = document.getElementById("public-slot-day");
+    const slotList = document.getElementById("public-slot-list");
+    if (pubDay)  pubDay.textContent  = "Select a date";
+    if (slotList) slotList.innerHTML = `<p style="font-size:13px;color:var(--muted);padding:8px 0;">Pick a date on the left to see available times.</p>`;
+    // Disable prev button if we're on the current month
+    const prevBtn = document.getElementById("cal-prev");
+    if (prevBtn) {
+      const now = new Date();
+      prevBtn.disabled = (calYear === now.getFullYear() && calMonth === now.getMonth());
+    }
+  }
+
+  renderCalendar();
+
+  document.getElementById("cal-prev")?.addEventListener("click", () => {
+    calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar();
+  });
+  document.getElementById("cal-next")?.addEventListener("click", () => {
+    calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar();
+  });
+
+  const SLOT_TIMES = ["09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00"];
+
   const pubCal = document.getElementById("public-cal");
   const pubDay = document.getElementById("public-slot-day");
   if (pubCal && pubDay) {
@@ -936,10 +993,19 @@
       if (!c) return;
       pubCal.querySelectorAll(".selected").forEach(x => x.classList.remove("selected"));
       c.classList.add("selected");
-      const d = c.dataset.day;
-      if (d && monthDays[d]) {
-        pubDay.textContent = monthDays[d];
-        bookingState.date = monthDays[d] + " 2026";
+      const d   = c.dataset.day;
+      const [y, m, day] = (c.dataset.date || "").split("-").map(Number);
+      if (!d) return;
+      const date   = new Date(y, m - 1, Number(day));
+      const label  = `${DAY_SHORT[date.getDay()]}, ${d} ${MONTH_SHORT[calMonth]}`;
+      pubDay.textContent      = label;
+      bookingState.date       = `${label} ${calYear}`;
+      // Populate slots
+      const slotList = document.getElementById("public-slot-list");
+      if (slotList) {
+        slotList.innerHTML = SLOT_TIMES.map(t =>
+          `<button class="slot" type="button">${t}</button>`
+        ).join("");
       }
     });
   }
@@ -987,7 +1053,7 @@
     date: "Tue, 12 May 2026",
     time: "10:30",
     endTime: "11:15",
-    eventName: "Strategic Sessions",
+    eventName: "Your Event",
     duration: 45,
     location: "Google Meet",
   };
@@ -1040,7 +1106,7 @@
   function controlForQuestion(question) {
     const required = question.required ? " required" : "";
     if (question.type.toLowerCase().includes("email")) {
-      return `<input type="email" value="maya@example.com"${required} />`;
+      return `<input type="email" placeholder="you@example.com"${required} />`;
     }
     if (question.type.toLowerCase().includes("select")) {
       return `<select${required}>
@@ -1052,15 +1118,13 @@
     }
     if (question.type.toLowerCase().includes("long")) {
       return `<textarea rows="3">Launch planning, pricing, and choosing the right package.</textarea>
-        <span class="hint">Helps Annie prepare for your session.</span>`;
+        <span class="hint">This helps the host prepare for your session.</span>`;
     }
     const lbl = question.label.toLowerCase();
     const defaultValue = lbl.includes("company")
-      ? "Northern Studio"
-      : lbl.includes("name")
-        ? ""
-        : "";
-    return `<input type="text" value="${defaultValue}"${required} />`;
+      ? ""
+      : "";
+    return `<input type="text" placeholder=""${required} />`;
   }
 
   function renderPublicBookingForm() {
@@ -1103,7 +1167,7 @@
     const heading = editor.querySelector(".topbar h2");
     const subtitle = editor.querySelector(".topbar .subtitle");
     if (heading) heading.textContent = title;
-    if (subtitle) subtitle.textContent = `bookly.io/annie/${slug} · ${duration} · ${location}`;
+    if (subtitle) subtitle.textContent = `bookly.io/you/${slug} · ${duration} · ${location}`;
 
     document.querySelectorAll("#screen-public-pick .pub-profile h1, #screen-public-form .pub-profile h1").forEach(el => {
       el.textContent = `Book a ${title}`;
@@ -1121,7 +1185,7 @@
       el.innerHTML = `<svg><use href="#i-video" /></svg>${location}`;
     });
 
-    editorStatus(`Preview updated: ${type} event at bookly.io/annie/${slug}.`);
+    editorStatus(`Preview updated: ${type} event at bookly.io/you/${slug}.`);
     updateQuestionCount();
     renderPublicBookingForm();
   }
@@ -1307,7 +1371,7 @@
     const copyUrlButton = editor.querySelector(".field button.btn-ghost");
     copyUrlButton?.addEventListener("click", () => {
       const slug = editorFields().slug?.value.trim() || "demo";
-      const url = `bookly.io/annie/${slug}`;
+      const url = `bookly.io/you/${slug}`;
       navigator.clipboard?.writeText(url).catch(() => {});
       copyUrlButton.classList.add("active");
       editorStatus(`Copied ${url}`);
@@ -1443,7 +1507,13 @@
       document.querySelectorAll("[data-email-date]").forEach(el => el.textContent = dayLabel);
       document.querySelectorAll("[data-email-time]").forEach(el => el.textContent = timeRange);
       document.querySelectorAll("[data-email-attendees]").forEach(el =>
-        el.textContent = `Annie Mumba & ${nameVal}`);
+        el.textContent = `Host & ${nameVal}`);
+      document.querySelectorAll("[data-manage-event]").forEach(el =>
+        el.textContent = `${bookingState.eventName} · your booking`);
+      document.querySelectorAll("[data-manage-datetime]").forEach(el =>
+        el.textContent = `${bookingState.date} at ${bookingState.time}`);
+      document.querySelectorAll("[data-manage-name]").forEach(el => el.textContent = nameVal);
+      document.querySelectorAll("[data-manage-email]").forEach(el => el.textContent = emailVal);
 
       go("public-done");
     }, 900);
