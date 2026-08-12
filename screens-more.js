@@ -737,7 +737,7 @@
             <div class="session-name" data-manage-event>Your booking</div>
             <h1 data-manage-datetime>—</h1>
             <div class="when">
-              <span><svg width="14" height="14"><use href="#i-clock" /></svg>45 minutes</span>
+              <span><svg width="14" height="14"><use href="#i-clock" /></svg><span data-manage-duration>—</span></span>
               <span><svg width="14" height="14"><use href="#i-globe" /></svg><span id="tz-name-manage">Europe/Lisbon</span></span>
             </div>
           </div>
@@ -747,8 +747,7 @@
               <div class="row">
                 <svg><use href="#i-video" /></svg>
                 <div style="flex: 1; min-width: 0;">
-                  <strong style="display: block;">Google Meet</strong>
-                  <span style="font-size: 11.5px; word-break: break-all;">meet.google.com/xyz-abcd-efg</span>
+                  <strong style="display: block;" data-manage-location>—</strong>
                 </div>
               </div>
               <div class="row">
@@ -1896,6 +1895,8 @@
         el.textContent = `${bookingState.date} at ${bookingState.time}`);
       document.querySelectorAll("[data-manage-name]").forEach(el => el.textContent = nameVal);
       document.querySelectorAll("[data-manage-email]").forEach(el => el.textContent = emailVal);
+      document.querySelectorAll("[data-manage-duration]").forEach(el => el.textContent = `${bookingState.duration} minutes`);
+      document.querySelectorAll("[data-manage-location]").forEach(el => el.textContent = bookingState.location || "");
 
       go("public-done");
     }, 900);
@@ -2659,7 +2660,7 @@
     onEditorLocationChange(evt.location || "");
   };
 
-  function applyEventToPublicPages(evt, hostUid) {
+  async function applyEventToPublicPages(evt, hostUid) {
     bookingState.eventName = evt.name;
     bookingState.duration = Number(evt.duration) || 30;
     bookingState.location = evt.location || "";
@@ -2670,6 +2671,15 @@
     const locLine = isInPerson
       ? `<svg><use href="#i-pin" /></svg>${evt.location}`
       : `<svg><use href="#i-video" /></svg>${evt.location || ""} · link in invite`;
+
+    document.querySelectorAll(".pub-profile .role").forEach((el) => (el.textContent = ""));
+    if (window.BooklyData) {
+      window.BooklyData.getUserProfile(hostUid)
+        .then((profile) => {
+          document.querySelectorAll(".pub-profile .role").forEach((el) => (el.textContent = profile?.displayName || ""));
+        })
+        .catch(() => {});
+    }
 
     document.querySelectorAll(".pub-profile h1").forEach((el) => (el.textContent = `Book a ${evt.name}`));
     document.querySelectorAll(".session-name").forEach((el) => (el.textContent = evt.name));
@@ -2968,12 +2978,8 @@
       if (!uid) { showIntegrationToast("This booking page doesn't exist."); return; }
       const evt = await window.BooklyData.getEventType(uid, slug);
       if (!evt) { showIntegrationToast("This event type isn't available."); return; }
-      const profile = await window.BooklyData.getUserProfile(uid);
       window.BooklyCurrentHandle = handle;
       applyEventToPublicPages(evt, uid);
-      if (profile?.displayName) {
-        document.querySelectorAll(".pub-profile .role").forEach((el) => (el.textContent = profile.displayName));
-      }
     } catch (err) {
       console.error("Failed to resolve public booking link:", err);
     }
@@ -3012,6 +3018,8 @@
       document.querySelectorAll("[data-manage-datetime]").forEach((el) => (el.textContent = `${bookingState.date} at ${booking.time}`));
       document.querySelectorAll("[data-manage-name]").forEach((el) => (el.textContent = booking.inviteeName || "Guest"));
       document.querySelectorAll("[data-manage-email]").forEach((el) => (el.textContent = booking.inviteeEmail || ""));
+      document.querySelectorAll("[data-manage-duration]").forEach((el) => (el.textContent = booking.duration ? `${booking.duration} minutes` : ""));
+      document.querySelectorAll("[data-manage-location]").forEach((el) => (el.textContent = booking.location || ""));
 
       if (booking.status === "cancelled") {
         const banner = document.querySelector("#screen-manage .manage-banner");
