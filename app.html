@@ -306,10 +306,6 @@
           </a>
         </div>
         <div class="sidebar-foot">
-          <a class="nav-item" data-nav="settings">
-            <svg width="16" height="16"><use href="#i-settings" /></svg>
-            <span>Settings</span>
-          </a>
           <a class="nav-item" data-nav="logout">
             <svg width="16" height="16"><use href="#i-arrow-right" /></svg>
             <span>Log out</span>
@@ -426,41 +422,38 @@
     </section>
 
     <!-- ──────────────────────────────────────────────────── -->
-    <!-- PROFILE / SETTINGS                                    -->
+    <!-- PROFILE (standalone — not part of the admin dashboard) -->
     <!-- ──────────────────────────────────────────────────── -->
     <section class="screen" id="screen-settings">
-      <div class="app-shell">
-        <div data-sidebar data-active="settings"></div>
-        <section class="workspace">
-          <header class="topbar">
+      <div class="info-page">
+        <header class="info-header">
+          <button class="btn btn-icon info-back" data-info-back>
+            <svg width="16" height="16"><use href="#i-chev-left" /></svg>
+          </button>
+          <svg class="brand-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bookly"><rect width="32" height="32" rx="7.5" fill="#d11124"/><rect x="10.5" y="6" width="3" height="7.5" rx="1.5" fill="white"/><rect x="18.5" y="6" width="3" height="7.5" rx="1.5" fill="white"/><rect x="5.5" y="9.5" width="21" height="17" rx="3" fill="white"/><path d="M10.5 19.5L14 23L21.5 14" stroke="#d11124" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="brand-name">Bookly</span>
+        </header>
+        <div class="info-body">
+          <h1>Your profile</h1>
+          <div style="display: flex; align-items: center; gap: 14px; margin: 20px 0;">
+            <span class="user-thumb" style="width: 48px; height: 48px; font-size: 18px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600;" id="profile-avatar"></span>
             <div>
-              <h2>Profile</h2>
-              <p class="subtitle">Your account details.</p>
+              <strong id="profile-name" style="font-size: 16px; display: block;">—</strong>
+              <span id="profile-email" style="color: var(--muted); font-size: 13px;">—</span>
             </div>
-          </header>
-          <section class="panel" style="max-width: 480px;">
-            <div class="panel-body" style="display: flex; flex-direction: column; gap: 18px; padding: 24px;">
-              <div style="display: flex; align-items: center; gap: 14px;">
-                <span class="user-thumb" style="width: 48px; height: 48px; font-size: 18px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600;" id="profile-avatar"></span>
-                <div>
-                  <strong id="profile-name" style="font-size: 16px; display: block;">—</strong>
-                  <span id="profile-email" style="color: var(--muted); font-size: 13px;">—</span>
-                </div>
-              </div>
-              <div class="field">
-                <label>Your booking link</label>
-                <div style="display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden;">
-                  <span style="padding: 0 12px; height: 38px; display: grid; place-items: center; background: var(--surface-2); border-right: 1px solid var(--line); color: var(--muted); font-size: 13px; font-family: var(--font-mono);">bookly.io/</span>
-                  <span id="profile-handle" style="padding: 0 12px; height: 38px; display: flex; align-items: center; flex: 1; font-family: var(--font-mono); font-size: 13px;">—</span>
-                </div>
-              </div>
-              <button class="btn btn-danger" type="button" data-nav="logout" style="align-self: flex-start;">
-                <svg width="14" height="14"><use href="#i-arrow-right" /></svg>
-                Log out
-              </button>
+          </div>
+          <div class="field" style="max-width: 380px;">
+            <label>Your booking link</label>
+            <div style="display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden;">
+              <span style="padding: 0 12px; height: 38px; display: grid; place-items: center; background: var(--surface-2); border-right: 1px solid var(--line); color: var(--muted); font-size: 13px; font-family: var(--font-mono);">bookly.io/</span>
+              <span id="profile-handle" style="padding: 0 12px; height: 38px; display: flex; align-items: center; flex: 1; font-family: var(--font-mono); font-size: 13px;">—</span>
             </div>
-          </section>
-        </section>
+          </div>
+          <button class="btn btn-danger" type="button" data-nav="logout" style="margin-top: 20px;">
+            <svg width="14" height="14"><use href="#i-arrow-right" /></svg>
+            Log out
+          </button>
+        </div>
       </div>
     </section>
 
@@ -789,7 +782,7 @@
             n.onclick = (e) => {
               e.preventDefault();
               const target = n.dataset.nav;
-              if (["admin-events", "admin-availability", "admin-integrations", "bookings", "settings"].includes(target)) {
+              if (["admin-events", "admin-availability", "admin-integrations", "bookings"].includes(target)) {
                 go(target);
               } else {
                 // not implemented — visual focus only
