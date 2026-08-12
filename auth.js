@@ -265,6 +265,11 @@ if (currentScreen() === "public-pick" && location.hash.includes("?")) {
   window.BooklyUI?.resolvePublicBooking?.(location.hash.split("?")[1]);
 }
 
+// Cold-load entry point for a "manage this booking" link from a confirmation email: #manage?b=<bookingId>.
+if (currentScreen() === "manage" && location.hash.includes("?")) {
+  window.BooklyUI?.resolveManageBooking?.(location.hash.split("?")[1]);
+}
+
 onAuthStateChanged(auth, (user) => {
   paintUser(user);
   const screen = currentScreen();

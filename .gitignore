@@ -1,3 +1,5 @@
 screenshots/
 .DS_Store
 .vercel
+functions/node_modules
+.firebase

@@ -2955,4 +2955,49 @@
     }
   };
 
+  function isoToDisplay(dateISO) {
+    const [y, m, d] = (dateISO || "").split("-").map(Number);
+    if (!y || !m || !d) return dateISO || "";
+    const date = new Date(y, m - 1, d);
+    return `${DAY_SHORT[date.getDay()]}, ${d} ${MONTH_SHORT[m - 1]} ${y}`;
+  }
+
+  // Cold-load a "manage this booking" link, e.g. from a confirmation email: #manage?b=<bookingId>
+  window.BooklyUI.resolveManageBooking = async function (queryString) {
+    if (!window.BooklyData) return;
+    const params = new URLSearchParams(queryString);
+    const bookingId = params.get("b");
+    if (!bookingId) return;
+    try {
+      const booking = await window.BooklyData.getBooking(bookingId);
+      if (!booking) {
+        showIntegrationToast("This booking could not be found.");
+        return;
+      }
+      bookingState.bookingId = bookingId;
+      bookingState.eventName = booking.eventName;
+      bookingState.date = isoToDisplay(booking.date);
+      bookingState.dateISO = booking.date;
+      bookingState.time = booking.time;
+      bookingState.endTime = booking.endTime;
+      bookingState.location = booking.location;
+      bookingState.hostUid = booking.hostUid;
+      bookingState.eventTypeSlug = booking.eventTypeSlug;
+
+      document.querySelectorAll("[data-manage-event]").forEach((el) => (el.textContent = `${booking.eventName} · your booking`));
+      document.querySelectorAll("[data-manage-datetime]").forEach((el) => (el.textContent = `${bookingState.date} at ${booking.time}`));
+      document.querySelectorAll("[data-manage-name]").forEach((el) => (el.textContent = booking.inviteeName || "Guest"));
+      document.querySelectorAll("[data-manage-email]").forEach((el) => (el.textContent = booking.inviteeEmail || ""));
+
+      if (booking.status === "cancelled") {
+        const banner = document.querySelector("#screen-manage .manage-banner");
+        if (banner) banner.insertAdjacentHTML("beforeend", `<div style="margin-top:8px;font-size:12px;color:var(--ink-muted);">This booking has already been cancelled.</div>`);
+        const actions = document.querySelector("#screen-manage .manage-actions");
+        if (actions) actions.style.display = "none";
+      }
+    } catch (err) {
+      console.error("Failed to resolve manage-booking link:", err);
+    }
+  };
+
 })();
