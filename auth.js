@@ -69,6 +69,54 @@ window.go = function (name) {
   paintUser(auth.currentUser);
 };
 
+// PIN-gate the admin section. Re-asked on every entry — no persistence, by design.
+const ADMIN_SCREENS = new Set(["admin-events", "admin-availability", "admin-integrations"]);
+const ADMIN_PIN = "7934";
+let pinBypass = false;
+let pendingAdminTarget = null;
+
+function resetPinScreen() {
+  const input = document.getElementById("admin-pin-input");
+  if (input) input.value = "";
+  clearError("admin-pin-error");
+}
+
+const _goWithUserPaint = window.go;
+window.go = function (name) {
+  if (ADMIN_SCREENS.has(name) && !pinBypass) {
+    if (currentScreen() === "admin-pin" && pendingAdminTarget === name) return; // duplicate trigger while already prompting for this target
+    pendingAdminTarget = name;
+    resetPinScreen();
+    _goWithUserPaint("admin-pin");
+    document.getElementById("admin-pin-input")?.focus();
+    return;
+  }
+  pinBypass = false;
+  _goWithUserPaint(name);
+};
+
+const pinForm = document.getElementById("admin-pin-form");
+const pinInput = document.getElementById("admin-pin-input");
+if (pinForm) {
+  pinForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (pinInput.value === ADMIN_PIN && pendingAdminTarget) {
+      pinBypass = true;
+      const target = pendingAdminTarget;
+      pendingAdminTarget = null;
+      go(target);
+    } else {
+      showError("admin-pin-error", "Incorrect PIN. Try again.");
+      pinInput.value = "";
+      pinInput.focus();
+    }
+  });
+}
+pinInput?.addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
+  if (e.target.value.length === 4) pinForm?.requestSubmit();
+});
+
 const signupForm = document.getElementById("signup-form");
 if (signupForm) {
   signupForm.addEventListener("submit", async (e) => {
@@ -82,7 +130,7 @@ if (signupForm) {
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       if (name) await updateProfile(cred.user, { displayName: name });
-      go("admin-events");
+      // navigation to admin-events happens via onAuthStateChanged below
     } catch (err) {
       showError("signup-error", friendlyError(err));
     } finally {
@@ -102,7 +150,7 @@ if (loginForm) {
     setBusy(submitBtn, true, "Logging in…");
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      go("admin-events");
+      // navigation to admin-events happens via onAuthStateChanged below
     } catch (err) {
       showError("login-error", friendlyError(err));
     } finally {
@@ -115,7 +163,7 @@ async function handleGoogle(errorId) {
   clearError(errorId);
   try {
     await signInWithPopup(auth, googleProvider);
-    go("admin-events");
+    // navigation to admin-events happens via onAuthStateChanged below
   } catch (err) {
     showError(errorId, friendlyError(err));
   }
@@ -125,7 +173,7 @@ document.getElementById("google-login-btn")?.addEventListener("click", () => han
 
 document.addEventListener("click", (e) => {
   if (e.target.closest('[data-nav="logout"]')) {
-    signOut(auth).then(() => go("login"));
+    signOut(auth); // navigation to login happens via onAuthStateChanged below
   }
 });
 
@@ -136,5 +184,8 @@ onAuthStateChanged(auth, (user) => {
     go("login");
   } else if (user && (screen === "signup" || screen === "login")) {
     go("admin-events");
+  } else if (user && ADMIN_SCREENS.has(screen)) {
+    // Direct load / refresh landing straight on an admin screen still needs the PIN.
+    go(screen);
   }
 });
