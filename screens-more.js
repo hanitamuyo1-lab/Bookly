@@ -379,13 +379,7 @@
                 <div class="panel-head"><h3>Timezone</h3></div>
                 <div class="panel-body" style="padding: 18px 22px;">
                   <div class="field">
-                    <select id="availability-timezone">
-                      <option value="Europe/Lisbon">Europe/Lisbon</option>
-                      <option value="Europe/London">Europe/London</option>
-                      <option value="America/New_York">America/New_York</option>
-                      <option value="America/Los_Angeles">America/Los_Angeles</option>
-                      <option value="Asia/Tokyo">Asia/Tokyo</option>
-                    </select>
+                    <select id="availability-timezone"></select>
                     <span class="hint">Times shown to invitees are auto-converted to their detected timezone.</span>
                   </div>
                 </div>
@@ -2802,6 +2796,35 @@
       : `<p style="font-size:12.5px;color:var(--muted);">No date overrides yet.</p>`;
   }
 
+  const TZ_CONTINENTS = ["Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Australia", "Europe", "Indian", "Pacific"];
+
+  function populateTimezoneOptions(select) {
+    if (!select || select.options.length > 0) return; // already populated
+    let zones;
+    try {
+      zones = Intl.supportedValuesOf("timeZone");
+    } catch (err) {
+      zones = [Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"];
+    }
+    const groups = {};
+    zones.forEach((zone) => {
+      const continent = zone.split("/")[0];
+      const key = TZ_CONTINENTS.includes(continent) ? continent : "Other";
+      (groups[key] = groups[key] || []).push(zone);
+    });
+    Object.keys(groups).sort().forEach((continent) => {
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = continent;
+      groups[continent].sort().forEach((zone) => {
+        const opt = document.createElement("option");
+        opt.value = zone;
+        opt.textContent = zone.replace(/_/g, " ");
+        optgroup.appendChild(opt);
+      });
+      select.appendChild(optgroup);
+    });
+  }
+
   async function renderAvailability(uid) {
     const list = document.getElementById("schedule-list");
     if (!list) return;
@@ -2815,6 +2838,7 @@
       list.innerHTML = DOW_KEYS.map((k) => scheduleDayHTML(k, currentAvailability.weekly?.[k] || DEFAULT_WEEKLY[k])).join("");
       const tzSelect = document.getElementById("availability-timezone");
       if (tzSelect) {
+        populateTimezoneOptions(tzSelect);
         if (![...tzSelect.options].some((o) => o.value === currentAvailability.timezone)) {
           const opt = document.createElement("option");
           opt.value = currentAvailability.timezone;
