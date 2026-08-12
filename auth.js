@@ -98,11 +98,22 @@ window.go = function (name) {
   if (name.split("?")[0] === "settings") paintProfileHandle(auth.currentUser);
 };
 
-// PIN-gate the admin section. Re-asked on every entry — no persistence, by design.
+// PIN-gate the admin section. Unlocked once per account per browser session
+// (sessionStorage, keyed by uid) — asked again after logging out, or in a new tab/window.
 const ADMIN_SCREENS = new Set(["admin-events", "admin-editor", "admin-availability", "admin-integrations", "bookings"]);
 const ADMIN_PIN = "7934";
-let pinBypass = false;
+const PIN_UNLOCK_KEY = "bookly_admin_pin_unlocked_uid";
 let pendingAdminTarget = null;
+
+function isPinUnlocked() {
+  return !!auth.currentUser && sessionStorage.getItem(PIN_UNLOCK_KEY) === auth.currentUser.uid;
+}
+function setPinUnlocked() {
+  if (auth.currentUser) sessionStorage.setItem(PIN_UNLOCK_KEY, auth.currentUser.uid);
+}
+function clearPinUnlocked() {
+  sessionStorage.removeItem(PIN_UNLOCK_KEY);
+}
 
 function resetPinScreen() {
   const input = document.getElementById("admin-pin-input");
@@ -112,15 +123,19 @@ function resetPinScreen() {
 
 const _goWithUserPaint = window.go;
 window.go = function (name) {
-  if (ADMIN_SCREENS.has(name) && !pinBypass) {
-    if (currentScreen() === "admin-pin" && pendingAdminTarget === name) return; // duplicate trigger while already prompting for this target
-    pendingAdminTarget = name;
-    resetPinScreen();
-    _goWithUserPaint("admin-pin");
-    document.getElementById("admin-pin-input")?.focus();
+  if (ADMIN_SCREENS.has(name)) {
+    if (!isPinUnlocked()) {
+      if (currentScreen() === "admin-pin" && pendingAdminTarget === name) return; // duplicate trigger while already prompting for this target
+      pendingAdminTarget = name;
+      resetPinScreen();
+      _goWithUserPaint("admin-pin");
+      document.getElementById("admin-pin-input")?.focus();
+      return;
+    }
+    _goWithUserPaint(name);
+    window.BooklyUI?.renderScreen?.(name, auth.currentUser?.uid);
     return;
   }
-  pinBypass = false;
   _goWithUserPaint(name);
 };
 
@@ -130,11 +145,10 @@ if (pinForm) {
   pinForm.addEventListener("submit", (e) => {
     e.preventDefault();
     if (pinInput.value === ADMIN_PIN && pendingAdminTarget) {
-      pinBypass = true;
+      setPinUnlocked();
       const target = pendingAdminTarget;
       pendingAdminTarget = null;
       go(target);
-      window.BooklyUI?.renderScreen?.(target, auth.currentUser?.uid);
     } else {
       showError("admin-pin-error", "Incorrect PIN. Try again.");
       pinInput.value = "";
@@ -229,6 +243,7 @@ document.getElementById("google-login-btn")?.addEventListener("click", () => han
 
 document.addEventListener("click", (e) => {
   if (e.target.closest('[data-nav="logout"]')) {
+    clearPinUnlocked();
     signOut(auth); // navigation to login happens via onAuthStateChanged below
   }
 });
