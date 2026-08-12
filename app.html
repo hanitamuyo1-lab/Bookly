@@ -136,9 +136,9 @@
               <label>Your booking handle</label>
               <div style="display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden;">
                 <span style="padding: 0 12px; height: 38px; display: grid; place-items: center; background: var(--surface-2); border-right: 1px solid var(--line); color: var(--muted); font-size: 13px; font-family: var(--font-mono);">bookly.io/</span>
-                <input style="border: 0; border-radius: 0; flex: 1;" id="signup-handle" placeholder="annie" />
+                <input style="border: 0; border-radius: 0; flex: 1;" id="signup-handle" placeholder="annie" required pattern="[a-z0-9-]{3,30}" title="Lowercase letters, numbers, and hyphens only" />
               </div>
-              <span class="hint">This becomes your public booking link.</span>
+              <span class="hint" id="signup-handle-hint">This becomes your public booking link.</span>
             </div>
             <button class="btn btn-primary btn-lg" type="submit">Create account →</button>
             <p class="auth-foot">Already have an account? <a href="#" onclick="event.preventDefault(); go('login');">Log in</a></p>
@@ -339,7 +339,7 @@
                 <svg width="14" height="14"><use href="#i-external" /></svg>
                 View public page
               </button>
-              <button class="btn btn-primary" type="button" onclick="go('admin-editor')">
+              <button class="btn btn-primary" type="button" onclick="newEventType()">
                 <svg width="14" height="14"><use href="#i-plus" /></svg>
                 New event type
               </button>
@@ -380,112 +380,80 @@
                   All event types
                   <svg width="12" height="12"><use href="#i-chev-down" /></svg>
                 </button>
-                <button class="btn btn-secondary btn-sm" type="button" onclick="go('admin-editor')">
+                <button class="btn btn-secondary btn-sm" type="button" onclick="newEventType()">
                   <svg width="12" height="12"><use href="#i-plus" /></svg>
                   New
                 </button>
               </div>
             </div>
 
-            <div class="event-list">
-              <div class="event-row active" data-event-row data-event-name="Training">
-                <span class="accent-bar"></span>
-                <div class="event-main">
-                  <h4>Training</h4>
-                  <span class="slug">bookly.io/you/training</span>
-                  <div class="event-meta-pills">
-                    <span class="pill"><svg><use href="#i-clock" /></svg>60 min</span>
-                    <span class="pill accent"><svg><use href="#i-zap" /></svg>Group session</span>
-                    <span class="pill"><svg><use href="#i-video" /></svg>Google Meet</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
-                  </div>
-                </div>
-                <div class="event-actions">
-                  <span class="toggle on" data-toggle></span>
-                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('Training')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('Training')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
-                </div>
-              </div>
+            <div class="event-list" id="event-list">
+              <div class="empty-state" data-event-list-empty style="padding: 24px; color: var(--muted); font-size: 13.5px;">Loading your event types…</div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </section>
 
-              <div class="event-row" data-event-row data-event-name="School">
-                <span class="accent-bar"></span>
-                <div class="event-main">
-                  <h4>School</h4>
-                  <span class="slug">bookly.io/you/school</span>
-                  <div class="event-meta-pills">
-                    <span class="pill"><svg><use href="#i-clock" /></svg>20 min</span>
-                    <span class="pill accent"><svg><use href="#i-zap" /></svg>Parent/teacher</span>
-                    <span class="pill"><svg><use href="#i-video" /></svg>Zoom</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
-                  </div>
-                </div>
-                <div class="event-actions">
-                  <span class="toggle on" data-toggle></span>
-                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('School')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('School')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
-                </div>
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- BOOKINGS (minimal, real, read-only)                   -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" id="screen-bookings">
+      <div class="app-shell">
+        <div data-sidebar data-active="bookings"></div>
+        <section class="workspace">
+          <header class="topbar">
+            <div>
+              <h2>Bookings</h2>
+              <p class="subtitle">Everything people have booked with you.</p>
+            </div>
+          </header>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Upcoming &amp; past bookings</h3>
+                <div class="subtitle" data-bookings-status>Loading…</div>
               </div>
+            </div>
+            <div id="bookings-list"></div>
+          </section>
+        </section>
+      </div>
+    </section>
 
-              <div class="event-row" data-event-row data-event-name="Work">
-                <span class="accent-bar"></span>
-                <div class="event-main">
-                  <h4>Work</h4>
-                  <span class="slug">bookly.io/you/work</span>
-                  <div class="event-meta-pills">
-                    <span class="pill"><svg><use href="#i-clock" /></svg>30 min</span>
-                    <span class="pill free"><svg><use href="#i-money" /></svg>Free</span>
-                    <span class="pill"><svg><use href="#i-video" /></svg>Google Meet</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
-                  </div>
-                </div>
-                <div class="event-actions">
-                  <span class="toggle on" data-toggle></span>
-                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('Work')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('Work')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
-                </div>
-              </div>
-
-              <div class="event-row" data-event-row data-event-name="Hospital">
-                <span class="accent-bar"></span>
-                <div class="event-main">
-                  <h4>Hospital</h4>
-                  <span class="slug">bookly.io/you/hospital</span>
-                  <div class="event-meta-pills">
-                    <span class="pill"><svg><use href="#i-clock" /></svg>25 min</span>
-                    <span class="pill free"><svg><use href="#i-money" /></svg>Free</span>
-                    <span class="pill"><svg><use href="#i-video" /></svg>Zoom</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
-                  </div>
-                </div>
-                <div class="event-actions">
-                  <span class="toggle on" data-toggle></span>
-                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('Hospital')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('Hospital')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- PROFILE / SETTINGS                                    -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" id="screen-settings">
+      <div class="app-shell">
+        <div data-sidebar data-active="settings"></div>
+        <section class="workspace">
+          <header class="topbar">
+            <div>
+              <h2>Profile</h2>
+              <p class="subtitle">Your account details.</p>
+            </div>
+          </header>
+          <section class="panel" style="max-width: 480px;">
+            <div class="panel-body" style="display: flex; flex-direction: column; gap: 18px; padding: 24px;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <span class="user-thumb" style="width: 48px; height: 48px; font-size: 18px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600;" id="profile-avatar"></span>
+                <div>
+                  <strong id="profile-name" style="font-size: 16px; display: block;">—</strong>
+                  <span id="profile-email" style="color: var(--muted); font-size: 13px;">—</span>
                 </div>
               </div>
-
-              <div class="event-row" data-event-row data-event-name="Business (Salon Bar)">
-                <span class="accent-bar"></span>
-                <div class="event-main">
-                  <h4>Business (Salon Bar)</h4>
-                  <span class="slug">bookly.io/you/salon-bar</span>
-                  <div class="event-meta-pills">
-                    <span class="pill"><svg><use href="#i-clock" /></svg>45 min</span>
-                    <span class="pill accent"><svg><use href="#i-pin" /></svg>In-person</span>
-                    <span class="pill"><svg><use href="#i-users" /></svg>0 booked</span>
-                  </div>
-                </div>
-                <div class="event-actions">
-                  <span class="toggle on" data-toggle></span>
-                  <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="View public" onclick="event.stopPropagation(); goPublic('Business (Salon Bar)')"><svg width="15" height="15"><use href="#i-external" /></svg></button>
-                  <button class="btn btn-icon" type="button" title="Edit" onclick="event.stopPropagation(); goEdit('Business (Salon Bar)')"><svg width="16" height="16"><use href="#i-more" /></svg></button>
+              <div class="field">
+                <label>Your booking link</label>
+                <div style="display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden;">
+                  <span style="padding: 0 12px; height: 38px; display: grid; place-items: center; background: var(--surface-2); border-right: 1px solid var(--line); color: var(--muted); font-size: 13px; font-family: var(--font-mono);">bookly.io/</span>
+                  <span id="profile-handle" style="padding: 0 12px; height: 38px; display: flex; align-items: center; flex: 1; font-family: var(--font-mono); font-size: 13px;">—</span>
                 </div>
               </div>
+              <button class="btn btn-danger" type="button" data-nav="logout" style="align-self: flex-start;">
+                <svg width="14" height="14"><use href="#i-arrow-right" /></svg>
+                Log out
+              </button>
             </div>
           </section>
         </section>
@@ -781,13 +749,14 @@
       const screens = () => document.querySelectorAll(".screen");
       let _prevScreen = "signup";
       function go(name) {
+        const screenName = name.split("?")[0];
         const current = document.querySelector(".screen.active");
         if (current && current.id) _prevScreen = current.id.replace("screen-", "");
         screens().forEach(s => s.classList.remove("active"));
-        const target = document.getElementById("screen-" + name);
+        const target = document.getElementById("screen-" + screenName);
         if (target) target.classList.add("active");
         document.querySelectorAll(".screen-nav button").forEach(b => {
-          b.classList.toggle("active", b.dataset.screen === name);
+          b.classList.toggle("active", b.dataset.screen === screenName);
         });
         window.scrollTo(0, 0);
         history.replaceState(null, "", "#" + name);
@@ -816,7 +785,7 @@
             n.onclick = (e) => {
               e.preventDefault();
               const target = n.dataset.nav;
-              if (["admin-events", "admin-availability", "admin-integrations"].includes(target)) {
+              if (["admin-events", "admin-availability", "admin-integrations", "bookings", "settings"].includes(target)) {
                 go(target);
               } else {
                 // not implemented — visual focus only
@@ -825,6 +794,8 @@
               }
             };
           });
+          const userCard = slot.querySelector(".user-card");
+          if (userCard) userCard.onclick = () => go("settings");
         });
       }
 

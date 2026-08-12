@@ -369,111 +369,8 @@
                   <svg width="12" height="12"><use href="#i-chev-down" /></svg>
                 </button>
               </div>
-              <div class="schedule-list">
-                <div class="schedule-day">
-                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Monday</strong></div>
-                  <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div class="range-row">
-                      <input class="range-input" value="09:00" />
-                      <span class="range-sep">–</span>
-                      <input class="range-input" value="12:00" />
-                      <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                    </div>
-                    <div class="range-row">
-                      <input class="range-input" value="13:00" />
-                      <span class="range-sep">–</span>
-                      <input class="range-input" value="17:00" />
-                      <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                    </div>
-                  </div>
-                  <div style="display: flex; gap: 4px;">
-                    <button class="btn btn-icon" title="Add range"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
-                    <button class="btn btn-icon" title="Copy to other days"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
-                  </div>
-                </div>
-
-                <div class="schedule-day">
-                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Tuesday</strong></div>
-                  <div class="range-row">
-                    <input class="range-input" value="09:00" />
-                    <span class="range-sep">–</span>
-                    <input class="range-input" value="17:00" />
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                  </div>
-                  <div style="display: flex; gap: 4px;">
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
-                  </div>
-                </div>
-
-                <div class="schedule-day">
-                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Wednesday</strong></div>
-                  <div class="range-row">
-                    <input class="range-input" value="09:00" />
-                    <span class="range-sep">–</span>
-                    <input class="range-input" value="17:00" />
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                  </div>
-                  <div style="display: flex; gap: 4px;">
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
-                  </div>
-                </div>
-
-                <div class="schedule-day">
-                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Thursday</strong></div>
-                  <div class="range-row">
-                    <input class="range-input" value="09:00" />
-                    <span class="range-sep">–</span>
-                    <input class="range-input" value="12:00" />
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                  </div>
-                  <div style="display: flex; gap: 4px;">
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
-                  </div>
-                </div>
-
-                <div class="schedule-day">
-                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Friday</strong></div>
-                  <div class="range-row">
-                    <input class="range-input" value="09:00" />
-                    <span class="range-sep">–</span>
-                    <input class="range-input" value="15:00" />
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                  </div>
-                  <div style="display: flex; gap: 4px;">
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
-                  </div>
-                </div>
-
-                <div class="schedule-day">
-                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Saturday</strong></div>
-                  <div class="range-row">
-                    <input class="range-input" value="09:00" />
-                    <span class="range-sep">–</span>
-                    <input class="range-input" value="13:00" />
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                  </div>
-                  <div style="display: flex; gap: 4px;">
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
-                  </div>
-                </div>
-                <div class="schedule-day">
-                  <div class="day-label"><span class="toggle on" data-toggle></span><strong>Sunday</strong></div>
-                  <div class="range-row">
-                    <input class="range-input" value="09:00" />
-                    <span class="range-sep">–</span>
-                    <input class="range-input" value="13:00" />
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                  </div>
-                  <div style="display: flex; gap: 4px;">
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-plus" /></svg></button>
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-copy" /></svg></button>
-                  </div>
-                </div>
+              <div class="schedule-list" id="schedule-list">
+                <div style="padding: 24px; color: var(--muted); font-size: 13.5px;">Loading your availability…</div>
               </div>
             </section>
 
@@ -482,12 +379,12 @@
                 <div class="panel-head"><h3>Timezone</h3></div>
                 <div class="panel-body" style="padding: 18px 22px;">
                   <div class="field">
-                    <select>
-                      <option selected>Europe/Lisbon (UTC+1)</option>
-                      <option>Europe/London (UTC+0)</option>
-                      <option>America/New_York (UTC−4)</option>
-                      <option>America/Los_Angeles (UTC−7)</option>
-                      <option>Asia/Tokyo (UTC+9)</option>
+                    <select id="availability-timezone">
+                      <option value="Europe/Lisbon">Europe/Lisbon</option>
+                      <option value="Europe/London">Europe/London</option>
+                      <option value="America/New_York">America/New_York</option>
+                      <option value="America/Los_Angeles">America/Los_Angeles</option>
+                      <option value="Asia/Tokyo">Asia/Tokyo</option>
                     </select>
                     <span class="hint">Times shown to invitees are auto-converted to their detected timezone.</span>
                   </div>
@@ -502,21 +399,8 @@
                   </div>
                 </div>
                 <div class="panel-body" style="padding: 14px 22px; display: flex; flex-direction: column; gap: 10px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--line-soft);">
-                    <div>
-                      <strong style="font-weight: 600;">Fri, 23 May</strong>
-                      <div style="color: var(--muted); font-size: 12px; margin-top: 2px;">Unavailable all day</div>
-                    </div>
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                  </div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--line-soft);">
-                    <div>
-                      <strong style="font-weight: 600;">Mon, 26 May</strong>
-                      <div style="color: var(--muted); font-size: 12px; margin-top: 2px;">14:00 – 18:00 only</div>
-                    </div>
-                    <button class="btn btn-icon"><svg width="14" height="14"><use href="#i-x" /></svg></button>
-                  </div>
-                  <button class="btn btn-secondary btn-sm" type="button" style="align-self: flex-start;">
+                  <div id="date-overrides-list"></div>
+                  <button class="btn btn-secondary btn-sm" type="button" id="add-override-btn" style="align-self: flex-start;">
                     <svg width="12" height="12"><use href="#i-plus" /></svg>
                     Add an override
                   </button>
@@ -909,7 +793,7 @@
               </div>
               <div style="display: flex; gap: 8px;">
                 <button class="btn btn-secondary" type="button" onclick="document.getElementById('cancel-pane').hidden = true;">Never mind</button>
-                <button class="btn" type="button" style="background: var(--danger); color: white; border-color: var(--danger);" onclick="go('cancelled')">Confirm cancel</button>
+                <button class="btn" type="button" style="background: var(--danger); color: white; border-color: var(--danger);" onclick="confirmCancelBooking(this)">Confirm cancel</button>
               </div>
             </div>
           </div>
@@ -1051,7 +935,7 @@
   const pubCal = document.getElementById("public-cal");
   const pubDay = document.getElementById("public-slot-day");
   if (pubCal && pubDay) {
-    pubCal.addEventListener("click", (e) => {
+    pubCal.addEventListener("click", async (e) => {
       const c = e.target.closest(".cal-cell.available");
       if (!c) return;
       pubCal.querySelectorAll(".selected").forEach(x => x.classList.remove("selected"));
@@ -1063,16 +947,15 @@
       const label  = `${DAY_SHORT[date.getDay()]}, ${d} ${MONTH_SHORT[calMonth]}`;
       pubDay.textContent      = label;
       bookingState.date       = `${label} ${calYear}`;
-      // Populate slots
+      bookingState.dateISO    = `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      // Populate slots (real availability + existing bookings when a real host is loaded)
       const slotList = document.getElementById("public-slot-list");
       if (slotList) {
-        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-        const slots = isWeekend
-          ? SLOT_TIMES.filter(t => t < "13:00")
-          : SLOT_TIMES;
-        slotList.innerHTML = slots.map(t =>
-          `<button class="slot" type="button">${t}</button>`
-        ).join("");
+        slotList.innerHTML = `<p style="font-size:13px;color:var(--muted);padding:8px 0;">Loading times…</p>`;
+        const slots = await computeAvailableSlots(bookingState.hostUid, date, bookingState.dateISO, bookingState.duration);
+        slotList.innerHTML = slots.length
+          ? slots.map(t => `<button class="slot" type="button">${t}</button>`).join("")
+          : `<p style="font-size:13px;color:var(--muted);padding:8px 0;">No times available this day — try another date.</p>`;
       }
     });
   }
@@ -1118,11 +1001,14 @@
 
   const bookingState = {
     date: "Tue, 12 May 2026",
+    dateISO: null,
     time: "10:30",
     endTime: "11:15",
     eventName: "Your Event",
     duration: 45,
     location: "Google Meet",
+    hostUid: null,
+    eventTypeSlug: null,
   };
 
   function editorFields() {
@@ -1757,9 +1643,16 @@
       }
 
       // X on a date override entry → remove the entry
-      const overrideX = e.target.closest(".panel-body > div > .btn-icon");
+      const overrideX = e.target.closest("#date-overrides-list > div > .btn-icon");
       if (overrideX) {
-        overrideX.closest(".panel-body > div")?.remove();
+        const overrideRow = overrideX.closest("#date-overrides-list > div");
+        const idx = Number(overrideRow?.dataset.overrideIndex);
+        if (currentAvailability && !Number.isNaN(idx)) {
+          currentAvailability.overrides = (currentAvailability.overrides || []).filter((_, i) => i !== idx);
+          rerenderOverrides();
+        } else {
+          overrideRow?.remove();
+        }
         return;
       }
 
@@ -1947,7 +1840,7 @@
     submitBtn?.classList.add("btn-loading");
     if (submitBtn) submitBtn.innerHTML = '<svg width="14" height="14"><use href="#i-refresh" /></svg> Confirming…';
 
-    setTimeout(() => {
+    setTimeout(async () => {
       submitBtn?.classList.remove("btn-loading");
       if (submitBtn) submitBtn.innerHTML = '<svg width="14" height="14"><use href="#i-check" /></svg> Confirm booking';
 
@@ -1956,6 +1849,37 @@
       const timeRange = `${bookingState.time} – ${bookingState.endTime}`;
       const dayLabel = bookingState.date;
       const shortDate = dayLabel.replace(" 2026", "");
+
+      if (bookingState.hostUid && bookingState.eventTypeSlug && window.BooklyData) {
+        try {
+          const answers = [...form.querySelectorAll(".field[data-rendered-question]")].map(f => ({
+            label: f.querySelector("label")?.textContent.replace("*", "").trim() || "",
+            value: f.querySelector("input, select, textarea")?.value || "",
+          }));
+          bookingState.bookingId = await window.BooklyData.createBooking({
+            hostUid: bookingState.hostUid,
+            eventTypeSlug: bookingState.eventTypeSlug,
+            eventName: bookingState.eventName,
+            duration: bookingState.duration,
+            location: bookingState.location,
+            inviteeName: nameVal,
+            inviteeEmail: emailVal,
+            answers,
+            date: bookingState.dateISO,
+            time: bookingState.time,
+            endTime: bookingState.endTime,
+          });
+        } catch (err) {
+          if (err.message === "slot-taken") {
+            showIntegrationToast("That time was just booked by someone else — please pick another.");
+            go("public-pick");
+          } else {
+            console.error("Booking failed:", err);
+            showIntegrationToast("Something went wrong creating your booking. Please try again.");
+          }
+          return;
+        }
+      }
 
       document.querySelectorAll("[data-confirm-date]").forEach(el => el.textContent = dayLabel);
       document.querySelectorAll("[data-confirm-time]").forEach(el => el.textContent = timeRange);
@@ -2534,5 +2458,501 @@
     document.getElementById("setup-modal-steps").innerHTML = info.steps.map(s => `<li>${s}</li>`).join("");
     overlay.hidden = false;
   }
+
+  // ─────────────────────────────────────────────────────────────
+  // FIRESTORE-BACKED CORE BOOKING LOOP
+  // window.BooklyData (from firestore-data.js, an ES module) provides the
+  // CRUD/transaction calls. This block is the classic-script side that owns
+  // the DOM and calls into it — see the memory note on module interop.
+  // ─────────────────────────────────────────────────────────────
+  function slugify(str) {
+    return (str || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "event";
+  }
+
+  async function computeAvailableSlots(hostUid, dateObj, dateISO, durationMinutes) {
+    if (!hostUid || !window.BooklyData) {
+      // No real host resolved (admin previewing, or Try full booking flow demo) — generic sample schedule.
+      const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
+      return isWeekend ? SLOT_TIMES.filter(t => t < "13:00") : SLOT_TIMES;
+    }
+    try {
+      const availability = await window.BooklyData.getAvailability(hostUid);
+      const dow = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][dateObj.getDay()];
+      let ranges = [];
+      const override = availability?.overrides?.find(o => o.date === dateISO);
+      if (override) {
+        ranges = override.blocked ? [] : (override.ranges || []);
+      } else {
+        const day = availability?.weekly?.[dow];
+        ranges = day?.enabled ? (day.ranges || []) : [];
+      }
+      if (!ranges.length) return [];
+
+      const existing = await window.BooklyData.getBookingsForDate(hostUid, dateISO);
+      const candidates = [];
+      for (const range of ranges) {
+        let mins = timeToMins(range.start);
+        const endMins = timeToMins(range.end);
+        while (mins + durationMinutes <= endMins) {
+          candidates.push(minsToTime(mins));
+          mins += 30;
+        }
+      }
+      return candidates.filter(t => {
+        const endT = minsToTime(timeToMins(t) + durationMinutes);
+        return window.BooklyData.slotIsFree(existing, t, endT);
+      });
+    } catch (err) {
+      console.warn("Failed to load availability:", err);
+      return [];
+    }
+  }
+
+  // ── Cancel a real booking ──────────────────────────────────────
+  window.confirmCancelBooking = async function (btn) {
+    btn.disabled = true;
+    const reason = document.querySelector("#cancel-pane textarea")?.value || "";
+    try {
+      if (bookingState.bookingId && window.BooklyData) {
+        await window.BooklyData.cancelBooking(bookingState.bookingId, reason);
+      }
+    } catch (err) {
+      console.warn("Cancellation failed:", err);
+    } finally {
+      btn.disabled = false;
+    }
+    go("cancelled");
+  };
+
+  // ── Event Types: render real rows into #event-list ─────────────
+  function eventRowHTML(evt, bookedCount) {
+    const typeLabel = evt.type || "One-on-one";
+    const locationIcon = evt.location === "In-person" ? "i-pin" : "i-video";
+    return `
+      <div class="event-row" data-event-row data-slug="${evt.slug}">
+        <span class="accent-bar"></span>
+        <div class="event-main">
+          <h4>${evt.name}</h4>
+          <span class="slug">bookly.io/${window.BooklyCurrentHandle || "you"}/${evt.slug}</span>
+          <div class="event-meta-pills">
+            <span class="pill"><svg><use href="#i-clock" /></svg>${evt.duration} min</span>
+            <span class="pill accent"><svg><use href="#i-zap" /></svg>${typeLabel}</span>
+            ${evt.location ? `<span class="pill"><svg><use href="#${locationIcon}" /></svg>${evt.location}</span>` : ""}
+            <span class="pill"><svg><use href="#i-users" /></svg>${bookedCount} booked</span>
+          </div>
+        </div>
+        <div class="event-actions">
+          <span class="toggle ${evt.active !== false ? "on" : ""}" data-toggle></span>
+          <button class="btn btn-icon" type="button" title="Copy link" data-copy-event><svg width="15" height="15"><use href="#i-copy" /></svg></button>
+          <button class="btn btn-icon" type="button" title="View public" data-view-event><svg width="15" height="15"><use href="#i-external" /></svg></button>
+          <button class="btn btn-icon" type="button" title="Edit" data-edit-event><svg width="16" height="16"><use href="#i-more" /></svg></button>
+        </div>
+      </div>`;
+  }
+
+  async function renderEventTypes(uid) {
+    const list = document.getElementById("event-list");
+    if (!list) return;
+    list.innerHTML = `<div style="padding:24px;color:var(--muted);font-size:13.5px;">Loading your event types…</div>`;
+    try {
+      const events = await window.BooklyData.listEventTypes(uid);
+      if (!events.length) {
+        list.innerHTML = `<div style="padding:24px;color:var(--muted);font-size:13.5px;">No event types yet — click "New" to create your first one.</div>`;
+        return;
+      }
+      const counts = await Promise.all(events.map((e) => window.BooklyData.countBookingsForEventType(uid, e.slug)));
+      list.innerHTML = events.map((e, i) => eventRowHTML(e, counts[i])).join("");
+      refreshEventListPills();
+    } catch (err) {
+      console.error("Failed to load event types:", err);
+      list.innerHTML = `<div style="padding:24px;color:var(--danger);font-size:13.5px;">Couldn't load your event types.</div>`;
+    }
+  }
+
+  document.getElementById("event-list")?.addEventListener("click", (e) => {
+    const row = e.target.closest("[data-event-row]");
+    if (!row) return;
+    const slug = row.dataset.slug;
+
+    if (e.target.closest("[data-copy-event]")) {
+      e.stopPropagation();
+      const url = `bookly.io/${window.BooklyCurrentHandle || "you"}/${slug}`;
+      navigator.clipboard?.writeText(url).catch(() => {});
+      return;
+    }
+    if (e.target.closest("[data-view-event]")) {
+      e.stopPropagation();
+      window.goPublic(slug);
+      return;
+    }
+    if (e.target.closest("[data-edit-event]")) {
+      e.stopPropagation();
+      window.goEdit(slug);
+      return;
+    }
+    if (e.target.closest("[data-toggle]")) {
+      e.stopPropagation();
+      const toggle = e.target.closest("[data-toggle]");
+      const nowOn = toggle.classList.toggle("on");
+      row.classList.toggle("off", !nowOn);
+      const uid = window.BooklyCurrentUid;
+      if (uid) window.BooklyData.saveEventType(uid, slug, { active: nowOn }).catch((err) => console.warn(err));
+      return;
+    }
+  });
+
+  // ── "New event type" resets the editor to a blank slate ────────
+  window.newEventType = function () {
+    window.BooklyCurrentEditSlug = null;
+    const fields = editorFields();
+    if (fields.title) fields.title.value = "";
+    if (fields.description) fields.description.value = "";
+    if (fields.slug) fields.slug.value = "";
+    const list = editor?.querySelector(".question-list");
+    if (list) {
+      list.innerHTML = "";
+      DEFAULT_QUESTIONS.forEach((q) =>
+        list.appendChild(makeQuestionRow({ label: q.label, type: q.type, required: q.required, meta: q.required ? "Required" : "Optional" })),
+      );
+    }
+    go("admin-editor");
+    syncEditorPreview();
+  };
+
+  // ── Real goEdit / goPublic, keyed by slug (not display name) ───
+  window.goEdit = async function (slug) {
+    const uid = window.BooklyCurrentUid;
+    if (!uid || !window.BooklyData) { go("admin-editor"); return; }
+    window.BooklyCurrentEditSlug = slug;
+    const evt = await window.BooklyData.getEventType(uid, slug);
+    if (!evt) { window.newEventType(); return; }
+
+    const editorEl = document.getElementById("screen-admin-editor");
+    const detailPanel = editorEl?.querySelector(".panel .panel-body");
+    const inputs = detailPanel ? [...detailPanel.querySelectorAll("input, textarea, select")] : [];
+    if (inputs[0]) inputs[0].value = evt.name || "";
+    if (inputs[1]) inputs[1].value = evt.description || "";
+    if (inputs[2]) {
+      const wanted = `${evt.duration} minutes`;
+      for (const o of inputs[2].options) { if (o.text === wanted) { inputs[2].value = o.value; break; } }
+    }
+    if (inputs[3]) {
+      for (const o of inputs[3].options) { if (o.text === evt.type) { inputs[3].value = o.value; break; } }
+    }
+    if (inputs[4]) {
+      for (const o of inputs[4].options) { if (o.text === evt.location) { inputs[4].value = o.value; break; } }
+    }
+    if (inputs[5]) inputs[5].value = evt.slug || "";
+
+    const list = editor?.querySelector(".question-list");
+    if (list) {
+      list.innerHTML = "";
+      const questions = evt.questions?.length ? evt.questions : DEFAULT_QUESTIONS;
+      questions.forEach((q) =>
+        list.appendChild(
+          makeQuestionRow({
+            label: q.label,
+            type: q.type,
+            required: q.required,
+            meta: q.builtIn ? "Built-in" + (q.required ? " · required" : "") : q.required ? "Required" : "Optional",
+          }),
+        ),
+      );
+    }
+
+    go("admin-editor");
+    syncEditorPreview();
+    onEditorLocationChange(evt.location || "");
+  };
+
+  function applyEventToPublicPages(evt, hostUid) {
+    bookingState.eventName = evt.name;
+    bookingState.duration = Number(evt.duration) || 30;
+    bookingState.location = evt.location || "";
+    bookingState.hostUid = hostUid;
+    bookingState.eventTypeSlug = evt.slug;
+
+    const isInPerson = evt.location === "In-person";
+    const locLine = isInPerson
+      ? `<svg><use href="#i-pin" /></svg>${evt.location}`
+      : `<svg><use href="#i-video" /></svg>${evt.location || ""} · link in invite`;
+
+    document.querySelectorAll(".pub-profile h1").forEach((el) => (el.textContent = `Book a ${evt.name}`));
+    document.querySelectorAll(".session-name").forEach((el) => (el.textContent = evt.name));
+    document.querySelectorAll(".session-desc").forEach((el) => (el.textContent = evt.description || ""));
+    document.querySelectorAll(".session-meta .row:first-child strong").forEach((el) => (el.textContent = `${evt.duration} minutes`));
+    document.querySelectorAll("#screen-public-pick .session-meta .row:nth-child(2)").forEach((el) => { el.innerHTML = locLine; });
+    document.querySelectorAll("#screen-public-form .session-meta .row:nth-child(2)").forEach((el) => {
+      el.innerHTML = `<svg><use href="#i-video" /></svg>${evt.location || ""}`;
+    });
+
+    if (publicForm && publicFormActions) {
+      [...publicForm.children].forEach((el) => { if (el.classList.contains("field")) el.remove(); });
+      const questions = evt.questions?.length ? evt.questions : DEFAULT_QUESTIONS;
+      questions.filter((q) => q.active !== false).forEach((question) => {
+        const field = document.createElement("div");
+        field.className = "field";
+        field.dataset.renderedQuestion = "";
+        field.innerHTML = `<label>${question.label}${question.required ? ' <span class="req">*</span>' : ""}</label>${controlForQuestion(question)}`;
+        publicFormActions.before(field);
+      });
+      const guestsField = document.createElement("div");
+      guestsField.className = "field";
+      guestsField.dataset.renderedQuestion = "";
+      guestsField.innerHTML = `<label>Add guests <span style="color: var(--faint); font-weight: 500;">(optional)</span></label><input type="text" placeholder="email@example.com, email2@example.com" />`;
+      publicFormActions.before(guestsField);
+    }
+  }
+
+  window.goPublic = async function (slug) {
+    const uid = window.BooklyCurrentUid;
+    if (!uid || !window.BooklyData) { go("public-pick"); return; }
+    const evt = await window.BooklyData.getEventType(uid, slug);
+    if (!evt) { go("public-pick"); return; }
+    applyEventToPublicPages(evt, uid);
+    go("public-pick");
+  };
+
+  // ── Event editor: persist Save to Firestore (extra listener; the
+  // original "Changes saved…" flash listener stays, harmless) ────
+  const editorSaveButton = editor
+    ? [...editor.querySelectorAll(".topbar-right .btn")].find((b) => b.textContent.includes("Save changes"))
+    : null;
+  editorSaveButton?.addEventListener("click", async () => {
+    const uid = window.BooklyCurrentUid;
+    if (!uid || !window.BooklyData) return;
+    const fields = editorFields();
+    const slug = fields.slug?.value.trim() || slugify(fields.title?.value);
+    const questions = selectedQuestionRows().map(questionFromRow);
+    const data = {
+      name: fields.title?.value.trim() || "Untitled event",
+      description: fields.description?.value.trim() || "",
+      duration: parseInt(fields.duration?.value || "30", 10) || 30,
+      type: fields.type?.value || "One-on-one",
+      location: fields.location?.value || "",
+      questions,
+      active: true,
+    };
+    try {
+      await window.BooklyData.saveEventType(uid, slug, data);
+      window.BooklyCurrentEditSlug = slug;
+      if (fields.slug) fields.slug.value = slug;
+      editorStatus("Saved to your account.");
+    } catch (err) {
+      console.error("Failed to save event type:", err);
+      editorStatus("Save failed — please try again.");
+    }
+  });
+
+  // ── Availability: render real data, wire Save + overrides ──────
+  const DOW_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+  const DOW_LABELS = { mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday", sat: "Saturday", sun: "Sunday" };
+  const DEFAULT_WEEKLY = {
+    mon: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+    tue: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+    wed: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+    thu: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+    fri: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+    sat: { enabled: false, ranges: [{ start: "09:00", end: "13:00" }] },
+    sun: { enabled: false, ranges: [{ start: "09:00", end: "13:00" }] },
+  };
+
+  function scheduleDayHTML(key, day) {
+    const ranges = day.ranges?.length ? day.ranges : [{ start: "09:00", end: "17:00" }];
+    return `
+      <div class="schedule-day" data-day="${key}">
+        <div class="day-label"><span class="toggle ${day.enabled ? "on" : ""}" data-toggle></span><strong>${DOW_LABELS[key]}</strong></div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          ${ranges
+            .map(
+              (r) => `
+            <div class="range-row">
+              <input class="range-input" value="${r.start}" />
+              <span class="range-sep">–</span>
+              <input class="range-input" value="${r.end}" />
+              <button class="btn btn-icon" type="button"><svg width="14" height="14"><use href="#i-x" /></svg></button>
+            </div>`,
+            )
+            .join("")}
+        </div>
+      </div>`;
+  }
+
+  function overrideRowHTML(o, i) {
+    const label = new Date(o.date + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    const desc = o.blocked ? "Unavailable all day" : (o.ranges || []).map((r) => `${r.start} – ${r.end}`).join(", ") + " only";
+    return `
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--line-soft);" data-override-index="${i}">
+        <div>
+          <strong style="font-weight: 600;">${label}</strong>
+          <div style="color: var(--muted); font-size: 12px; margin-top: 2px;">${desc}</div>
+        </div>
+        <button class="btn btn-icon" type="button"><svg width="14" height="14"><use href="#i-x" /></svg></button>
+      </div>`;
+  }
+
+  let currentAvailability = null;
+
+  function rerenderOverrides() {
+    const overridesList = document.getElementById("date-overrides-list");
+    if (!overridesList) return;
+    const overrides = currentAvailability?.overrides || [];
+    overridesList.innerHTML = overrides.length
+      ? overrides.map((o, i) => overrideRowHTML(o, i)).join("")
+      : `<p style="font-size:12.5px;color:var(--muted);">No date overrides yet.</p>`;
+  }
+
+  async function renderAvailability(uid) {
+    const list = document.getElementById("schedule-list");
+    if (!list) return;
+    try {
+      const saved = await window.BooklyData.getAvailability(uid);
+      currentAvailability = saved || {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Lisbon",
+        weekly: DEFAULT_WEEKLY,
+        overrides: [],
+      };
+      list.innerHTML = DOW_KEYS.map((k) => scheduleDayHTML(k, currentAvailability.weekly?.[k] || DEFAULT_WEEKLY[k])).join("");
+      const tzSelect = document.getElementById("availability-timezone");
+      if (tzSelect) {
+        if (![...tzSelect.options].some((o) => o.value === currentAvailability.timezone)) {
+          const opt = document.createElement("option");
+          opt.value = currentAvailability.timezone;
+          opt.textContent = currentAvailability.timezone;
+          tzSelect.appendChild(opt);
+        }
+        tzSelect.value = currentAvailability.timezone;
+      }
+      rerenderOverrides();
+    } catch (err) {
+      console.error("Failed to load availability:", err);
+      list.innerHTML = `<div style="padding:24px;color:var(--danger);font-size:13.5px;">Couldn't load your availability.</div>`;
+    }
+  }
+
+  function serializeAvailability() {
+    const weekly = {};
+    document.querySelectorAll("#schedule-list .schedule-day").forEach((dayEl) => {
+      const key = dayEl.dataset.day;
+      const enabled = dayEl.querySelector("[data-toggle]")?.classList.contains("on");
+      const ranges = [...dayEl.querySelectorAll(".range-row")].map((row) => {
+        const inputs = row.querySelectorAll(".range-input");
+        return { start: inputs[0]?.value.trim() || "09:00", end: inputs[1]?.value.trim() || "17:00" };
+      });
+      weekly[key] = { enabled: !!enabled, ranges: ranges.length ? ranges : [{ start: "09:00", end: "17:00" }] };
+    });
+    return {
+      timezone: document.getElementById("availability-timezone")?.value || "Europe/Lisbon",
+      weekly,
+      overrides: currentAvailability?.overrides || [],
+    };
+  }
+
+  document.getElementById("add-override-btn")?.addEventListener("click", () => {
+    const dateInput = prompt("Block which date? (YYYY-MM-DD)");
+    if (!dateInput) return;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateInput.trim())) {
+      alert("Enter a date as YYYY-MM-DD.");
+      return;
+    }
+    const blockAllDay = confirm("Block the whole day? Click Cancel to set a limited time range instead.");
+    const override = { date: dateInput.trim(), blocked: blockAllDay };
+    if (!blockAllDay) {
+      const start = prompt("Available from (HH:MM)", "09:00") || "09:00";
+      const end = prompt("Available until (HH:MM)", "17:00") || "17:00";
+      override.ranges = [{ start, end }];
+    }
+    if (!currentAvailability) currentAvailability = { timezone: "Europe/Lisbon", weekly: DEFAULT_WEEKLY, overrides: [] };
+    currentAvailability.overrides = [...(currentAvailability.overrides || []).filter((o) => o.date !== override.date), override];
+    rerenderOverrides();
+  });
+
+  const availTopbar = document.querySelector("#screen-admin-availability .topbar-right");
+  const availSaveButton = availTopbar ? [...availTopbar.querySelectorAll(".btn")].find((b) => b.textContent.includes("Save changes")) : null;
+  availSaveButton?.addEventListener("click", async () => {
+    const uid = window.BooklyCurrentUid;
+    if (!uid || !window.BooklyData) return;
+    availSaveButton.disabled = true;
+    const original = availSaveButton.textContent;
+    availSaveButton.textContent = "Saving…";
+    try {
+      currentAvailability = serializeAvailability();
+      await window.BooklyData.saveAvailability(uid, currentAvailability);
+      availSaveButton.textContent = "Saved";
+    } catch (err) {
+      console.error("Failed to save availability:", err);
+      availSaveButton.textContent = "Save failed";
+    } finally {
+      setTimeout(() => {
+        availSaveButton.textContent = original;
+        availSaveButton.disabled = false;
+      }, 1200);
+    }
+  });
+
+  // ── Bookings: minimal real read-only list ───────────────────────
+  function bookingRowHTML(b) {
+    return `
+      <div class="event-row">
+        <span class="accent-bar"></span>
+        <div class="event-main">
+          <h4>${b.eventName || "Event"}</h4>
+          <span class="slug">${b.inviteeName || "Guest"} · ${b.inviteeEmail || ""}</span>
+          <div class="event-meta-pills">
+            <span class="pill"><svg><use href="#i-cal" /></svg>${b.date}</span>
+            <span class="pill"><svg><use href="#i-clock" /></svg>${b.time} – ${b.endTime}</span>
+            <span class="pill" style="background:var(--success-soft);color:var(--success);border-color:transparent;">Confirmed</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  async function renderBookings(uid) {
+    const list = document.getElementById("bookings-list");
+    const status = document.querySelector("[data-bookings-status]");
+    if (!list) return;
+    list.innerHTML = `<div style="padding:24px;color:var(--muted);font-size:13.5px;">Loading…</div>`;
+    try {
+      const bookings = (await window.BooklyData.listBookingsForHost(uid)).filter((b) => b.status !== "cancelled");
+      if (status) status.textContent = bookings.length ? `${bookings.length} total.` : "No bookings yet.";
+      list.innerHTML = bookings.length
+        ? `<div class="event-list">${bookings.map(bookingRowHTML).join("")}</div>`
+        : `<div style="padding:24px;color:var(--muted);font-size:13.5px;">Nothing here yet — bookings will show up as people book your event types.</div>`;
+    } catch (err) {
+      console.error("Failed to load bookings:", err);
+      list.innerHTML = `<div style="padding:24px;color:var(--danger);font-size:13.5px;">Couldn't load your bookings.</div>`;
+    }
+  }
+
+  // ── Dispatch + public-URL resolution, called from auth.js ──────
+  window.BooklyUI = window.BooklyUI || {};
+  window.BooklyUI.renderScreen = function (screenName, uid) {
+    window.BooklyCurrentUid = uid;
+    if (screenName === "admin-events") renderEventTypes(uid);
+    else if (screenName === "admin-availability") renderAvailability(uid);
+    else if (screenName === "bookings") renderBookings(uid);
+  };
+
+  window.BooklyUI.resolvePublicBooking = async function (queryString) {
+    if (!window.BooklyData) return;
+    const params = new URLSearchParams(queryString);
+    const handle = params.get("u");
+    const slug = params.get("e");
+    if (!handle || !slug) return;
+    try {
+      const uid = await window.BooklyData.resolveHandle(handle);
+      if (!uid) { showIntegrationToast("This booking page doesn't exist."); return; }
+      const evt = await window.BooklyData.getEventType(uid, slug);
+      if (!evt) { showIntegrationToast("This event type isn't available."); return; }
+      const profile = await window.BooklyData.getUserProfile(uid);
+      window.BooklyCurrentHandle = handle;
+      applyEventToPublicPages(evt, uid);
+      if (profile?.displayName) {
+        document.querySelectorAll(".pub-profile .role").forEach((el) => (el.textContent = profile.displayName));
+      }
+    } catch (err) {
+      console.error("Failed to resolve public booking link:", err);
+    }
+  };
 
 })();
