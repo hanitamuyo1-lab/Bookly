@@ -70,7 +70,7 @@ window.go = function (name) {
 };
 
 // PIN-gate the admin section. Re-asked on every entry — no persistence, by design.
-const ADMIN_SCREENS = new Set(["admin-events", "admin-availability", "admin-integrations"]);
+const ADMIN_SCREENS = new Set(["admin-events", "admin-editor", "admin-availability", "admin-integrations"]);
 const ADMIN_PIN = "7934";
 let pinBypass = false;
 let pendingAdminTarget = null;
