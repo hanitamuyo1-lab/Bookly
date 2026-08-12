@@ -250,7 +250,11 @@
             />
           </div>
           <button class="btn btn-primary btn-lg" type="submit">Unlock →</button>
-          <p class="auth-foot"><a href="#" onclick="event.preventDefault();" data-info-back>Cancel</a></p>
+          <p class="auth-foot">
+            <a href="#" onclick="event.preventDefault();" data-info-back>Cancel</a>
+            · <a href="#" onclick="event.preventDefault(); go('settings');">View profile</a>
+            · <a href="#" onclick="event.preventDefault();" data-nav="logout">Log out</a>
+          </p>
         </form>
       </div>
     </section>
