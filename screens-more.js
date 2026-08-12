@@ -20,7 +20,7 @@
               <p class="subtitle">bookly.io/you/demo · 45 min · Zoom</p>
             </div>
             <div class="topbar-right">
-              <button class="btn btn-secondary" type="button" onclick="go('public-pick')">
+              <button class="btn btn-secondary" type="button" onclick="viewMyPublicPage()">
                 <svg width="14" height="14"><use href="#i-eye" /></svg>
                 Preview
               </button>
@@ -263,7 +263,7 @@
                     <div id="pv-cal-days"></div>
                   </div>
                   <div id="pv-slots" class="pv-slots"></div>
-                  <button class="btn btn-primary" style="width:100%;height:34px;font-size:12.5px;margin-top:8px;" onclick="go('public-pick')">
+                  <button class="btn btn-primary" style="width:100%;height:34px;font-size:12.5px;margin-top:8px;" onclick="viewMyPublicPage()">
                     Try full booking flow →
                   </button>
                 </div>
@@ -3021,6 +3021,35 @@
       }
     } catch (err) {
       console.error("Failed to resolve manage-booking link:", err);
+    }
+  };
+
+  // ── "View public page" / "Preview" — show the ADMIN's own real public page ─
+  // (not a hardcoded demo) so previewing and actually booking through it are
+  // the same real flow, including real Firestore writes and confirmation emails.
+  window.viewMyPublicPage = async function () {
+    const uid = window.BooklyCurrentUid;
+    if (!uid || !window.BooklyData) { go("public-pick"); return; }
+    try {
+      let evt = null;
+      if (window.BooklyCurrentEditSlug) {
+        evt = await window.BooklyData.getEventType(uid, window.BooklyCurrentEditSlug);
+      }
+      if (!evt) {
+        const events = await window.BooklyData.listEventTypes(uid);
+        evt = events.find((e) => e.active !== false) || events[0];
+      }
+      if (!evt) {
+        showIntegrationToast("Create an event type first to preview your public page.");
+        return;
+      }
+      const profile = await window.BooklyData.getUserProfile(uid);
+      if (profile?.handle) window.BooklyCurrentHandle = profile.handle;
+      applyEventToPublicPages(evt, uid);
+      go("public-pick");
+    } catch (err) {
+      console.error("Failed to load public page preview:", err);
+      go("public-pick");
     }
   };
 
