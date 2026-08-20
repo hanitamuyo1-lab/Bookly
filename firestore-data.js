@@ -5,6 +5,8 @@ import {
   getDocs,
   setDoc,
   updateDoc,
+  arrayUnion,
+  arrayRemove,
   collection,
   query,
   where,
@@ -145,6 +147,14 @@ export async function cancelBooking(bookingId, reason) {
   });
 }
 
+export async function addGuestToBooking(bookingId, email) {
+  await updateDoc(doc(db, "bookings", bookingId), { guests: arrayUnion(email) });
+}
+
+export async function removeGuestFromBooking(bookingId, email) {
+  await updateDoc(doc(db, "bookings", bookingId), { guests: arrayRemove(email) });
+}
+
 window.BooklyData = {
   resolveHandle,
   isHandleTaken,
@@ -162,4 +172,6 @@ window.BooklyData = {
   slotIsFree,
   createBooking,
   cancelBooking,
+  addGuestToBooking,
+  removeGuestFromBooking,
 };

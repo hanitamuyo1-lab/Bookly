@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+
+    match /users/{uid} {
+      allow read: if true;
+      allow create, update: if isOwner(uid);
+      allow delete: if false;
+
+      match /eventTypes/{slug} {
+        allow read: if true;
+        allow write: if isOwner(uid);
+      }
+      match /availability/{doc} {
+        allow read: if true;
+        allow write: if isOwner(uid);
+      }
+    }
+
+    match /handles/{handle} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.status == 'confirmed'
+                    && request.resource.data.hostUid is string
+                    && request.resource.data.eventTypeSlug is string
+                    && request.resource.data.date is string
+                    && request.resource.data.time is string
+                    && request.resource.data.endTime is string
+                    && request.resource.data.duration is number
+                    && request.resource.data.inviteeEmail is string
+                    && request.resource.data.inviteeEmail
+                         .matches('^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$')
+                    && request.resource.data.createdAt == request.time;
+
+      allow update: if
+        (isSignedIn() && request.auth.uid == resource.data.hostUid)
+        || (
+          resource.data.status == 'confirmed'
+          && request.resource.data.status == 'cancelled'
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['status', 'cancelledAt', 'cancelReason'])
+        )
+        || (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['guests'])
+          && request.resource.data.guests.size() <= 10
+        );
+
+      allow delete: if false;
+    }
+  }
+}

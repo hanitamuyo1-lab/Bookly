@@ -37,7 +37,7 @@
             <button class="tab">Workflows</button>
           </div>
 
-          <div style="display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px;">
+          <div class="two-col-320" style="gap: 24px;">
             <!-- Left: main editor -->
             <div style="display: flex; flex-direction: column; gap: 18px;">
               <section class="panel">
@@ -51,7 +51,7 @@
                     <label>Description</label>
                     <textarea>A live walk-through of Bookly for your team. We'll cover scheduling, calendar integrations, custom questions, and answer anything specific to your workflow.</textarea>
                   </div>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
                     <div class="field">
                       <label>Duration</label>
                       <select>
@@ -357,7 +357,7 @@
             </div>
           </header>
 
-          <div style="display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px;">
+          <div class="two-col-320" style="gap: 20px;">
             <section class="panel">
               <div class="panel-head">
                 <div>
@@ -433,7 +433,7 @@
             </div>
             <div class="panel-body" style="padding: 14px 22px 22px;">
               <div style="display: flex; flex-direction: column; gap: 8px;">
-                <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
+                <div style="display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
                   <div class="integration-logo google" style="width: 32px; height: 32px; font-size: 13px;">G</div>
                   <div>
                     <div style="font-size: 13.5px; font-weight: 600;">your@email.com</div>
@@ -444,7 +444,7 @@
                     <button class="btn btn-secondary btn-sm">Manage</button>
                   </div>
                 </div>
-                <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
+                <div style="display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
                   <div class="integration-logo google" style="width: 32px; height: 32px; font-size: 13px;">G</div>
                   <div>
                     <div style="font-size: 13.5px; font-weight: 600;">personal@gmail.com</div>
@@ -455,7 +455,7 @@
                     <button class="btn btn-secondary btn-sm">Manage</button>
                   </div>
                 </div>
-                <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
+                <div style="display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius);">
                   <div class="integration-logo outlook" style="width: 32px; height: 32px; font-size: 13px;">O</div>
                   <div>
                     <div style="font-size: 13.5px; font-weight: 600;">work@company.com</div>
@@ -755,6 +755,11 @@
                 <div style="flex: 1; min-width: 0;">
                   <strong style="display: block;" data-manage-name>Guest</strong>
                   <span style="font-size: 11.5px;" data-manage-email>—</span>
+                  <div id="manage-guests-list" style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;"></div>
+                  <button class="btn btn-ghost btn-sm" type="button" style="margin-top: 6px; padding-left: 0;" onclick="addGuestToCurrentBooking()">
+                    <svg width="12" height="12"><use href="#i-plus" /></svg>
+                    Add guest
+                  </button>
                 </div>
               </div>
               <div class="row">
@@ -767,7 +772,7 @@
             </div>
 
             <div class="manage-actions">
-              <button class="btn btn-secondary btn-lg" type="button" onclick="go('public-pick')">
+              <button class="btn btn-secondary btn-lg" type="button" onclick="rescheduleBooking()">
                 <svg width="15" height="15"><use href="#i-refresh" /></svg>
                 Reschedule
               </button>
@@ -1002,6 +1007,10 @@
     location: "Google Meet",
     hostUid: null,
     eventTypeSlug: null,
+    inviteeName: null,
+    inviteeEmail: null,
+    guests: [],
+    rescheduleOfBookingId: null,
   };
 
   function editorFields() {
@@ -1784,7 +1793,16 @@
     document.querySelectorAll("[data-form-date]").forEach(el => el.textContent = bookingState.date);
     document.querySelectorAll("[data-form-time]").forEach(el => el.textContent = timeRange);
 
-    renderPublicBookingForm();
+    // NOTE: intentionally NOT calling renderPublicBookingForm() here — that function
+    // rebuilds the form from the admin editor's DOM (a leftover from the single-demo-event
+    // era) and would clobber the real per-event questions applyEventToPublicPages() already
+    // rendered from Firestore, showing every invitee generic/wrong questions.
+    if (bookingState.rescheduleOfBookingId) {
+      const nameInput = document.querySelector('#booking-confirm-form input[type="text"]');
+      const emailInput = document.querySelector('#booking-confirm-form input[type="email"]');
+      if (nameInput && bookingState.inviteeName) nameInput.value = bookingState.inviteeName;
+      if (emailInput && bookingState.inviteeEmail) emailInput.value = bookingState.inviteeEmail;
+    }
     go("public-form");
   };
 
@@ -1849,7 +1867,7 @@
             label: f.querySelector("label")?.textContent.replace("*", "").trim() || "",
             value: f.querySelector("input, select, textarea")?.value || "",
           }));
-          bookingState.bookingId = await window.BooklyData.createBooking({
+          const newBookingId = await window.BooklyData.createBooking({
             hostUid: bookingState.hostUid,
             eventTypeSlug: bookingState.eventTypeSlug,
             eventName: bookingState.eventName,
@@ -1862,6 +1880,18 @@
             time: bookingState.time,
             endTime: bookingState.endTime,
           });
+          if (bookingState.rescheduleOfBookingId && bookingState.rescheduleOfBookingId !== newBookingId) {
+            try {
+              await window.BooklyData.cancelBooking(bookingState.rescheduleOfBookingId, "Rescheduled to a new time");
+            } catch (err) {
+              console.warn("Failed to cancel the original booking after reschedule:", err);
+            }
+          }
+          bookingState.bookingId = newBookingId;
+          bookingState.rescheduleOfBookingId = null;
+          bookingState.inviteeName = nameVal;
+          bookingState.inviteeEmail = emailVal;
+          bookingState.guests = [];
         } catch (err) {
           if (err.message === "slot-taken") {
             showIntegrationToast("That time was just booked by someone else — please pick another.");
@@ -1897,6 +1927,7 @@
       document.querySelectorAll("[data-manage-email]").forEach(el => el.textContent = emailVal);
       document.querySelectorAll("[data-manage-duration]").forEach(el => el.textContent = `${bookingState.duration} minutes`);
       document.querySelectorAll("[data-manage-location]").forEach(el => el.textContent = bookingState.location || "");
+      renderManageGuestsList(bookingState.guests);
 
       go("public-done");
     }, 900);
@@ -2666,6 +2697,9 @@
     bookingState.location = evt.location || "";
     bookingState.hostUid = hostUid;
     bookingState.eventTypeSlug = evt.slug;
+    // A fresh event/host context means this is NOT a continuation of an in-progress
+    // reschedule — only rescheduleBooking() should set this flag.
+    bookingState.rescheduleOfBookingId = null;
 
     const isInPerson = evt.location === "In-person";
     const locLine = isInPerson
@@ -2927,7 +2961,7 @@
   // ── Bookings: minimal real read-only list ───────────────────────
   function bookingRowHTML(b) {
     return `
-      <div class="event-row">
+      <div class="event-row" data-booking-id="${b.id}">
         <span class="accent-bar"></span>
         <div class="event-main">
           <h4>${b.eventName || "Event"}</h4>
@@ -2938,8 +2972,20 @@
             <span class="pill" style="background:var(--success-soft);color:var(--success);border-color:transparent;">Confirmed</span>
           </div>
         </div>
+        <div class="event-actions">
+          <button class="btn btn-icon" type="button" title="View / cancel / reschedule / add guest" data-manage-booking><svg width="15" height="15"><use href="#i-external" /></svg></button>
+        </div>
       </div>`;
   }
+
+  document.getElementById("bookings-list")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-manage-booking]");
+    if (!btn) return;
+    const bookingId = btn.closest("[data-booking-id]")?.dataset.bookingId;
+    if (!bookingId) return;
+    go(`manage?b=${encodeURIComponent(bookingId)}`);
+    window.BooklyUI?.resolveManageBooking?.(`b=${encodeURIComponent(bookingId)}`);
+  });
 
   async function renderBookings(uid) {
     const list = document.getElementById("bookings-list");
@@ -3013,6 +3059,10 @@
       bookingState.location = booking.location;
       bookingState.hostUid = booking.hostUid;
       bookingState.eventTypeSlug = booking.eventTypeSlug;
+      bookingState.inviteeName = booking.inviteeName || "";
+      bookingState.inviteeEmail = booking.inviteeEmail || "";
+      bookingState.guests = booking.guests || [];
+      bookingState.rescheduleOfBookingId = null;
 
       document.querySelectorAll("[data-manage-event]").forEach((el) => (el.textContent = `${booking.eventName} · your booking`));
       document.querySelectorAll("[data-manage-datetime]").forEach((el) => (el.textContent = `${bookingState.date} at ${booking.time}`));
@@ -3020,16 +3070,83 @@
       document.querySelectorAll("[data-manage-email]").forEach((el) => (el.textContent = booking.inviteeEmail || ""));
       document.querySelectorAll("[data-manage-duration]").forEach((el) => (el.textContent = booking.duration ? `${booking.duration} minutes` : ""));
       document.querySelectorAll("[data-manage-location]").forEach((el) => (el.textContent = booking.location || ""));
+      renderManageGuestsList(bookingState.guests);
 
       if (booking.status === "cancelled") {
         const banner = document.querySelector("#screen-manage .manage-banner");
         if (banner) banner.insertAdjacentHTML("beforeend", `<div style="margin-top:8px;font-size:12px;color:var(--ink-muted);">This booking has already been cancelled.</div>`);
         const actions = document.querySelector("#screen-manage .manage-actions");
         if (actions) actions.style.display = "none";
+        const addGuestBtn = document.querySelector('#screen-manage [onclick="addGuestToCurrentBooking()"]');
+        if (addGuestBtn) addGuestBtn.style.display = "none";
       }
     } catch (err) {
       console.error("Failed to resolve manage-booking link:", err);
     }
+  };
+
+  // ── Booking management: guests + reschedule ─────────────────────
+  function renderManageGuestsList(guests) {
+    const container = document.getElementById("manage-guests-list");
+    if (!container) return;
+    container.innerHTML = (guests || [])
+      .map(
+        (email) => `
+        <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;">
+          <span style="word-break:break-all;">${email}</span>
+          <button type="button" class="btn btn-icon" style="width:18px;height:18px;" data-remove-guest="${email}"><svg width="10" height="10"><use href="#i-x" /></svg></button>
+        </div>`,
+      )
+      .join("");
+  }
+
+  document.getElementById("manage-guests-list")?.addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-remove-guest]");
+    if (!btn || !bookingState.bookingId || !window.BooklyData) return;
+    const email = btn.dataset.removeGuest;
+    try {
+      await window.BooklyData.removeGuestFromBooking(bookingState.bookingId, email);
+      bookingState.guests = bookingState.guests.filter((g) => g !== email);
+      renderManageGuestsList(bookingState.guests);
+    } catch (err) {
+      console.error("Failed to remove guest:", err);
+    }
+  });
+
+  window.addGuestToCurrentBooking = async function () {
+    if (!bookingState.bookingId || !window.BooklyData) return;
+    const raw = prompt("Add a guest's email address:");
+    if (!raw) return;
+    const email = raw.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert("Enter a valid email address.");
+      return;
+    }
+    if ((bookingState.guests || []).includes(email)) {
+      alert("That guest is already added.");
+      return;
+    }
+    try {
+      await window.BooklyData.addGuestToBooking(bookingState.bookingId, email);
+      bookingState.guests = [...(bookingState.guests || []), email];
+      renderManageGuestsList(bookingState.guests);
+      showIntegrationToast(`${email} added as a guest.`);
+    } catch (err) {
+      console.error("Failed to add guest:", err);
+      showIntegrationToast("Couldn't add that guest. Please try again.");
+    }
+  };
+
+  // Reschedule: remember which booking we're replacing, then let the same
+  // pick-a-time flow run again for the same host/event; submitBooking() creates
+  // the new booking and cancels this one once the new one is confirmed.
+  window.rescheduleBooking = function () {
+    if (!bookingState.bookingId) {
+      go("public-pick");
+      return;
+    }
+    bookingState.rescheduleOfBookingId = bookingState.bookingId;
+    go("public-pick");
   };
 
   // ── "View public page" / "Preview" — show the ADMIN's own real public page ─
