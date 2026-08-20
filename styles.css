@@ -966,6 +966,9 @@ h1, h2, h3, h4, p { margin: 0; }
   .slot-pair { grid-template-columns: 1fr 68px; }
   .public-right h2 { font-size: 17px; }
   .confirm-actions .btn { width: 100%; justify-content: center; }
+  .manage-card { border-radius: 0; }
+  .manage-banner, .manage-body { padding-left: 18px; padding-right: 18px; }
+  .manage-actions { grid-template-columns: 1fr; }
   .field input,
   .field select,
   .field textarea { height: 44px; font-size: 16px; }
@@ -1223,12 +1226,7 @@ h1, h2, h3, h4, p { margin: 0; }
   gap: 10px;
   margin-top: 4px;
 }
-.manage-actions .btn {
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.manage-actions .btn { min-width: 0; }
 .manage-meta-list { display: flex; flex-direction: column; gap: 10px; }
 .manage-meta-list .row {
   display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--muted); line-height: 1.5;
