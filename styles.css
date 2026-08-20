@@ -968,7 +968,6 @@ h1, h2, h3, h4, p { margin: 0; }
   .confirm-actions .btn { width: 100%; justify-content: center; }
   .manage-card { border-radius: 0; }
   .manage-banner, .manage-body { padding-left: 18px; padding-right: 18px; }
-  .manage-actions { grid-template-columns: 1fr; }
   .field input,
   .field select,
   .field textarea { height: 44px; font-size: 16px; }
@@ -1291,6 +1290,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .btn-loading svg { animation: spin 0.7s linear infinite; }
 
 @media (max-width: 640px) {
+  .manage-actions { grid-template-columns: 1fr; }
   .screen-nav {
     inset: 10px auto 10px 10px;
     width: 96px;
