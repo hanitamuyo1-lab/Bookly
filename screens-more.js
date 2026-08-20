@@ -1606,7 +1606,7 @@
     const copyUrlButton = editor.querySelector(".field button.btn-ghost");
     copyUrlButton?.addEventListener("click", () => {
       const slug = editorFields().slug?.value.trim() || "demo";
-      const url = `bookly.io/you/${slug}`;
+      const url = publicBookingUrl(slug);
       navigator.clipboard?.writeText(url).catch(() => {});
       copyUrlButton.classList.add("active");
       editorStatus(`Copied ${url}`);
@@ -2551,6 +2551,11 @@
   };
 
   // ── Event Types: render real rows into #event-list ─────────────
+  function publicBookingUrl(slug) {
+    const handle = window.BooklyCurrentHandle || "you";
+    return `https://www.booklylive.net/app.html#public-pick?u=${encodeURIComponent(handle)}&e=${encodeURIComponent(slug)}`;
+  }
+
   function eventRowHTML(evt, bookedCount) {
     const typeLabel = evt.type || "One-on-one";
     const locationIcon = evt.location === "In-person" ? "i-pin" : "i-video";
@@ -2559,7 +2564,7 @@
         <span class="accent-bar"></span>
         <div class="event-main">
           <h4>${evt.name}</h4>
-          <span class="slug">bookly.io/${window.BooklyCurrentHandle || "you"}/${evt.slug}</span>
+          <span class="slug">${publicBookingUrl(evt.slug)}</span>
           <div class="event-meta-pills">
             <span class="pill"><svg><use href="#i-clock" /></svg>${evt.duration} min</span>
             <span class="pill accent"><svg><use href="#i-zap" /></svg>${typeLabel}</span>
@@ -2602,8 +2607,7 @@
 
     if (e.target.closest("[data-copy-event]")) {
       e.stopPropagation();
-      const url = `bookly.io/${window.BooklyCurrentHandle || "you"}/${slug}`;
-      navigator.clipboard?.writeText(url).catch(() => {});
+      navigator.clipboard?.writeText(publicBookingUrl(slug)).catch(() => {});
       return;
     }
     if (e.target.closest("[data-view-event]")) {

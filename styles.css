@@ -435,6 +435,7 @@ h1, h2, h3, h4, p { margin: 0; }
   font-size: 11.5px;
   color: var(--muted);
   margin-top: 3px;
+  overflow-wrap: anywhere;
 }
 .event-meta-pills { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; }
 .pill {
@@ -1572,6 +1573,9 @@ h1, h2, h3, h4, p { margin: 0; }
 /* ─────────────────────────────────────────────────────────────
    Setup modal
    ───────────────────────────────────────────────────────────── */
+.setup-modal-overlay[hidden] {
+  display: none;
+}
 .setup-modal-overlay {
   position: fixed;
   inset: 0;
