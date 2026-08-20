@@ -202,6 +202,7 @@ if (signupForm) {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       if (name) await updateProfile(cred.user, { displayName: name });
       await reserveHandle(cred.user.uid, handle, { displayName: name || "", email });
+      window.BooklyCurrentHandle = handle;
       // navigation to admin-events happens via onAuthStateChanged below
     } catch (err) {
       showError("signup-error", friendlyError(err));
@@ -272,6 +273,7 @@ async function ensureHandle(user) {
       continue;
     }
     await reserveHandle(user.uid, handle, { displayName: user.displayName || "", email: user.email || "" });
+    window.BooklyCurrentHandle = handle;
     return;
   }
 }
