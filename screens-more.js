@@ -3060,6 +3060,7 @@
       bookingState.dateISO = booking.date;
       bookingState.time = booking.time;
       bookingState.endTime = booking.endTime;
+      bookingState.duration = booking.duration;
       bookingState.location = booking.location;
       bookingState.hostUid = booking.hostUid;
       bookingState.eventTypeSlug = booking.eventTypeSlug;
