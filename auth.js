@@ -80,13 +80,15 @@ function paintUser(user) {
 }
 
 async function paintProfileHandle(user) {
-  const handleEl = document.getElementById("profile-handle");
-  if (!handleEl || !user) return;
+  if (!user) return;
   try {
     const profile = await getUserProfile(user.uid);
-    handleEl.textContent = profile?.handle || "—";
+    if (profile?.handle) window.BooklyCurrentHandle = profile.handle;
+    const handleEl = document.getElementById("profile-handle");
+    if (handleEl) handleEl.textContent = profile?.handle || "—";
   } catch {
-    handleEl.textContent = "—";
+    const handleEl = document.getElementById("profile-handle");
+    if (handleEl) handleEl.textContent = "—";
   }
 }
 
