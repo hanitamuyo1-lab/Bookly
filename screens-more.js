@@ -3317,12 +3317,26 @@
   // Reschedule: remember which booking we're replacing, then let the same
   // pick-a-time flow run again for the same host/event; submitBooking() creates
   // the new booking and cancels this one once the new one is confirmed.
-  window.rescheduleBooking = function () {
+  window.rescheduleBooking = async function () {
     if (!bookingState.bookingId) {
       go("public-pick");
       return;
     }
-    bookingState.rescheduleOfBookingId = bookingState.bookingId;
+    const currentBookingId = bookingState.bookingId;
+    // Rescheduling from a cold-loaded #manage?b= link means #screen-public-pick was never
+    // populated with real data this page load — it still shows its original static
+    // placeholder markup ("Product demo call" etc.) unless we refresh it here. Re-fetch the
+    // real event and re-apply it (this also resets rescheduleOfBookingId to null, so set the
+    // flag *after*, not before).
+    if (bookingState.hostUid && bookingState.eventTypeSlug && window.BooklyData) {
+      try {
+        const evt = await window.BooklyData.getEventType(bookingState.hostUid, bookingState.eventTypeSlug);
+        if (evt) await applyEventToPublicPages(evt, bookingState.hostUid);
+      } catch (err) {
+        console.warn("Failed to refresh event details before reschedule:", err);
+      }
+    }
+    bookingState.rescheduleOfBookingId = currentBookingId;
     go("public-pick");
   };
 
