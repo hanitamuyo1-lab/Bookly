@@ -290,17 +290,26 @@ async function ensureHandle(user) {
   // so every account still ends up with a resolvable public booking URL.
   if (handleCheckedUids.has(user.uid)) return;
   handleCheckedUids.add(user.uid);
-  const profile = await getUserProfile(user.uid);
-  if (profile?.handle) return;
 
-  // Profile doc missing but a handle reservation for this uid still exists (e.g. the
-  // users/{uid} doc was deleted separately from handles/{handle}) — silently recreate
-  // the profile with the handle already owned, instead of prompting for a new one.
-  const existingHandle = await findHandleForUid(user.uid);
-  if (existingHandle) {
-    await reserveHandle(user.uid, existingHandle, { displayName: user.displayName || "", email: user.email || "" });
-    window.BooklyCurrentHandle = existingHandle;
-    return;
+  // onAuthStateChanged can fire before a just-submitted signup form's own reserveHandle()
+  // write has landed (Firebase's auth-state event isn't ordered against arbitrary Firestore
+  // writes) — a single immediate check can catch that in-flight write as "no handle yet" and
+  // wrongly prompt for a brand new one mid-signup. Check twice, a beat apart, before deciding
+  // there's genuinely nothing to find.
+  for (const delayMs of [0, 800]) {
+    if (delayMs) await new Promise((r) => setTimeout(r, delayMs));
+    const profile = await getUserProfile(user.uid);
+    if (profile?.handle) return;
+
+    // Profile doc missing but a handle reservation for this uid still exists (e.g. the
+    // users/{uid} doc was deleted separately from handles/{handle}) — silently recreate
+    // the profile with the handle already owned, instead of prompting for a new one.
+    const existingHandle = await findHandleForUid(user.uid);
+    if (existingHandle) {
+      await reserveHandle(user.uid, existingHandle, { displayName: user.displayName || "", email: user.email || "" });
+      window.BooklyCurrentHandle = existingHandle;
+      return;
+    }
   }
 
   const suggestion = (user.email || "").split("@")[0].toLowerCase().replace(/[^a-z0-9-]/g, "");
