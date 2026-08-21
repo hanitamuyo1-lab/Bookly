@@ -36,6 +36,14 @@ export async function isHandleTaken(handle) {
   return snap.exists();
 }
 
+// Finds a handle already reserved for this uid — used to self-heal a missing
+// users/{uid} profile doc (e.g. after an accidental Firestore deletion) without
+// re-prompting for a new handle when the original reservation still exists.
+export async function findHandleForUid(uid) {
+  const snap = await getDocs(query(collection(db, "handles"), where("uid", "==", uid)));
+  return snap.empty ? null : snap.docs[0].id;
+}
+
 export async function reserveHandle(uid, handle, profile) {
   await setDoc(doc(db, "handles", handle), { uid, createdAt: serverTimestamp() });
   await setDoc(doc(db, "users", uid), { ...profile, handle, createdAt: serverTimestamp() }, { merge: true });
@@ -165,6 +173,7 @@ window.BooklyData = {
   reserveHandle,
   getUserProfile,
   saveIntegrationLink,
+  findHandleForUid,
   listEventTypes,
   getEventType,
   saveEventType,

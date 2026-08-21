@@ -1,5 +1,5 @@
 import { auth, googleProvider } from "./firebase-init.js";
-import { isHandleTaken, reserveHandle, getUserProfile } from "./firestore-data.js";
+import { isHandleTaken, reserveHandle, getUserProfile, findHandleForUid } from "./firestore-data.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -292,6 +292,17 @@ async function ensureHandle(user) {
   handleCheckedUids.add(user.uid);
   const profile = await getUserProfile(user.uid);
   if (profile?.handle) return;
+
+  // Profile doc missing but a handle reservation for this uid still exists (e.g. the
+  // users/{uid} doc was deleted separately from handles/{handle}) — silently recreate
+  // the profile with the handle already owned, instead of prompting for a new one.
+  const existingHandle = await findHandleForUid(user.uid);
+  if (existingHandle) {
+    await reserveHandle(user.uid, existingHandle, { displayName: user.displayName || "", email: user.email || "" });
+    window.BooklyCurrentHandle = existingHandle;
+    return;
+  }
+
   const suggestion = (user.email || "").split("@")[0].toLowerCase().replace(/[^a-z0-9-]/g, "");
   while (true) {
     const raw = prompt("Choose a public booking handle (bookly.io/<handle>) — lowercase letters, numbers, and hyphens:", suggestion);
