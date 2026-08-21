@@ -217,6 +217,11 @@
                   </div>
                 </div>
 
+                <div style="margin: 0 0 10px; padding: 8px 10px; border-radius: var(--radius-sm); background: var(--surface-2); border: 1px solid var(--line); font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+                  <svg width="12" height="12" style="flex-shrink:0;"><use href="#i-eye" /></svg>
+                  Preview only — no real booking is created and no email is sent here. To test the real flow, use "Preview" above or your actual public link.
+                </div>
+
                 <!-- browser chrome -->
                 <div class="pv-urlbar">
                   <svg width="10" height="10" style="color:var(--success);flex-shrink:0;"><use href="#i-check" /></svg>
@@ -649,6 +654,9 @@
           <section class="public-right" style="text-align: center; align-items: center; padding: 40px 32px;">
             <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--success-soft); color: var(--success); display: grid; place-items: center;">
               <svg width="32" height="32"><use href="#i-check" /></svg>
+            </div>
+            <div id="pv-mock-banner" hidden style="width: 100%; max-width: 480px; padding: 8px 14px; border-radius: var(--radius-sm); background: var(--warning-soft, #fff4e5); border: 1px solid var(--warning, #e5a100); color: var(--warning, #915c00); font-size: 12.5px; font-weight: 600;">
+              Preview only — this was not a real booking. No email was sent.
             </div>
             <div style="text-align: center;">
               <h2 style="font-size: 24px;">You're booked!</h2>
@@ -1299,6 +1307,9 @@
     document.querySelectorAll("[data-confirm-time]").forEach(el => el.textContent = `${bookingState.time} – ${bookingState.endTime}`);
     document.querySelectorAll("[data-confirm-email]").forEach(el => el.textContent = emailVal);
 
+    const banner = document.getElementById("pv-mock-banner");
+    if (banner) banner.hidden = false;
+
     go("public-done");
   };
 
@@ -1928,6 +1939,9 @@
       document.querySelectorAll("[data-manage-duration]").forEach(el => el.textContent = `${bookingState.duration} minutes`);
       document.querySelectorAll("[data-manage-location]").forEach(el => el.textContent = bookingState.location || "");
       renderManageGuestsList(bookingState.guests);
+
+      const pvBanner = document.getElementById("pv-mock-banner");
+      if (pvBanner) pvBanner.hidden = true;
 
       go("public-done");
     }, 900);
