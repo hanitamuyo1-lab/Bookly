@@ -1057,13 +1057,20 @@
     const label = (labelEl?.textContent || "").replace("*", "").trim();
     const type = row.querySelector(".q-type-badge")?.textContent?.trim() || "Text";
     const meta = row.querySelector(".q-meta span:last-child")?.textContent?.trim() || "";
+    let options = [];
+    try { options = JSON.parse(row.dataset.options || "[]"); } catch { options = []; }
     return {
       label,
       type,
       required: labelEl?.textContent.includes("*") || meta.toLowerCase().includes("required"),
       active: row.querySelector(".toggle")?.classList.contains("on"),
-      builtIn: meta.toLowerCase().includes("built-in")
+      builtIn: meta.toLowerCase().includes("built-in"),
+      options,
     };
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
   function controlForQuestion(question) {
@@ -1078,6 +1085,14 @@
         <span class="hint">This helps the host prepare for your session.</span>`;
     }
     if (question.type.toLowerCase().includes("select")) {
+      const opts = Array.isArray(question.options) ? question.options.filter((o) => o && o.trim()) : [];
+      if (opts.length) {
+        return `<select${required}>
+          <option value="">Select an option</option>
+          ${opts.map((o) => `<option>${escapeHtml(o)}</option>`).join("\n")}
+        </select>`;
+      }
+      // Backward-compat fallback for questions saved before per-question options existed.
       if (lbl.includes("new customer") || lbl.includes("existing")) {
         return `<select${required}>
           <option value="">Select an option</option>
@@ -1107,9 +1122,9 @@
     { label: "Your name", type: "Text", required: true, active: true },
     { label: "Email", type: "Email", required: true, active: true },
     { label: "Company name", type: "Text", required: false, active: true },
-    { label: "Team size", type: "Select", required: true, active: true },
+    { label: "Team size", type: "Select", required: true, active: true, options: ["1–10 people", "11–50 people", "51–200 people", "200+ people"] },
     { label: "What would you like to cover in the demo?", type: "Long text", required: false, active: true },
-    { label: "Are you a new customer?", type: "Select", required: true, active: true },
+    { label: "Are you a new customer?", type: "Select", required: true, active: true, options: ["Yes, I'm a new customer", "No, I'm an existing customer", "Not sure"] },
   ];
 
   function renderPublicBookingForm() {
@@ -1421,21 +1436,26 @@
     }
   };
 
-  function makeQuestionRow({ label = "New custom question", type = "Text", meta = "Optional", required = false } = {}) {
+  function makeQuestionRow({ label = "New custom question", type = "Text", meta = "Optional", required = false, options = [], enabled = true } = {}) {
     const row = document.createElement("div");
     row.className = "question-row active";
+    const displayMeta = type === "Select" && options.filter((o) => o && o.trim()).length
+      ? options.filter((o) => o && o.trim()).join(" · ")
+      : meta;
+    row.dataset.options = JSON.stringify(options || []);
     row.innerHTML = `
       <svg class="q-handle" width="18" height="18"><use href="#i-handle" /></svg>
       <div class="q-info">
-        <div class="q-label">${label}${required ? ' <span class="req">*</span>' : ""}</div>
+        <div class="q-label">${escapeHtml(label)}${required ? ' <span class="req">*</span>' : ""}</div>
         <div class="q-meta">
-          <span class="q-type-badge">${type}</span>
-          <span>${meta}</span>
+          <span class="q-type-badge">${escapeHtml(type)}</span>
+          <span>${escapeHtml(displayMeta)}</span>
         </div>
       </div>
       <div style="display: flex; gap: 4px;">
-        <span class="toggle on" data-toggle></span>
-        <button class="btn btn-icon" type="button" data-delete-question><svg width="15" height="15"><use href="#i-trash" /></svg></button>
+        <span class="toggle ${enabled ? "on" : ""}" data-toggle></span>
+        <button class="btn btn-icon" type="button" data-edit-question title="Edit"><svg width="14" height="14"><use href="#i-more" /></svg></button>
+        <button class="btn btn-icon" type="button" data-delete-question title="Delete"><svg width="15" height="15"><use href="#i-trash" /></svg></button>
       </div>
     `;
     return row;
@@ -1536,13 +1556,7 @@
 
     const addQuestionButton = [...editor.querySelectorAll("button")].find(btn => btn.textContent.includes("Add question"));
     addQuestionButton?.addEventListener("click", () => {
-      const list = editor.querySelector(".question-list");
-      list?.querySelectorAll(".question-row").forEach(row => row.classList.remove("active"));
-      const row = makeQuestionRow();
-      list?.appendChild(row);
-      editorStatus("New question added to the booking form.");
-      updateQuestionCount();
-      renderPublicBookingForm();
+      showQuestionModal(null);
     });
 
     editor.addEventListener("click", (e) => {
@@ -1553,7 +1567,13 @@
         editorStatus(`${questionFromRow(row).label} selected.`);
       }
 
-      const deleteButton = e.target.closest(".question-row .btn-icon:not([disabled])");
+      const editButton = e.target.closest("[data-edit-question]");
+      if (editButton) {
+        showQuestionModal(editButton.closest(".question-row"));
+        return;
+      }
+
+      const deleteButton = e.target.closest("[data-delete-question]:not([disabled])");
       if (deleteButton) {
         const targetRow = deleteButton.closest(".question-row");
         const label = questionFromRow(targetRow).label;
@@ -2309,6 +2329,106 @@
 
   // ── Toast notification ────────────────────────────────────────
   // ── Zoom / Teams personal link modal ─────────────────────────
+  // ── Add/edit a booking-form question (label, type, and — for Select — real
+  // host-defined options, e.g. "Meeting, Interview, Seminar, Conference") ────
+  function showQuestionModal(existingRow) {
+    let overlay = document.getElementById("question-modal-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "question-modal-overlay";
+      overlay.className = "setup-modal-overlay";
+      overlay.innerHTML = `
+        <div class="setup-modal">
+          <div class="setup-modal-head">
+            <h3 id="question-modal-title">Add question</h3>
+            <button class="btn btn-icon" type="button" onclick="document.getElementById('question-modal-overlay').hidden=true">
+              <svg width="16" height="16"><use href="#i-x" /></svg>
+            </button>
+          </div>
+          <div style="padding:16px 24px 4px; display:flex; flex-direction:column; gap:12px;">
+            <div class="field">
+              <label>Question label</label>
+              <input id="question-modal-label" type="text" style="font-size:13px;" placeholder="e.g. Which service do you need?" />
+            </div>
+            <div class="field">
+              <label>Type</label>
+              <select id="question-modal-type" style="font-size:13px;">
+                <option value="Text">Text</option>
+                <option value="Long text">Long text</option>
+                <option value="Email">Email</option>
+                <option value="Select">Dropdown (Select)</option>
+              </select>
+            </div>
+            <div class="field" id="question-modal-options-field" hidden>
+              <label>Dropdown options — one per line</label>
+              <textarea id="question-modal-options" rows="5" style="font-size:13px;" placeholder="Meeting&#10;Interview&#10;Seminar&#10;Conference&#10;Barber&#10;Hair Salon"></textarea>
+              <span class="hint">Invitees will pick one of these when they book.</span>
+            </div>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+              <input id="question-modal-required" type="checkbox" style="width:auto;" />
+              Required
+            </label>
+          </div>
+          <div class="setup-modal-foot" style="gap:8px;">
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('question-modal-overlay').hidden=true">Cancel</button>
+            <button class="btn btn-primary" id="question-modal-save" type="button">Save</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.hidden = true; });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !overlay.hidden) overlay.hidden = true; });
+      document.getElementById("question-modal-type").addEventListener("change", (e) => {
+        document.getElementById("question-modal-options-field").hidden = e.target.value !== "Select";
+      });
+    }
+
+    const existing = existingRow ? questionFromRow(existingRow) : null;
+    document.getElementById("question-modal-title").textContent = existing ? "Edit question" : "Add question";
+    const labelInput = document.getElementById("question-modal-label");
+    const typeSelect = document.getElementById("question-modal-type");
+    const optionsField = document.getElementById("question-modal-options-field");
+    const optionsInput = document.getElementById("question-modal-options");
+    const requiredInput = document.getElementById("question-modal-required");
+
+    labelInput.value = existing?.label || "";
+    typeSelect.value = ["Text", "Long text", "Email", "Select"].includes(existing?.type) ? existing.type : "Text";
+    optionsInput.value = (existing?.options || []).join("\n");
+    optionsField.hidden = typeSelect.value !== "Select";
+    requiredInput.checked = !!existing?.required;
+
+    document.getElementById("question-modal-save").onclick = () => {
+      const label = labelInput.value.trim();
+      if (!label) { labelInput.focus(); return; }
+      const type = typeSelect.value;
+      const options = type === "Select"
+        ? optionsInput.value.split("\n").map((o) => o.trim()).filter(Boolean)
+        : [];
+      if (type === "Select" && !options.length) {
+        showIntegrationToast("Add at least one dropdown option.");
+        optionsInput.focus();
+        return;
+      }
+      const required = requiredInput.checked;
+      const meta = required ? "Required" : "Optional";
+
+      const enabled = existingRow ? existingRow.querySelector(".toggle")?.classList.contains("on") ?? true : true;
+      const list = editor.querySelector(".question-list");
+      const newRow = makeQuestionRow({ label, type, meta, required, options, enabled });
+      if (existingRow) {
+        existingRow.replaceWith(newRow);
+      } else {
+        list?.appendChild(newRow);
+      }
+      overlay.hidden = true;
+      editorStatus(`${label} ${existingRow ? "updated" : "added to the booking form"}.`);
+      updateQuestionCount();
+      renderPublicBookingForm();
+    };
+
+    overlay.hidden = false;
+    setTimeout(() => labelInput.focus(), 50);
+  }
+
   function showLinkModal(id) {
     const isZoom   = id === "zoom";
     const title    = isZoom ? "Connect Zoom" : "Connect Microsoft Teams";
@@ -2656,7 +2776,7 @@
     if (list) {
       list.innerHTML = "";
       DEFAULT_QUESTIONS.forEach((q) =>
-        list.appendChild(makeQuestionRow({ label: q.label, type: q.type, required: q.required, meta: q.required ? "Required" : "Optional" })),
+        list.appendChild(makeQuestionRow({ label: q.label, type: q.type, required: q.required, meta: q.required ? "Required" : "Optional", options: q.options || [], enabled: q.active !== false })),
       );
     }
     go("admin-editor");
@@ -2699,6 +2819,8 @@
             type: q.type,
             required: q.required,
             meta: q.builtIn ? "Built-in" + (q.required ? " · required" : "") : q.required ? "Required" : "Optional",
+            options: q.options || [],
+            enabled: q.active !== false,
           }),
         ),
       );
