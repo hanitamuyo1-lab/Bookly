@@ -65,10 +65,6 @@ function paintUser(user) {
     if (emailEl) emailEl.textContent = user.email || "";
   });
 
-  document.querySelectorAll('.screen-nav [data-screen="signup"], .screen-nav [data-screen="login"]').forEach((btn) => {
-    btn.style.display = user ? "none" : "";
-  });
-
   const profileName = document.getElementById("profile-name");
   const profileEmail = document.getElementById("profile-email");
   const profileAvatar = document.getElementById("profile-avatar");

@@ -73,63 +73,8 @@ button { cursor: pointer; background: none; border: 0; padding: 0; color: inheri
 a { color: inherit; text-decoration: none; }
 h1, h2, h3, h4, p { margin: 0; }
 
-/* ─── Screen navigator pill ───────────────────────────────── */
-.screen-nav {
-  position: fixed;
-  inset: 16px auto 16px 16px;
-  width: 206px;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 6px;
-  padding: 14px 10px;
-  background: rgba(5, 5, 5, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--ink-line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-.screen-nav::-webkit-scrollbar { display: none; }
-.screen-nav .label {
-  color: var(--ink-muted);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 10px 10px 2px;
-  white-space: nowrap;
-}
-.screen-nav .label:first-child { padding-top: 2px; }
-.screen-nav .group-sep {
-  width: 100%;
-  height: 1px;
-  background: var(--ink-line);
-  margin: 6px 0;
-  flex-shrink: 0;
-}
-.screen-nav button {
-  height: 34px;
-  padding: 0 10px;
-  border-radius: var(--radius-sm);
-  color: var(--ink-muted);
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-  text-align: left;
-  flex-shrink: 0;
-}
-.screen-nav button:hover { background: var(--ink-2); color: var(--ink-text); }
-.screen-nav button.active {
-  background: var(--accent);
-  color: var(--accent-ink);
-}
-
 /* ─── Screens visibility ──────────────────────────────────── */
-.screen { display: none; min-height: 100vh; padding-left: 238px; }
+.screen { display: none; min-height: 100vh; }
 .screen.active { display: block; }
 
 /* ─── App shell (admin) ───────────────────────────────────── */
@@ -1291,37 +1236,6 @@ h1, h2, h3, h4, p { margin: 0; }
 
 @media (max-width: 640px) {
   .manage-actions { grid-template-columns: 1fr; }
-  .screen-nav {
-    inset: 10px auto 10px 10px;
-    width: 96px;
-    padding: 10px 8px;
-    gap: 4px;
-    flex-direction: column;
-    align-items: stretch;
-    overflow-x: hidden;
-    overflow-y: auto;
-    border-radius: var(--radius-lg);
-  }
-  .screen-nav .label {
-    padding: 8px 6px 2px;
-    font-size: 9px;
-  }
-  .screen-nav .label:first-child { padding-top: 0; }
-  .screen-nav .group-sep {
-    width: 100%;
-    height: 1px;
-    margin: 4px 0;
-  }
-  .screen-nav button {
-    height: auto;
-    min-height: 30px;
-    padding: 6px;
-    text-align: left;
-    white-space: normal;
-    line-height: 1.15;
-    font-size: 11px;
-  }
-  .screen { padding-left: 112px; }
   .workspace { padding: 22px 18px 60px; }
   .topbar, .panel-head { flex-direction: column; align-items: stretch; }
 }

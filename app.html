@@ -50,31 +50,6 @@
       </defs>
     </svg>
 
-    <!-- ─── Screen navigator (floats at bottom) ─── -->
-    <nav class="screen-nav" aria-label="Demo screens">
-      <span class="label">Demo</span>
-      <button data-screen="signup">Sign up</button>
-      <button data-screen="login">Log in</button>
-      <span class="group-sep"></span>
-      <span class="label">Admin</span>
-      <button data-screen="admin-events">Event types</button>
-      <button data-screen="admin-editor">Editor</button>
-      <button data-screen="admin-availability">Availability</button>
-      <button data-screen="admin-integrations">Integrations</button>
-      <span class="group-sep"></span>
-      <span class="label">Public</span>
-      <button data-screen="public-pick">Pick a time</button>
-      <button data-screen="public-form">Details</button>
-      <button data-screen="public-done">Confirmed</button>
-      <button data-screen="manage">Manage</button>
-      <span class="group-sep"></span>
-      <span class="label">Info</span>
-      <button data-screen="about">About</button>
-      <button data-screen="faq">FAQ</button>
-      <button data-screen="privacy">Privacy</button>
-      <button data-screen="terms">Terms</button>
-    </nav>
-
     <!-- ──────────────────────────────────────────────────── -->
     <!-- 1. SIGN UP                                            -->
     <!-- ──────────────────────────────────────────────────── -->
@@ -718,18 +693,12 @@
         screens().forEach(s => s.classList.remove("active"));
         const target = document.getElementById("screen-" + screenName);
         if (target) target.classList.add("active");
-        document.querySelectorAll(".screen-nav button").forEach(b => {
-          b.classList.toggle("active", b.dataset.screen === screenName);
-        });
         window.scrollTo(0, 0);
         history.replaceState(null, "", "#" + name);
         ensureSidebars();
       }
       document.addEventListener("click", (e) => {
         if (e.target.closest("[data-info-back]")) go(_prevScreen);
-      });
-      document.querySelectorAll(".screen-nav button").forEach(b => {
-        b.addEventListener("click", () => go(b.dataset.screen));
       });
 
       // ──────────────────────────────────────────────────
