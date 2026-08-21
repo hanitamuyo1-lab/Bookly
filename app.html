@@ -226,40 +226,6 @@
     </section>
 
     <!-- ──────────────────────────────────────────────────── -->
-    <!-- ADMIN PIN GATE                                        -->
-    <!-- ──────────────────────────────────────────────────── -->
-    <section class="screen" id="screen-admin-pin">
-      <div class="auth-form-side" style="min-height: 100vh;">
-        <form class="auth-form" id="admin-pin-form">
-          <div>
-            <h1>Admin access</h1>
-            <p class="auth-sub">Enter the 4-digit PIN to continue.</p>
-          </div>
-          <div class="auth-error" id="admin-pin-error" hidden></div>
-          <div class="field">
-            <label>PIN</label>
-            <input
-              type="password"
-              id="admin-pin-input"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              maxlength="4"
-              autocomplete="off"
-              placeholder="••••"
-              style="text-align: center; font-size: 28px; letter-spacing: 14px; font-family: var(--font-mono);"
-            />
-          </div>
-          <button class="btn btn-primary btn-lg" type="submit">Unlock →</button>
-          <p class="auth-foot">
-            <a href="#" onclick="event.preventDefault();" data-info-back>Cancel</a>
-            · <a href="#" onclick="event.preventDefault(); go('settings');">View profile</a>
-            · <a href="#" onclick="event.preventDefault();" data-nav="logout">Log out</a>
-          </p>
-        </form>
-      </div>
-    </section>
-
-    <!-- ──────────────────────────────────────────────────── -->
     <!-- Sidebar template (reused via JS later)                -->
     <!-- ──────────────────────────────────────────────────── -->
     <template id="sidebar-tmpl">

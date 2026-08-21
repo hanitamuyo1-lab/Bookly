@@ -100,68 +100,15 @@ window.go = function (name) {
   if (name.split("?")[0] === "settings") paintProfileHandle(auth.currentUser);
 };
 
-// PIN-gate the admin section. Unlocked once per account per browser session
-// (sessionStorage, keyed by uid) — asked again after logging out, or in a new tab/window.
 const ADMIN_SCREENS = new Set(["admin-events", "admin-editor", "admin-availability", "admin-integrations", "bookings"]);
-const ADMIN_PIN = "7934";
-const PIN_UNLOCK_KEY = "bookly_admin_pin_unlocked_uid";
-let pendingAdminTarget = null;
-
-function isPinUnlocked() {
-  return !!auth.currentUser && sessionStorage.getItem(PIN_UNLOCK_KEY) === auth.currentUser.uid;
-}
-function setPinUnlocked() {
-  if (auth.currentUser) sessionStorage.setItem(PIN_UNLOCK_KEY, auth.currentUser.uid);
-}
-function clearPinUnlocked() {
-  sessionStorage.removeItem(PIN_UNLOCK_KEY);
-}
-
-function resetPinScreen() {
-  const input = document.getElementById("admin-pin-input");
-  if (input) input.value = "";
-  clearError("admin-pin-error");
-}
 
 const _goWithUserPaint = window.go;
 window.go = function (name) {
-  if (ADMIN_SCREENS.has(name)) {
-    if (!isPinUnlocked()) {
-      if (currentScreen() === "admin-pin" && pendingAdminTarget === name) return; // duplicate trigger while already prompting for this target
-      pendingAdminTarget = name;
-      resetPinScreen();
-      _goWithUserPaint("admin-pin");
-      document.getElementById("admin-pin-input")?.focus();
-      return;
-    }
-    _goWithUserPaint(name);
-    window.BooklyUI?.renderScreen?.(name, auth.currentUser?.uid);
-    return;
-  }
   _goWithUserPaint(name);
+  if (ADMIN_SCREENS.has(name)) {
+    window.BooklyUI?.renderScreen?.(name, auth.currentUser?.uid);
+  }
 };
-
-const pinForm = document.getElementById("admin-pin-form");
-const pinInput = document.getElementById("admin-pin-input");
-if (pinForm) {
-  pinForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    if (pinInput.value === ADMIN_PIN && pendingAdminTarget) {
-      setPinUnlocked();
-      const target = pendingAdminTarget;
-      pendingAdminTarget = null;
-      go(target);
-    } else {
-      showError("admin-pin-error", "Incorrect PIN. Try again.");
-      pinInput.value = "";
-      pinInput.focus();
-    }
-  });
-}
-pinInput?.addEventListener("input", (e) => {
-  e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
-  if (e.target.value.length === 4) pinForm?.requestSubmit();
-});
 
 const signupHandleInput = document.getElementById("signup-handle");
 const signupHandleHint = document.getElementById("signup-handle-hint");
@@ -246,7 +193,6 @@ document.getElementById("google-login-btn")?.addEventListener("click", () => han
 
 document.addEventListener("click", (e) => {
   if (e.target.closest('[data-nav="logout"]')) {
-    clearPinUnlocked();
     signOut(auth); // navigation to login happens via onAuthStateChanged below
   }
 });
@@ -297,7 +243,9 @@ onAuthStateChanged(auth, (user) => {
   } else if (user && (screen === "signup" || screen === "login")) {
     go("admin-events");
   } else if (user && ADMIN_SCREENS.has(screen)) {
-    // Direct load / refresh landing straight on an admin screen still needs the PIN.
+    // Direct load / refresh landing straight on an admin screen: boot()'s initial render ran
+    // through the *unwrapped* go() before this module's wrapper was installed, so re-invoke it
+    // here to trigger the real-data renderScreen() call.
     go(screen);
   }
   if (user) {
