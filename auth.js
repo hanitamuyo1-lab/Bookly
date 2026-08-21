@@ -7,6 +7,10 @@ import {
   signOut,
   updateProfile,
   onAuthStateChanged,
+  verifyBeforeUpdateEmail,
+  reauthenticateWithPopup,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
 const PUBLIC_SCREENS = new Set([
@@ -23,6 +27,8 @@ const ERROR_MESSAGES = {
   "auth/invalid-credential": "Incorrect email or password.",
   "auth/too-many-requests": "Too many attempts. Try again later.",
   "auth/popup-closed-by-user": "Google sign-in was cancelled.",
+  "auth/requires-recent-login": "For security, please try that again — the confirmation just expired.",
+  "auth/operation-not-allowed": "Email changes aren't enabled for this project yet.",
 };
 
 function friendlyError(err) {
@@ -87,6 +93,91 @@ async function paintProfileHandle(user) {
     if (handleEl) handleEl.textContent = "—";
   }
 }
+
+// ── Change the account's login email ────────────────────────────
+// Firebase requires a recent sign-in before this kind of security-sensitive
+// change, and (since verifyBeforeUpdateEmail, not the deprecated updateEmail)
+// sends a confirmation link to the NEW address — the change only takes effect
+// once that link is clicked, so this never silently swaps a real login email.
+function showChangeEmailModal() {
+  let overlay = document.getElementById("change-email-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "change-email-overlay";
+    overlay.className = "setup-modal-overlay";
+    overlay.innerHTML = `
+      <div class="setup-modal">
+        <div class="setup-modal-head">
+          <h3>Change login email</h3>
+          <button class="btn btn-icon" type="button" onclick="document.getElementById('change-email-overlay').hidden=true">
+            <svg width="16" height="16"><use href="#i-x" /></svg>
+          </button>
+        </div>
+        <div style="padding:16px 24px 4px; display:flex; flex-direction:column; gap:12px;">
+          <div class="auth-error" id="change-email-error" hidden></div>
+          <div class="field">
+            <label>New email</label>
+            <input id="change-email-new" type="email" style="font-size:13px;" placeholder="you@example.com" />
+          </div>
+          <div class="field" id="change-email-password-field" hidden>
+            <label>Current password</label>
+            <input id="change-email-password" type="password" style="font-size:13px;" />
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin:0;">
+            We'll send a confirmation link to the new address. Your login stays on the current email until you click it.
+          </p>
+        </div>
+        <div class="setup-modal-foot" style="gap:8px;">
+          <button class="btn btn-secondary" type="button" onclick="document.getElementById('change-email-overlay').hidden=true">Cancel</button>
+          <button class="btn btn-primary" id="change-email-save" type="button">Send confirmation link</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.hidden = true; });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !overlay.hidden) overlay.hidden = true; });
+  }
+
+  const isGoogleAccount = auth.currentUser?.providerData?.some((p) => p.providerId === "google.com");
+  document.getElementById("change-email-password-field").hidden = !!isGoogleAccount;
+  document.getElementById("change-email-new").value = "";
+  document.getElementById("change-email-password").value = "";
+  clearError("change-email-error");
+
+  document.getElementById("change-email-save").onclick = async () => {
+    clearError("change-email-error");
+    const newEmail = document.getElementById("change-email-new").value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      showError("change-email-error", "Enter a valid email address.");
+      return;
+    }
+    const saveBtn = document.getElementById("change-email-save");
+    setBusy(saveBtn, true, "Sending…");
+    try {
+      if (isGoogleAccount) {
+        await reauthenticateWithPopup(auth.currentUser, googleProvider);
+      } else {
+        const password = document.getElementById("change-email-password").value;
+        if (!password) throw { code: "auth/missing-password" };
+        await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(auth.currentUser.email, password));
+      }
+      await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
+      overlay.hidden = true;
+      const status = document.getElementById("change-email-status");
+      if (status) {
+        status.style.display = "";
+        status.textContent = `Confirmation link sent to ${newEmail}. Click it there to finish switching your login email.`;
+      }
+    } catch (err) {
+      showError("change-email-error", err.code === "auth/missing-password" ? "Enter your current password." : friendlyError(err));
+    } finally {
+      setBusy(saveBtn, false);
+    }
+  };
+
+  overlay.hidden = false;
+  setTimeout(() => document.getElementById("change-email-new")?.focus(), 50);
+}
+document.getElementById("change-email-btn")?.addEventListener("click", showChangeEmailModal);
 
 // Repaint the sidebar every time the app navigates (new sidebar clones need it too).
 const _go = window.go;
