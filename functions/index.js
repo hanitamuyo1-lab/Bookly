@@ -82,6 +82,14 @@ async function getHostTimezone(hostUid) {
   return tz;
 }
 
+function locationRowHtml(booking) {
+  const location = escapeHtml(booking.location || "TBD");
+  if (booking.meetingLink) {
+    return `<tr><td style="padding: 6px 0; color: #888;">Location</td><td style="padding: 6px 0;"><a href="${escapeHtml(booking.meetingLink)}" style="color: #d11124;">${location}: ${escapeHtml(booking.meetingLink)}</a></td></tr>`;
+  }
+  return `<tr><td style="padding: 6px 0; color: #888;">Location</td><td style="padding: 6px 0;">${location}</td></tr>`;
+}
+
 function reminderHtml(booking, manageUrl, label) {
   return `
     <div style="font-family: -apple-system, Segoe UI, sans-serif; max-width: 480px; margin: 0 auto; color: #111;">
@@ -90,7 +98,7 @@ function reminderHtml(booking, manageUrl, label) {
       <table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;">
         <tr><td style="padding: 6px 0; color: #888;">Date</td><td style="padding: 6px 0;"><strong>${escapeHtml(booking.date)}</strong></td></tr>
         <tr><td style="padding: 6px 0; color: #888;">Time</td><td style="padding: 6px 0;"><strong>${escapeHtml(booking.time)} – ${escapeHtml(booking.endTime)}</strong></td></tr>
-        <tr><td style="padding: 6px 0; color: #888;">Location</td><td style="padding: 6px 0;">${escapeHtml(booking.location || "TBD")}</td></tr>
+        ${locationRowHtml(booking)}
       </table>
       <p><a href="${manageUrl}" style="display: inline-block; background: #d11124; color: #fff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: 600;">Manage or cancel booking</a></p>
       <p style="color: #999; font-size: 12px; margin-top: 24px;">— The Bookly team</p>
@@ -105,7 +113,7 @@ function confirmationHtml(booking, manageUrl) {
       <table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;">
         <tr><td style="padding: 6px 0; color: #888;">Date</td><td style="padding: 6px 0;"><strong>${escapeHtml(booking.date)}</strong></td></tr>
         <tr><td style="padding: 6px 0; color: #888;">Time</td><td style="padding: 6px 0;"><strong>${escapeHtml(booking.time)} – ${escapeHtml(booking.endTime)}</strong></td></tr>
-        <tr><td style="padding: 6px 0; color: #888;">Location</td><td style="padding: 6px 0;">${escapeHtml(booking.location || "TBD")}</td></tr>
+        ${locationRowHtml(booking)}
       </table>
       <p><a href="${manageUrl}" style="display: inline-block; background: #d11124; color: #fff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: 600;">Manage or cancel booking</a></p>
       <p style="color: #999; font-size: 12px; margin-top: 24px;">— The Bookly team</p>

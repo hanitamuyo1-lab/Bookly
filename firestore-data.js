@@ -46,6 +46,10 @@ export async function getUserProfile(uid) {
   return snap.exists() ? snap.data() : null;
 }
 
+export async function saveIntegrationLink(uid, provider, url) {
+  await setDoc(doc(db, "users", uid), { [`${provider}Link`]: url }, { merge: true });
+}
+
 // ---- Event types ----
 
 export async function listEventTypes(uid) {
@@ -160,6 +164,7 @@ window.BooklyData = {
   isHandleTaken,
   reserveHandle,
   getUserProfile,
+  saveIntegrationLink,
   listEventTypes,
   getEventType,
   saveEventType,

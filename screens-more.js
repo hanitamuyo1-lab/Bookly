@@ -1891,6 +1891,11 @@
       const timeRange = `${bookingState.time} – ${bookingState.endTime}`;
       const dayLabel = bookingState.date;
       const shortDate = dayLabel.replace(" 2026", "");
+      // Real per-host meeting link (Zoom/Teams), fetched from the HOST's own saved
+      // integration — not this browser's localStorage, which the invitee never has
+      // access to. Without this, only the location *label* (e.g. "Zoom") was ever
+      // saved, never an actual joinable link, so it could never reach the real email.
+      let meetingLink = "";
 
       if (bookingState.hostUid && bookingState.eventTypeSlug && window.BooklyData) {
         try {
@@ -1898,12 +1903,21 @@
             label: f.querySelector("label")?.textContent.replace("*", "").trim() || "",
             value: f.querySelector("input, select, textarea")?.value || "",
           }));
+          const loc = (bookingState.location || "").toLowerCase();
+          if (loc.includes("zoom") || loc.includes("teams")) {
+            const provider = loc.includes("zoom") ? "zoom" : "teams";
+            try {
+              const hostProfile = await window.BooklyData.getUserProfile(bookingState.hostUid);
+              meetingLink = hostProfile?.[`${provider}Link`] || "";
+            } catch (err) { console.warn("Failed to load host's meeting link:", err); }
+          }
           const newBookingId = await window.BooklyData.createBooking({
             hostUid: bookingState.hostUid,
             eventTypeSlug: bookingState.eventTypeSlug,
             eventName: bookingState.eventName,
             duration: bookingState.duration,
             location: bookingState.location,
+            meetingLink,
             inviteeName: nameVal,
             inviteeEmail: emailVal,
             answers,
@@ -1938,7 +1952,10 @@
       document.querySelectorAll("[data-confirm-date]").forEach(el => el.textContent = dayLabel);
       document.querySelectorAll("[data-confirm-time]").forEach(el => el.textContent = timeRange);
       document.querySelectorAll("[data-confirm-email]").forEach(el => el.textContent = emailVal);
-      document.querySelectorAll("[data-confirm-location]").forEach(el => el.textContent = bookingState.location);
+      document.querySelectorAll("[data-confirm-location]").forEach(el => {
+        el.textContent = bookingState.location;
+        if (meetingLink) el.href = meetingLink;
+      });
       document.querySelectorAll("[data-email-to]").forEach(el => el.textContent = `To: ${emailVal}`);
       document.querySelectorAll("[data-email-subject]").forEach(el =>
         el.textContent = `Your ${bookingState.eventName} is confirmed for ${shortDate}`);
@@ -1957,7 +1974,11 @@
       document.querySelectorAll("[data-manage-name]").forEach(el => el.textContent = nameVal);
       document.querySelectorAll("[data-manage-email]").forEach(el => el.textContent = emailVal);
       document.querySelectorAll("[data-manage-duration]").forEach(el => el.textContent = `${bookingState.duration} minutes`);
-      document.querySelectorAll("[data-manage-location]").forEach(el => el.textContent = bookingState.location || "");
+      document.querySelectorAll("[data-manage-location]").forEach(el => {
+        el.innerHTML = meetingLink
+          ? `<a href="${escapeHtml(meetingLink)}" target="_blank" rel="noopener">${escapeHtml(bookingState.location || "")}</a>`
+          : escapeHtml(bookingState.location || "");
+      });
       renderManageGuestsList(bookingState.guests);
 
       const pvBanner = document.getElementById("pv-mock-banner");
@@ -2429,7 +2450,7 @@
     setTimeout(() => labelInput.focus(), 50);
   }
 
-  function showLinkModal(id) {
+  async function showLinkModal(id) {
     const isZoom   = id === "zoom";
     const title    = isZoom ? "Connect Zoom" : "Connect Microsoft Teams";
     const hint     = isZoom
@@ -2437,7 +2458,16 @@
       : "Your Teams meeting link — e.g. teams.microsoft.com/l/meetup-join/…";
     const placeholder = isZoom ? "https://zoom.us/j/your-room-id" : "https://teams.microsoft.com/l/meetup-join/…";
     const storageKey  = isZoom ? "bookly_zoom_link" : "bookly_teams_link";
-    const current     = localStorage.getItem(storageKey) || "";
+    const provider = isZoom ? "zoom" : "teams";
+    const uid = window.BooklyCurrentUid;
+    let current = localStorage.getItem(storageKey) || "";
+    if (uid) {
+      try {
+        const profile = await window.BooklyData.getUserProfile(uid);
+        const remote = profile?.[`${provider}Link`];
+        if (remote) { current = remote; localStorage.setItem(storageKey, remote); }
+      } catch (err) { console.warn("Failed to load saved integration link:", err); }
+    }
 
     let overlay = document.getElementById("link-modal-overlay");
     if (!overlay) {
@@ -2483,15 +2513,16 @@
 
     const removeBtn = document.getElementById("link-modal-remove");
     removeBtn.style.display = current ? "" : "none";
-    removeBtn.onclick = () => {
+    removeBtn.onclick = async () => {
       localStorage.removeItem(storageKey);
       connected[id] = false;
       refreshIntegrationUI();
       overlay.hidden = true;
       showIntegrationToast(`${isZoom ? "Zoom" : "Teams"} link removed.`);
+      if (uid) await window.BooklyData.saveIntegrationLink(uid, provider, "").catch((err) => console.warn(err));
     };
 
-    document.getElementById("link-modal-save").onclick = () => {
+    document.getElementById("link-modal-save").onclick = async () => {
       const val = input.value.trim();
       if (!val) { input.focus(); return; }
       if (!val.startsWith("http")) {
@@ -2504,6 +2535,7 @@
       refreshEventListPills();
       onEditorLocationChange(document.getElementById("editor-location-select")?.value || "");
       overlay.hidden = true;
+      if (uid) await window.BooklyData.saveIntegrationLink(uid, provider, val).catch((err) => console.warn(err));
       showIntegrationToast(`${isZoom ? "Zoom" : "Teams"} link saved! It will appear in booking confirmations.`);
     };
 
@@ -3210,7 +3242,11 @@
       document.querySelectorAll("[data-manage-name]").forEach((el) => (el.textContent = booking.inviteeName || "Guest"));
       document.querySelectorAll("[data-manage-email]").forEach((el) => (el.textContent = booking.inviteeEmail || ""));
       document.querySelectorAll("[data-manage-duration]").forEach((el) => (el.textContent = booking.duration ? `${booking.duration} minutes` : ""));
-      document.querySelectorAll("[data-manage-location]").forEach((el) => (el.textContent = booking.location || ""));
+      document.querySelectorAll("[data-manage-location]").forEach((el) => {
+        el.innerHTML = booking.meetingLink
+          ? `<a href="${escapeHtml(booking.meetingLink)}" target="_blank" rel="noopener">${escapeHtml(booking.location || "")}</a>`
+          : escapeHtml(booking.location || "");
+      });
       renderManageGuestsList(bookingState.guests);
 
       if (booking.status === "cancelled") {
