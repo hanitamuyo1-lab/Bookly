@@ -54,7 +54,7 @@ service cloud.firestore {
           && request.resource.data.guests.size() <= 10
         );
 
-      allow delete: if false;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.hostUid;
     }
   }
 }
