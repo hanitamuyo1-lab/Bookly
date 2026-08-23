@@ -187,7 +187,7 @@ window.go = function (name) {
   if (name.split("?")[0] === "settings") paintProfileHandle(auth.currentUser);
 };
 
-const ADMIN_SCREENS = new Set(["admin-events", "admin-editor", "admin-availability", "admin-integrations", "bookings"]);
+const ADMIN_SCREENS = new Set(["admin-editor", "admin-availability", "admin-integrations", "bookings"]);
 
 const _goWithUserPaint = window.go;
 window.go = function (name) {
@@ -237,7 +237,7 @@ if (signupForm) {
       if (name) await updateProfile(cred.user, { displayName: name });
       await reserveHandle(cred.user.uid, handle, { displayName: name || "", email });
       window.BooklyCurrentHandle = handle;
-      // navigation to admin-events happens via onAuthStateChanged below
+      // navigation to bookings happens via onAuthStateChanged below
     } catch (err) {
       showError("signup-error", friendlyError(err));
     } finally {
@@ -257,7 +257,7 @@ if (loginForm) {
     setBusy(submitBtn, true, "Logging in…");
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // navigation to admin-events happens via onAuthStateChanged below
+      // navigation to bookings happens via onAuthStateChanged below
     } catch (err) {
       showError("login-error", friendlyError(err));
     } finally {
@@ -270,7 +270,7 @@ async function handleGoogle(errorId) {
   clearError(errorId);
   try {
     await signInWithPopup(auth, googleProvider);
-    // navigation to admin-events happens via onAuthStateChanged below
+    // navigation to bookings happens via onAuthStateChanged below
   } catch (err) {
     showError(errorId, friendlyError(err));
   }
@@ -348,7 +348,7 @@ onAuthStateChanged(auth, (user) => {
   if (!user && !PUBLIC_SCREENS.has(screen)) {
     go("login");
   } else if (user && (screen === "signup" || screen === "login")) {
-    go("admin-events");
+    go("bookings");
   } else if (user && ADMIN_SCREENS.has(screen)) {
     // Direct load / refresh landing straight on an admin screen: boot()'s initial render ran
     // through the *unwrapped* go() before this module's wrapper was installed, so re-invoke it

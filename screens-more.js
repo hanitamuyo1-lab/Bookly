@@ -8,11 +8,11 @@
     <!-- ──────────────────────────────────────────────── -->
     <section class="screen" data-screen-label="04 Event type editor" id="screen-admin-editor">
       <div class="app-shell">
-        <div data-sidebar data-active="admin-events"></div>
+        <div data-sidebar data-active="bookings"></div>
         <section class="workspace">
           <header class="topbar">
             <div>
-              <a href="#" onclick="event.preventDefault(); go('admin-events')" style="display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 12.5px; font-weight: 500; margin-bottom: 10px;">
+              <a href="#" onclick="event.preventDefault(); go('bookings')" style="display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 12.5px; font-weight: 500; margin-bottom: 10px;">
                 <svg width="14" height="14"><use href="#i-arrow-left" /></svg>
                 All event types
               </a>
@@ -3174,9 +3174,8 @@
   window.BooklyUI = window.BooklyUI || {};
   window.BooklyUI.renderScreen = function (screenName, uid) {
     window.BooklyCurrentUid = uid;
-    if (screenName === "admin-events") renderEventTypes(uid);
-    else if (screenName === "admin-availability") renderAvailability(uid);
-    else if (screenName === "bookings") renderBookings(uid);
+    if (screenName === "admin-availability") renderAvailability(uid);
+    else if (screenName === "bookings") { renderEventTypes(uid); renderBookings(uid); }
   };
 
   window.BooklyUI.resolvePublicBooking = async function (queryString) {

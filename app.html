@@ -216,11 +216,6 @@
         </div>
         <div class="nav-section">
           <div class="nav-title">Workspace</div>
-          <a class="nav-item" data-nav="admin-events">
-            <svg width="16" height="16"><use href="#i-link" /></svg>
-            <span>Event types</span>
-            <span class="nav-count">5</span>
-          </a>
           <a class="nav-item" data-nav="bookings">
             <svg width="16" height="16"><use href="#i-cal" /></svg>
             <span>Bookings</span>
@@ -266,14 +261,17 @@
     <!-- ──────────────────────────────────────────────────── -->
     <!-- 3. ADMIN — EVENT TYPES                                -->
     <!-- ──────────────────────────────────────────────────── -->
-    <section class="screen" data-screen-label="03 Event types" id="screen-admin-events">
+    <!-- ──────────────────────────────────────────────────── -->
+    <!-- BOOKINGS (event types + bookings, one screen, toggled) -->
+    <!-- ──────────────────────────────────────────────────── -->
+    <section class="screen" data-screen-label="03 Bookings" id="screen-bookings">
       <div class="app-shell">
-        <div data-sidebar data-active="admin-events"></div>
+        <div data-sidebar data-active="bookings"></div>
         <section class="workspace">
           <header class="topbar">
             <div>
-              <h2>Good morning</h2>
-              <p class="subtitle">Here's an overview of your scheduling activity.</p>
+              <h2>Bookings</h2>
+              <p class="subtitle">Your event types and everything people have booked with you.</p>
             </div>
             <div class="topbar-right">
               <button class="btn btn-secondary" type="button" onclick="viewMyPublicPage()">
@@ -287,69 +285,12 @@
             </div>
           </header>
 
-          <section class="summary-grid">
-            <article class="metric">
-              <div class="label">Bookings this week</div>
-              <div class="value">—</div>
-              <div class="delta">Connect your calendar to start</div>
-            </article>
-            <article class="metric">
-              <div class="label">Awaiting confirmation</div>
-              <div class="value">—</div>
-              <div class="delta">No pending bookings</div>
-            </article>
-            <article class="metric">
-              <div class="label">Conflicts blocked</div>
-              <div class="value">—</div>
-              <div class="delta">No calendars connected yet</div>
-            </article>
-            <article class="metric">
-              <div class="label">Reminders sent</div>
-              <div class="value">—</div>
-              <div class="delta">Automated once bookings start</div>
-            </article>
-          </section>
+          <div class="segmented-control" data-bookings-segmented>
+            <button class="segmented-btn on" type="button" data-segment="bookings">Bookings</button>
+            <button class="segmented-btn" type="button" data-segment="event-types">Event types</button>
+          </div>
 
-          <section class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Your event types</h3>
-                <div class="subtitle" data-event-status>Share any of these links to let people book time with you.</div>
-              </div>
-              <div style="display: flex; gap: 6px;">
-                <button class="btn btn-secondary btn-sm" type="button">
-                  All event types
-                  <svg width="12" height="12"><use href="#i-chev-down" /></svg>
-                </button>
-                <button class="btn btn-secondary btn-sm" type="button" onclick="newEventType()">
-                  <svg width="12" height="12"><use href="#i-plus" /></svg>
-                  New
-                </button>
-              </div>
-            </div>
-
-            <div class="event-list" id="event-list">
-              <div class="empty-state" data-event-list-empty style="padding: 24px; color: var(--muted); font-size: 13.5px;">Loading your event types…</div>
-            </div>
-          </section>
-        </section>
-      </div>
-    </section>
-
-    <!-- ──────────────────────────────────────────────────── -->
-    <!-- BOOKINGS (minimal, real, read-only)                   -->
-    <!-- ──────────────────────────────────────────────────── -->
-    <section class="screen" id="screen-bookings">
-      <div class="app-shell">
-        <div data-sidebar data-active="bookings"></div>
-        <section class="workspace">
-          <header class="topbar">
-            <div>
-              <h2>Bookings</h2>
-              <p class="subtitle">Everything people have booked with you.</p>
-            </div>
-          </header>
-          <section class="panel">
+          <section class="panel" data-segment-panel="bookings">
             <div class="panel-head">
               <div>
                 <h3>Upcoming &amp; past bookings</h3>
@@ -357,6 +298,18 @@
               </div>
             </div>
             <div id="bookings-list"></div>
+          </section>
+
+          <section class="panel" data-segment-panel="event-types" style="display: none;">
+            <div class="panel-head">
+              <div>
+                <h3>Your event types</h3>
+                <div class="subtitle" data-event-status>Share any of these links to let people book time with you.</div>
+              </div>
+            </div>
+            <div class="event-list" id="event-list">
+              <div class="empty-state" data-event-list-empty style="padding: 24px; color: var(--muted); font-size: 13.5px;">Loading your event types…</div>
+            </div>
           </section>
         </section>
       </div>
@@ -719,7 +672,7 @@
             n.onclick = (e) => {
               e.preventDefault();
               const target = n.dataset.nav;
-              if (["admin-events", "admin-availability", "admin-integrations", "bookings"].includes(target)) {
+              if (["admin-availability", "admin-integrations", "bookings"].includes(target)) {
                 go(target);
               } else {
                 // not implemented — visual focus only
@@ -732,6 +685,24 @@
           if (userCard) userCard.onclick = () => go("settings");
         });
       }
+
+      // ──────────────────────────────────────────────────
+      // Bookings screen: segmented toggle between the
+      // Bookings and Event types panels (both are fetched
+      // together whenever the screen loads — see renderScreen
+      // in screens-more.js — this just swaps which is visible).
+      // ──────────────────────────────────────────────────
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-segment]");
+        if (!btn) return;
+        const segmented = btn.closest("[data-bookings-segmented]");
+        if (!segmented) return;
+        const segment = btn.dataset.segment;
+        segmented.querySelectorAll("[data-segment]").forEach(b => b.classList.toggle("on", b === btn));
+        document.querySelectorAll("[data-segment-panel]").forEach(panel => {
+          panel.style.display = panel.dataset.segmentPanel === segment ? "" : "none";
+        });
+      });
 
       // ──────────────────────────────────────────────────
       // Toggle interactivity

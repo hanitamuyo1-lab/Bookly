@@ -272,6 +272,27 @@ h1, h2, h3, h4, p { margin: 0; }
 .btn-ghost:hover { background: var(--surface-2); color: var(--text); }
 .btn-danger { background: var(--surface); color: var(--danger); border-color: var(--line); }
 .btn-danger:hover { background: var(--danger-soft); border-color: var(--danger); }
+
+.segmented-control {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  margin: 16px 0;
+}
+.segmented-btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.segmented-btn.on { background: var(--accent); color: var(--accent-ink); }
 .btn-icon {
   width: 32px; height: 32px; padding: 0;
   display: grid; place-items: center;
