@@ -853,9 +853,6 @@
   const MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const DAY_SHORT   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-  // Days blocked as "unavailable" (0=Sun,6=Sat always blocked; this adds Wed off)
-  const BLOCKED_DOW = new Set([3]); // Wed only — Sat/Sun open 09:00–13:00
-
   let calYear, calMonth;
   (function initCal() {
     const now = new Date();
@@ -881,16 +878,17 @@
     for (let d = 1; d <= totalDays; d++) {
       const date   = new Date(year, month, d);
       const isPast = date < today;
-      const dow    = date.getDay();
-      const isBlocked = BLOCKED_DOW.has(dow);
       const isToday   = date.getTime() === today.getTime();
       let cls = "cal-cell";
       let extra = "";
       if (isPast) {
         cls += " muted"; extra = " disabled";
-      } else if (isBlocked) {
-        cls += " blocked"; extra = " disabled";
       } else {
+        // Every non-past date is clickable — which days actually have open slots is
+        // determined for real when clicked (computeAvailableSlots reads the host's real
+        // per-day availability), not guessed here. A hardcoded day-of-week block used to
+        // live here and was wrong for every host: it disabled Wednesday (enabled by
+        // default) and left weekends looking bookable (disabled by default).
         cls += " available";
         if (isToday) cls += " today";
         extra = ` data-day="${d}" data-date="${year}-${month+1}-${d}"`;
@@ -1160,7 +1158,6 @@
 
   // ── Live booking preview ──────────────────────────────────────
   const PV_SLOT_TIMES = ["09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30"];
-  const PV_BLOCKED_DOW = new Set([3]);
   let pvYear, pvMonth;
 
   function pvBuildCal(year, month) {
@@ -1178,10 +1175,9 @@
     for (let d = 1; d <= days; d++) {
       const date = new Date(year, month, d);
       const past = date < today;
-      const blocked = PV_BLOCKED_DOW.has(date.getDay());
       const isToday = date.getTime() === today.getTime();
       let cls = "pv-day";
-      if (past || blocked) cls += " pv-day-off";
+      if (past) cls += " pv-day-off";
       else cls += " pv-day-on";
       if (isToday) cls += " pv-day-today";
       html += `<span class="${cls}" onclick="pvSelectDay(this,${year},${month},${d})">${d}</span>`;
@@ -1227,9 +1223,7 @@
     const now = new Date();
     const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
     const MONS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    // find next available weekday
-    let sample = new Date(now); sample.setDate(sample.getDate() + 2);
-    while (PV_BLOCKED_DOW.has(sample.getDay())) sample.setDate(sample.getDate() + 1);
+    const sample = new Date(now); sample.setDate(sample.getDate() + 2);
     const dateStr = `${DAYS[sample.getDay()]}, ${sample.getDate()} ${MONS[sample.getMonth()]} · 10:30`;
     set("pv-sample-date", dateStr);
 
