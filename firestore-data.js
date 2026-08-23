@@ -44,9 +44,37 @@ export async function findHandleForUid(uid) {
   return snap.empty ? null : snap.docs[0].id;
 }
 
+// Same Mon-Fri 9-5 default shown (but not persisted) on the Availability
+// screen when no schedule exists yet (see DEFAULT_WEEKLY in screens-more.js).
+const DEFAULT_WEEKLY_AVAILABILITY = {
+  mon: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+  tue: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+  wed: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+  thu: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+  fri: { enabled: true, ranges: [{ start: "09:00", end: "17:00" }] },
+  sat: { enabled: false, ranges: [{ start: "09:00", end: "13:00" }] },
+  sun: { enabled: false, ranges: [{ start: "09:00", end: "13:00" }] },
+};
+
 export async function reserveHandle(uid, handle, profile) {
   await setDoc(doc(db, "handles", handle), { uid, createdAt: serverTimestamp() });
   await setDoc(doc(db, "users", uid), { ...profile, handle, createdAt: serverTimestamp() }, { merge: true });
+
+  // Without this, a host's public booking page shows "no times available" on
+  // every single date until they separately visit Availability and click
+  // Save — which looks completely broken to anyone testing right after
+  // signup. Only write if nothing exists yet, so this never clobbers a real
+  // schedule (relevant for the self-heal / re-login call sites too).
+  const availabilityRef = doc(db, "users", uid, "availability", "default");
+  const existing = await getDoc(availabilityRef);
+  if (!existing.exists()) {
+    await setDoc(availabilityRef, {
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Lisbon",
+      weekly: DEFAULT_WEEKLY_AVAILABILITY,
+      overrides: [],
+      updatedAt: serverTimestamp(),
+    });
+  }
 }
 
 export async function getUserProfile(uid) {
