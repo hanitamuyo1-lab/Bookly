@@ -2342,6 +2342,222 @@
     }, 950);
   };
 
+  // ── Manually create a real booking on a customer's behalf (e.g. a phone
+  // booking) — separate from both "New event type" (configures a reusable
+  // service) and the real self-service public booking flow. ─────────────
+  function manualBookingDraftKey() {
+    return `bookly_manual_booking_draft_${window.BooklyCurrentUid || "anon"}`;
+  }
+
+  function readManualBookingFields() {
+    return {
+      name: document.getElementById("mb-name")?.value.trim() || "",
+      email: document.getElementById("mb-email")?.value.trim() || "",
+      customerStatus: document.getElementById("mb-customer-status")?.value || "New customer",
+      eventType: document.getElementById("mb-event-type")?.value.trim() || "",
+      date: document.getElementById("mb-date")?.value || "",
+      time: document.getElementById("mb-time")?.value || "",
+      duration: document.getElementById("mb-duration")?.value || "30",
+      teamSize: document.getElementById("mb-team-size")?.value || "0-10",
+      provider: document.getElementById("mb-provider")?.value || "Zoom",
+    };
+  }
+
+  function writeManualBookingFields(f) {
+    if (!f) return;
+    if (document.getElementById("mb-name")) document.getElementById("mb-name").value = f.name || "";
+    if (document.getElementById("mb-email")) document.getElementById("mb-email").value = f.email || "";
+    if (document.getElementById("mb-customer-status")) document.getElementById("mb-customer-status").value = f.customerStatus || "New customer";
+    if (document.getElementById("mb-event-type")) document.getElementById("mb-event-type").value = f.eventType || "";
+    if (document.getElementById("mb-date")) document.getElementById("mb-date").value = f.date || "";
+    if (document.getElementById("mb-time")) document.getElementById("mb-time").value = f.time || "";
+    if (document.getElementById("mb-duration")) document.getElementById("mb-duration").value = f.duration || "30";
+    if (document.getElementById("mb-team-size")) document.getElementById("mb-team-size").value = f.teamSize || "0-10";
+    if (document.getElementById("mb-provider")) document.getElementById("mb-provider").value = f.provider || "Zoom";
+  }
+
+  const TEAM_SIZE_LABELS = { "0-10": "0–10 people", "10-50": "10–50 people", "50-100": "50–100 people", "100+": "More than 100 people" };
+
+  window.openManualBookingModal = function () {
+    let overlay = document.getElementById("manual-booking-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "manual-booking-overlay";
+      overlay.className = "setup-modal-overlay";
+      overlay.innerHTML = `
+        <div class="setup-modal" style="width:min(520px,100%);">
+          <div class="setup-modal-head">
+            <h3>New booking</h3>
+            <button class="btn btn-icon" type="button" onclick="document.getElementById('manual-booking-overlay').hidden=true">
+              <svg width="16" height="16"><use href="#i-x" /></svg>
+            </button>
+          </div>
+          <div style="padding:16px 24px 4px; display:flex; flex-direction:column; gap:12px; max-height:62vh; overflow-y:auto;">
+            <div class="auth-error" id="mb-error" hidden></div>
+            <div class="field"><label>Customer name</label><input id="mb-name" type="text" placeholder="Jordan Rivera" /></div>
+            <div class="field"><label>Customer email</label><input id="mb-email" type="email" placeholder="jordan@example.com" /></div>
+            <div class="field">
+              <label>Customer status</label>
+              <select id="mb-customer-status">
+                <option>New customer</option>
+                <option>Existing customer</option>
+              </select>
+            </div>
+            <div class="field"><label>Event type</label><input id="mb-event-type" type="text" placeholder="e.g. Strategy call" /></div>
+            <div style="display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:10px;">
+              <div class="field"><label>Date</label><input id="mb-date" type="date" /></div>
+              <div class="field"><label>Time</label><input id="mb-time" type="time" /></div>
+            </div>
+            <div style="display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:10px;">
+              <div class="field">
+                <label>Duration</label>
+                <select id="mb-duration">
+                  <option value="30">30 minutes</option>
+                  <option value="45">45 minutes</option>
+                  <option value="60">60 minutes</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Team size</label>
+                <select id="mb-team-size">
+                  <option value="0-10">0–10</option>
+                  <option value="10-50">10–50</option>
+                  <option value="50-100">50–100</option>
+                  <option value="100+">More than 100</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Meeting link</label>
+              <select id="mb-provider">
+                <option>Zoom</option>
+                <option>Microsoft Teams</option>
+                <option>Google Meet</option>
+                <option>Phone call</option>
+                <option>In-person</option>
+              </select>
+            </div>
+            <div id="manual-booking-preview" hidden style="padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--surface-2); font-size:12.5px; line-height:1.7;"></div>
+            <p style="font-size:11.5px;color:var(--muted);margin:0;">A confirmation with the meeting link is sent to the customer's email automatically, and reminders go out 24 hours and 1 hour before the meeting.</p>
+          </div>
+          <div class="setup-modal-foot" style="gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" type="button" id="mb-discard">Discard</button>
+            <div style="flex:1;"></div>
+            <button class="btn btn-secondary btn-sm" type="button" id="mb-preview">Preview</button>
+            <button class="btn btn-secondary btn-sm" type="button" id="mb-save">Save</button>
+            <button class="btn btn-primary btn-sm" type="button" id="mb-confirm">Confirm booking</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.hidden = true; });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !overlay.hidden) overlay.hidden = true; });
+
+      document.getElementById("mb-discard").onclick = () => {
+        localStorage.removeItem(manualBookingDraftKey());
+        writeManualBookingFields({});
+        document.getElementById("manual-booking-preview").hidden = true;
+        overlay.hidden = true;
+      };
+
+      document.getElementById("mb-preview").onclick = () => {
+        const f = readManualBookingFields();
+        const previewEl = document.getElementById("manual-booking-preview");
+        previewEl.innerHTML = `
+          <strong>${escapeHtml(f.eventType || "Untitled event")}</strong> with ${escapeHtml(f.name || "Guest")}${f.email ? ` (${escapeHtml(f.email)})` : ""}<br>
+          ${f.date ? escapeHtml(f.date) : "No date set"} ${f.time ? "at " + escapeHtml(f.time) : ""} · ${escapeHtml(f.duration)} minutes<br>
+          ${escapeHtml(f.customerStatus)} · Team size: ${escapeHtml(TEAM_SIZE_LABELS[f.teamSize] || f.teamSize)}<br>
+          Meeting via ${escapeHtml(f.provider)}
+        `;
+        previewEl.hidden = false;
+      };
+
+      document.getElementById("mb-save").onclick = () => {
+        const f = readManualBookingFields();
+        localStorage.setItem(manualBookingDraftKey(), JSON.stringify(f));
+        showIntegrationToast("Draft saved — reopen \"New booking\" any time to pick up where you left off.");
+      };
+
+      document.getElementById("mb-confirm").onclick = async () => {
+        const f = readManualBookingFields();
+        const errEl = document.getElementById("mb-error");
+        errEl.hidden = true;
+        if (!f.name) { errEl.textContent = "Enter the customer's name."; errEl.hidden = false; return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) { errEl.textContent = "Enter a valid customer email."; errEl.hidden = false; return; }
+        if (!f.eventType) { errEl.textContent = "Enter the event type."; errEl.hidden = false; return; }
+        if (!f.date || !f.time) { errEl.textContent = "Pick a date and time."; errEl.hidden = false; return; }
+
+        const uid = window.BooklyCurrentUid;
+        if (!uid || !window.BooklyData) { errEl.textContent = "Not signed in."; errEl.hidden = false; return; }
+
+        const confirmBtn = document.getElementById("mb-confirm");
+        confirmBtn.disabled = true;
+        try {
+          const durationMin = parseInt(f.duration, 10) || 30;
+          const endTime = minsToTime(timeToMins(f.time) + durationMin);
+
+          let meetingLink = "";
+          const providerLower = f.provider.toLowerCase();
+          if (providerLower.includes("zoom") || providerLower.includes("teams")) {
+            const provider = providerLower.includes("zoom") ? "zoom" : "teams";
+            try {
+              const hostProfile = await window.BooklyData.getUserProfile(uid);
+              meetingLink = hostProfile?.[`${provider}Link`] || "";
+            } catch (err) { console.warn("Failed to load host's meeting link:", err); }
+          }
+
+          const existingForDate = await window.BooklyData.getBookingsForDate(uid, f.date);
+          if (!window.BooklyData.slotIsFree(existingForDate, f.time, endTime)) {
+            errEl.textContent = "That time overlaps with an existing booking. Pick another time.";
+            errEl.hidden = false;
+            return;
+          }
+
+          await window.BooklyData.createBooking({
+            hostUid: uid,
+            eventTypeSlug: slugify(f.eventType) || "manual-booking",
+            eventName: f.eventType,
+            duration: durationMin,
+            location: f.provider,
+            meetingLink,
+            inviteeName: f.name,
+            inviteeEmail: f.email,
+            answers: [
+              { label: "Customer status", value: f.customerStatus },
+              { label: "Team size", value: TEAM_SIZE_LABELS[f.teamSize] || f.teamSize },
+            ],
+            date: f.date,
+            time: f.time,
+            endTime,
+          });
+
+          localStorage.removeItem(manualBookingDraftKey());
+          writeManualBookingFields({});
+          document.getElementById("manual-booking-preview").hidden = true;
+          overlay.hidden = true;
+          showIntegrationToast(`Booking created — a confirmation was sent to ${f.email}.`);
+          if (typeof renderBookings === "function") renderBookings(uid);
+        } catch (err) {
+          console.error("Failed to create manual booking:", err);
+          if (err.message === "slot-taken") {
+            errEl.textContent = "That time was just booked. Pick another time.";
+          } else {
+            errEl.textContent = "Something went wrong creating this booking. Please try again.";
+          }
+          errEl.hidden = false;
+        } finally {
+          confirmBtn.disabled = false;
+        }
+      };
+    }
+
+    const draft = JSON.parse(localStorage.getItem(manualBookingDraftKey()) || "null");
+    writeManualBookingFields(draft || {});
+    document.getElementById("manual-booking-preview").hidden = true;
+    document.getElementById("mb-error").hidden = true;
+    overlay.hidden = false;
+    setTimeout(() => document.getElementById("mb-name")?.focus(), 50);
+  };
+
   // ── Toast notification ────────────────────────────────────────
   // ── Zoom / Teams personal link modal ─────────────────────────
   // ── Add/edit a booking-form question (label, type, and — for Select — real
